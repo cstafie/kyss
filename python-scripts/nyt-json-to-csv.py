@@ -1,29 +1,38 @@
 import json
-import pandas
+import csv
+import pandas as pd
+import glob
 
-f = open("nyt_crosswords/2018/03/09.json")
+def generate_json_paths(year):
+    year_path = 'nyt_xwords/'+str(year)+'/*'
+    month_paths = glob.glob(year_path)
 
+    json_paths = []
+    for month_path in month_paths:
+        
+        # loop on all files of the folder and build a list of files paths
+        json_paths += glob.glob(month_path+'/*.json')
+    return json_paths
 
-# returns JSON object as 
-# a dictionary
-crossword_data = json.load(f)
-  
-# Iterating through the json
-# list
+json_paths = generate_json_paths(2017)
+answers=[]
+clues=[]
 
-d = {}
+for json_path in json_paths:
+    #critian says has to add long proper names
+    f = open(json_path)
+    crossword_data = json.load(f) 
 
-for i in range(len(crossword_data['answers']['across'])): 
-    d["clue"]
+    answers += crossword_data['answers']['across'] + crossword_data['answers']['down']
+    clues += crossword_data['clues']['across'] + crossword_data['clues']['down']
+    
+    f.close()
 
+#remove the clues numbers "01. cristian is bad" -> "cristian is bad"
+clues = list(map(lambda x: x.split(". ", 1)[1], clues))
 
+df = pd.DataFrame()
+df['words'] = answers
+df['clues'] = clues
 
-
-
-
-
-for i in crossword_data['answers']:
-    print(crossword_data['answers'][i][0])
-  
-# Closing file
-f.close()
+csv_data = df.to_csv("xwords_data/2017.csv")
