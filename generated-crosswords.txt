@@ -1,0 +1,153 @@
+SWEAT
+WORSE
+ERASE
+ASSET
+TEETH
+
+AMPED
+MOOLA
+POSIT
+ELITE
+DATED
+
+AMPED
+MOOLA
+POSIT
+ELITE
+DATES
+
+WRITE
+RACED
+ICING
+TENSE
+EDGES
+
+'TACIT'
+'ABASE'
+'CALLS'
+'ISLET'
+'TESTS'
+
+'TACIT'
+'ATONE'
+'COOPS'
+'INPUT'
+'TESTS'
+
+'TACIT'
+'ATONE'
+'COILS'
+'INLET'
+'TESTS'
+
+'TACIT'
+'AROSE'
+'COILS'
+'ISLET'
+'TESTS'
+
+'TACIT'
+'ALONE'
+'COOPS'
+'INPUT'
+'TESTS'
+
+'TACIT'
+'ALONE'
+'COILS'
+'INLET'
+'TESTS'
+
+'GALLS'
+'AFOOT'
+'LOTSA'
+'LOSES'
+'STASH'
+
+'GALLS'
+'AFOOT'
+'LOTSA'
+'LOSER'
+'STARS'
+
+'GALLS'
+'AFOOT'
+'LOTSA'
+'LOSER'
+'START'
+
+'GALLS'
+'AFOOT'
+'LOOSE'
+'LOSER'
+'STERN'
+
+'GALLS'
+'AFOOT'
+'LOUSE'
+'LOSER'
+'STERN'
+
+'GALLS'
+'ABOUT'
+'LOTSA'
+'LUSTS'
+'STASH'
+
+'OBESE'
+'BRAID'
+'EARNS'
+'SINCE'
+'EDSEL'
+
+
+XWord { grid: [['W', 'R', 'I', 'T', 'E'], ['R', 'A', 'C', 'E', 'D'], ['I', 'C', 'I', 'N', 'G'], ['T', 'E', 'N', 'S', 'E'], ['E', 'D', 'G', 'E', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'B', 'A', 'S', 'E'], ['C', 'A', 'L', 'L', 'S'], ['I', 'S', 'L', 'E', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'T', 'O', 'N', 'E'], ['C', 'O', 'O', 'P', 'S'], ['I', 'N', 'P', 'U', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'T', 'O', 'N', 'E'], ['C', 'O', 'I', 'L', 'S'], ['I', 'N', 'L', 'E', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'R', 'O', 'S', 'E'], ['C', 'O', 'I', 'L', 'S'], ['I', 'S', 'L', 'E', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'L', 'O', 'N', 'E'], ['C', 'O', 'O', 'P', 'S'], ['I', 'N', 'P', 'U', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'A', 'C', 'I', 'T'], ['A', 'L', 'O', 'N', 'E'], ['C', 'O', 'I', 'L', 'S'], ['I', 'N', 'L', 'E', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'F', 'O', 'O', 'T'], ['L', 'O', 'T', 'S', 'A'], ['L', 'O', 'S', 'E', 'S'], ['S', 'T', 'A', 'S', 'H']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'F', 'O', 'O', 'T'], ['L', 'O', 'T', 'S', 'A'], ['L', 'O', 'S', 'E', 'R'], ['S', 'T', 'A', 'R', 'S']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'F', 'O', 'O', 'T'], ['L', 'O', 'T', 'S', 'A'], ['L', 'O', 'S', 'E', 'R'], ['S', 'T', 'A', 'R', 'T']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'F', 'O', 'O', 'T'], ['L', 'O', 'O', 'S', 'E'], ['L', 'O', 'S', 'E', 'R'], ['S', 'T', 'E', 'R', 'N']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'F', 'O', 'O', 'T'], ['L', 'O', 'U', 'S', 'E'], ['L', 'O', 'S', 'E', 'R'], ['S', 'T', 'E', 'R', 'N']] }
+XWord { grid: [['G', 'A', 'L', 'L', 'S'], ['A', 'B', 'O', 'U', 'T'], ['L', 'O', 'T', 'S', 'A'], ['L', 'U', 'S', 'T', 'S'], ['S', 'T', 'A', 'S', 'H']] }
+XWord { grid: [['O', 'B', 'E', 'S', 'E'], ['B', 'R', 'A', 'I', 'D'], ['E', 'A', 'R', 'N', 'S'], ['S', 'I', 'N', 'C', 'E'], ['E', 'D', 'S', 'E', 'L']] }
+XWord { grid: [['T', 'W', 'I', 'S', 'T'], ['W', 'R', 'O', 'T', 'E'], ['I', 'O', 'T', 'A', 'S'], ['S', 'T', 'A', 'R', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['T', 'W', 'I', 'S', 'T'], ['W', 'H', 'O', 'L', 'E'], ['I', 'O', 'T', 'A', 'S'], ['S', 'L', 'A', 'N', 'T'], ['T', 'E', 'S', 'T', 'S']] }
+XWord { grid: [['S', 'O', 'B', 'E', 'R'], ['O', 'P', 'E', 'R', 'A'], ['B', 'E', 'A', 'U', 'T'], ['E', 'R', 'U', 'P', 'T'], ['R', 'A', 'T', 'T', 'Y']] }
+XWord { grid: [['S', 'O', 'B', 'E', 'R'], ['O', 'P', 'E', 'R', 'A'], ['B', 'E', 'G', 'E', 'T'], ['E', 'R', 'E', 'C', 'T'], ['R', 'A', 'T', 'T', 'Y']] }
+XWord { grid: [['S', 'O', 'B', 'E', 'R'], ['O', 'P', 'E', 'R', 'A'], ['B', 'E', 'G', 'O', 'T'], ['E', 'R', 'O', 'D', 'E'], ['R', 'A', 'T', 'E', 'S']] }
+XWord { grid: [['S', 'O', 'B', 'E', 'R'], ['O', 'P', 'E', 'R', 'A'], ['B', 'E', 'G', 'A', 'T'], ['E', 'R', 'A', 'S', 'E'], ['R', 'A', 'T', 'E', 'S']] }
+XWord { grid: [['S', 'O', 'B', 'E', 'R'], ['O', 'P', 'E', 'R', 'A'], ['B', 'E', 'S', 'E', 'T'], ['E', 'R', 'E', 'C', 'T'], ['R', 'A', 'T', 'T', 'Y']] }
+XWord { grid: [['N', 'A', 'K', 'E', 'D'], ['A', 'Z', 'U', 'R', 'E'], ['K', 'U', 'D', 'O', 'S'], ['E', 'R', 'O', 'D', 'E'], ['D', 'E', 'S', 'E', 'X']] }
+XWord { grid: [['S', 'C', 'A', 'M', 'P'], ['C', 'A', 'P', 'E', 'R'], ['A', 'P', 'P', 'L', 'E'], ['M', 'E', 'L', 'E', 'E'], ['P', 'R', 'E', 'E', 'N']] }
+XWord { grid: [['S', 'C', 'A', 'M', 'P'], ['C', 'A', 'R', 'O', 'L'], ['A', 'R', 'E', 'N', 'A'], ['M', 'O', 'N', 'E', 'Y'], ['P', 'L', 'A', 'Y', 'S']] }
+XWord { grid: [['S', 'C', 'A', 'M', 'P'], ['T', 'A', 'P', 'E', 'R'], ['A', 'P', 'P', 'L', 'E'], ['M', 'E', 'L', 'E', 'E'], ['P', 'R', 'E', 'E', 'N']] }
+XWord { grid: [['O', 'U', 'S', 'T', 'S'], ['U', 'N', 'T', 'I', 'L'], ['S', 'T', 'A', 'T', 'E'], ['T', 'I', 'T', 'L', 'E'], ['S', 'L', 'E', 'E', 'P']] }
+XWord { grid: [['O', 'U', 'S', 'T', 'S'], ['U', 'N', 'L', 'I', 'T'], ['S', 'L', 'I', 'M', 'E'], ['T', 'I', 'M', 'E', 'R'], ['S', 'T', 'E', 'R', 'N']] }
+XWord { grid: [['S', 'I', 'G', 'N', 'S'], ['I', 'S', 'L', 'E', 'T'], ['G', 'L', 'A', 'R', 'E'], ['N', 'E', 'R', 'V', 'E'], ['S', 'T', 'E', 'E', 'R']] }
+XWord { grid: [['S', 'I', 'G', 'N', 'S'], ['I', 'S', 'L', 'E', 'T'], ['G', 'L', 'A', 'R', 'E'], ['N', 'E', 'R', 'V', 'E'], ['S', 'T', 'E', 'E', 'P']] }
+XWord { grid: [['S', 'I', 'G', 'N', 'S'], ['I', 'N', 'L', 'E', 'T'], ['G', 'L', 'A', 'R', 'E'], ['N', 'E', 'R', 'V', 'E'], ['S', 'T', 'E', 'E', 'R']] }
+XWord { grid: [['S', 'I', 'G', 'N', 'S'], ['I', 'N', 'L', 'E', 'T'], ['G', 'L', 'A', 'R', 'E'], ['N', 'E', 'R', 'V', 'E'], ['S', 'T', 'E', 'E', 'P']] }
+XWord { grid: [['F', 'O', 'R', 'C', 'E'], ['O', 'P', 'E', 'R', 'A'], ['R', 'E', 'F', 'E', 'R'], ['C', 'R', 'E', 'S', 'T'], ['E', 'A', 'R', 'T', 'H']] }
+XWord { grid: [['C', 'R', 'O', 'S', 'S'], ['R', 'E', 'C', 'A', 'P'], ['O', 'C', 'C', 'U', 'R'], ['S', 'A', 'U', 'C', 'E'], ['S', 'P', 'R', 'E', 'E']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'F', 'O', 'R', 'E'], ['R', 'O', 'G', 'U', 'E'], ['C', 'R', 'U', 'E', 'L'], ['H', 'E', 'E', 'L', 'S']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'F', 'O', 'R', 'E'], ['R', 'O', 'V', 'E', 'R'], ['C', 'R', 'E', 'D', 'O'], ['H', 'E', 'R', 'O', 'S']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'F', 'O', 'R', 'E'], ['R', 'O', 'V', 'E', 'R'], ['C', 'R', 'E', 'E', 'D'], ['H', 'E', 'R', 'D', 'S']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'D', 'O', 'R', 'E'], ['R', 'O', 'G', 'U', 'E'], ['C', 'R', 'U', 'E', 'L'], ['H', 'E', 'E', 'L', 'S']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'D', 'O', 'R', 'E'], ['R', 'O', 'V', 'E', 'R'], ['C', 'R', 'E', 'D', 'O'], ['H', 'E', 'R', 'O', 'S']] }
+XWord { grid: [['P', 'A', 'R', 'C', 'H'], ['A', 'D', 'O', 'R', 'E'], ['R', 'O', 'V', 'E', 'R'], ['C', 'R', 'E', 'E', 'D'], ['H', 'E', 'R', 'D', 'S']] }
+XWord { grid: [['S', 'T', 'A', 'F', 'F'], ['T', 'A', 'P', 'E', 'R'], ['A', 'P', 'P', 'L', 'E'], ['F', 'E', 'L', 'L', 'A'], ['F', 'R', 'E', 'A', 'K']] }
+XWord { grid: [['S', 'T', 'A', 'F', 'F'], ['T', 'A', 'P', 'E', 'R'], ['A', 'P', 'P', 'L', 'E'], ['F', 'E', 'L', 'L', 'S'], ['F', 'R', 'E', 'S', 'H']] }
+XWord { grid: [['S', 'T', 'A', 'F', 'F'], ['T', 'I', 'M', 'E', 'R'], ['A', 'M', 'B', 'L', 'E'], ['F', 'E', 'L', 'L', 'A'], ['F', 'R', 'E', 'A', 'K']] }
+XWord { grid: [['S', 'T', 'A', 'F', 'F'], ['T', 'I', 'M', 'E', 'R'], ['A', 'M', 'B', 'L', 'E'], ['F', 'E', 'L', 'L', 'S'], ['F', 'R', 'E', 'S', 'H']] }
+XWord { grid: [['J', 'A', 'I', 'L', 'S'], ['A', 'G', 'R', 'E', 'E'], ['I', 'R', 'A', 'T', 'E'], ['L', 'E', 'T', 'U', 'P'], ['S', 'E', 'E', 'P', 'S']] }
+XWord { grid: [['F', 'O', 'R', 'A', 'Y'], ['O', 'P', 'I', 'N', 'E'], ['R', 'I', 'P', 'E', 'N'], ['A', 'N', 'E', 'N', 'T'], ['Y', 'E', 'N', 'T', 'A']] }
+XWord { grid: [['A', 'G', 'R', 'E', 'E'], ['G', 'R', 'E', 'E', 'D'], ['R', 'E', 'A', 'R', 'S'], ['E', 'E', 'R', 'I', 'E'], ['E', 'D', 'S', 'E', 'L']] }
+XWord { grid: [['L', 'I', 'M', 'I', 'T'], ['I', 'N', 'A', 'N', 'E'], ['M', 'A', 'N', 'T', 'A'], ['I', 'N', 'T', 'E', 'R'], ['T', 'E', 'A', 'R', 'Y']] }
+XWord { grid: [['L', 'I', 'M', 'I', 'T'], ['I', 'N', 'A', 'N', 'E'], ['M', 'A', 'N', 'T', 'A'], ['I', 'N', 'T', 'E', 'R'], ['T', 'E', 'A', 'R', 'S']] }
+XWord { grid: [['S', 'E', 'M', 'I', 'S'], ['E', 'R', 'O', 'D', 'E'], ['M', 'O', 'R', 'O', 'N'], ['I', 'D', 'O', 'L', 'S'], ['S', 'E', 'N', 'S', 'E']] }
+XWord { grid: [['S', 'E', 'M', 'I', 'S'], ['E', 'R', 'O', 'D', 'E'], ['M', 'O', 'D', 'E', 'L'], ['I', 'D', 'E', 'A', 'L'], ['S', 'E', 'L', 'L', 'S']] }
