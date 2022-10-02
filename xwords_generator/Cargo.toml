@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 csv = "1.1.6"
 trie-rs = "0.1.1"
+
+[profile.release]
+lto = true

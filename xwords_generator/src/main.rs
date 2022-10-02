@@ -1,5 +1,4 @@
-use csv;
-use std::str;
+use std::{collections::HashSet, str};
 use trie_rs::{Trie, TrieBuilder};
 
 const SIZE: usize = 5;
@@ -23,7 +22,7 @@ impl XWord {
             .trim()
             .to_string()
     }
-    pub fn set_across(&mut self, row: usize, col: usize, word: &String) {
+    pub fn set_across(&mut self, row: usize, col: usize, word: &str) {
         for (i, char) in word.chars().enumerate() {
             self.grid[row][col + i] = char;
         }
@@ -36,7 +35,7 @@ impl XWord {
             .trim()
             .to_string()
     }
-    pub fn set_down(&mut self, row: usize, col: usize, word: &String) {
+    pub fn set_down(&mut self, row: usize, col: usize, word: &str) {
         for (i, char) in word.chars().enumerate() {
             self.grid[row + i][col] = char
         }
@@ -113,9 +112,15 @@ fn get_matching_words(words_trie: &Trie<u8>, entry: &String) -> Vec<String> {
     words
 }
 
-fn insert_vertical(xword: &mut XWord, col: usize, words_trie: &Trie<u8>, words_vec: &Vec<String>) {
+fn insert_vertical(
+    xword: &mut XWord,
+    col: usize,
+    words_trie: &mut Trie<u8>,
+    words_vec: &Vec<String>,
+    used_words: &mut HashSet<String>,
+) {
     let entry = &xword.get_down(0, col);
-    let mut matching_words = Vec::new();
+    let matching_words;
     let words = if entry.is_empty() {
         words_vec
     } else {
@@ -123,36 +128,39 @@ fn insert_vertical(xword: &mut XWord, col: usize, words_trie: &Trie<u8>, words_v
         &matching_words
     };
 
+    if col == SIZE - 1 && words_trie.exact_match(entry) && !used_words.contains(entry) {
+        // we found a solution!
+        println!("{:?}", xword);
+        return;
+    }
+
     for word in words {
-        xword.set_down(0, col, &word.chars().collect());
-
-        if col == SIZE - 1 {
-            // we found a solution!
-            println!("{:?}", xword);
-
-            // reset the xword
-            xword.set_down(0, col, entry);
-
-            // there will be no other solution at this point
-            break;
+        if used_words.contains(word) {
+            continue;
         }
 
+        let used_word: String = word.chars().collect();
+        xword.set_down(0, col, &used_word);
+        used_words.insert(used_word);
+
         // move to the next iteration
-        insert_horizontal(xword, col + 1, words_trie, words_vec);
+        insert_horizontal(xword, col + 1, words_trie, words_vec, used_words);
 
         // reset the xword
-        xword.set_down(0, col, entry);
+        xword.set_down(0, col, &format!("{: <5}", entry));
+        used_words.remove(&word.chars().collect::<String>());
     }
 }
 
 fn insert_horizontal(
     xword: &mut XWord,
     row: usize,
-    words_trie: &Trie<u8>,
+    words_trie: &mut Trie<u8>,
     words_vec: &Vec<String>,
+    used_words: &mut HashSet<String>,
 ) {
     let entry = &xword.get_across(row, 0);
-    let mut matching_words = Vec::new();
+    let matching_words;
     let words = if entry.is_empty() {
         words_vec
     } else {
@@ -160,23 +168,34 @@ fn insert_horizontal(
         &matching_words
     };
 
-    for word in words {
-        xword.set_across(row, 0, &word.chars().collect());
+    for (i, word) in words.iter().enumerate() {
+        if used_words.contains(word) {
+            continue;
+        }
 
-        insert_vertical(xword, row, words_trie, words_vec);
+        if row == 0 {
+            println!("{}% {}", i * 100 / words.len(), word);
+        }
+
+        let used_word: String = word.chars().collect();
+        xword.set_across(row, 0, &used_word);
+        used_words.insert(used_word);
+
+        insert_vertical(xword, row, words_trie, words_vec, used_words);
 
         // reset the xword
-        xword.set_across(row, 0, entry);
+        xword.set_across(row, 0, &format!("{: <5}", entry));
+        used_words.remove(&word.chars().collect::<String>());
     }
 }
 
 fn main() {
-    let (words_trie, words) = get_words();
-    println!("{:?}", words);
+    let (mut words_trie, words) = get_words();
+    println!("{:?}", words.len());
 
     let mut xword = XWord::new();
 
-    insert_horizontal(&mut xword, 0, &words_trie, &words);
+    insert_horizontal(&mut xword, 0, &mut words_trie, &words, &mut HashSet::new());
 
     println!("{:?}", xword);
 }
