@@ -9,6 +9,4 @@ takes crossword data from `xwords_data` directory and tries to generate crosswor
 
 ## Possible Optimizations
 
-- rewrite `get_matching_words` to use binary search (think I prefer this since we can continue to use String)
-- OR
-- use Vec<u8> instead of String and continue with tries
+- multithreading
