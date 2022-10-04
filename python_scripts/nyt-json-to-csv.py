@@ -13,7 +13,7 @@ def generate_json_paths(year):
         json_paths += glob.glob(month_path+'/*.json')
     return json_paths
 
-start_year = 2007
+start_year = 1976
 end_year = 2018
 
 json_paths = []

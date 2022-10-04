@@ -61,11 +61,14 @@ impl XWord {
 }
 
 fn get_words() -> (Trie<u8>, Vec<String>) {
-    let file_path = "../xwords_data/2007_to_2018.csv";
+    let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
     let mut builder = TrieBuilder::new();
     let mut words = vec![];
 
+    // for word in vec![
+    //     "TOADS", "ANGEL", "LEAVE", "CUTIE", "SPELT", "TALCS", "ONEUP", "AGATE", "DEVIL", "SLEET",
+    // ] {
     for result in results.records() {
         let record = result.expect("a CSV record");
         let word = record[2].to_string();
@@ -104,6 +107,9 @@ fn get_words() -> (Trie<u8>, Vec<String>) {
 
 fn get_matching_words(words_trie: &Trie<u8>, entry: &String) -> Vec<String> {
     let words_in_u8s: Vec<Vec<u8>> = words_trie.predictive_search(entry);
+    // TODO: there might be a way to improve performance here
+    // if we use around Vec<Vec<u8>> instead of Vec<String> we won't need to do this
+    // time consuming mapping
     let words = words_in_u8s
         .iter()
         .map(|u8s| str::from_utf8(u8s).unwrap().to_string())
@@ -191,7 +197,7 @@ fn insert_horizontal(
 
 fn main() {
     let (mut words_trie, words) = get_words();
-    println!("{:?}", words.len());
+    println!("{}", words.len());
 
     let mut xword = XWord::new();
 
