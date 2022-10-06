@@ -1,4 +1,7 @@
-use std::{collections::HashSet, str};
+use std::{
+    collections::{HashMap, HashSet},
+    str,
+};
 
 #[derive(Clone, Debug)]
 struct XWord {
@@ -61,10 +64,11 @@ impl XWord {
     // }
 }
 
-fn get_words(min_word_len: usize, max_word_len: usize) -> Vec<String> {
+fn get_words(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec<String>> {
     let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
-    let mut words = vec![];
+    // let mut words = vec![];
+    let mut words_map: HashMap<usize, Vec<String>> = HashMap::new();
 
     // for word in vec![
     //     "TOADS", "ANGEL", "LEAVE", "CUTIE", "SPELT", "TALCS", "ONEUP", "AGATE", "DEVIL", "SLEET",
@@ -76,16 +80,29 @@ fn get_words(min_word_len: usize, max_word_len: usize) -> Vec<String> {
         let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
 
         if is_good_len && word.chars().all(|c| c.is_ascii_alphabetic()) {
+            if !words_map.contains_key(&word.len()) {
+                words_map.insert(word.len(), vec![]);
+            }
+
+            let words = words_map.get_mut(&word.len()).unwrap();
+
             let uppercase_word = word.to_ascii_uppercase();
             if !words.contains(&uppercase_word) {
                 words.push(uppercase_word);
+                // TODO: super inefficient, but doesn't slow down program
+                words.sort();
             }
         }
     }
 
-    words.sort();
+    // print
+    for i in min_word_len..=max_word_len {
+        if let Some(words) = words_map.get(&i) {
+            println!("{} \t {:?}", i, words.len());
+        }
+    }
 
-    words
+    words_map
 }
 
 fn get_matching_words<'a>(words_vec: &'a Vec<String>, entry: &String) -> &'a [String] {
@@ -176,12 +193,16 @@ fn main() {
     let width = 5;
 
     // TODO: pass smaller value first when width and height are different sizes
-    let words = get_words(width, height);
-    println!("{}", words.len());
+    let words = get_words(1, 300);
 
     let mut xword = XWord::new(width, height);
 
-    insert_horizontal(&mut xword, 0, &words, &mut HashSet::new());
+    insert_horizontal(
+        &mut xword,
+        0,
+        words.get(&width).unwrap(),
+        &mut HashSet::new(),
+    );
 
     println!("{:?}", xword);
 }
