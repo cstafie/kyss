@@ -1,21 +1,23 @@
 use std::{collections::HashSet, str};
 
-const SIZE: usize = 5;
-
 #[derive(Clone, Debug)]
 struct XWord {
-    grid: [[char; SIZE]; SIZE],
+    grid: Vec<Vec<char>>,
+    pub width: usize,
+    pub height: usize,
 }
 
 impl XWord {
-    pub fn new() -> Self {
+    pub fn new(width: usize, height: usize) -> Self {
         Self {
-            grid: [[' '; SIZE]; SIZE],
+            grid: vec![vec![' '; width]; height],
+            width,
+            height,
         }
     }
 
     pub fn get_across(&self, row: usize, col: usize) -> String {
-        (col..SIZE)
+        (col..self.width)
             .map(|i| self.grid[row][i])
             .collect::<String>()
             .trim()
@@ -28,7 +30,7 @@ impl XWord {
     }
 
     pub fn get_down(&self, row: usize, col: usize) -> String {
-        (row..SIZE)
+        (row..self.height)
             .map(|i| self.grid[i][col])
             .collect::<String>()
             .trim()
@@ -59,7 +61,7 @@ impl XWord {
     // }
 }
 
-fn get_words() -> Vec<String> {
+fn get_words(min_word_len: usize, max_word_len: usize) -> Vec<String> {
     let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
     let mut words = vec![];
@@ -71,7 +73,9 @@ fn get_words() -> Vec<String> {
         let record = result.expect("a CSV record");
         let word = record[2].to_string();
 
-        if word.len() == SIZE && word.chars().all(|c| c.is_ascii_alphabetic()) {
+        let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
+
+        if is_good_len && word.chars().all(|c| c.is_ascii_alphabetic()) {
             let uppercase_word = word.to_ascii_uppercase();
             if !words.contains(&uppercase_word) {
                 words.push(uppercase_word);
@@ -111,7 +115,7 @@ fn insert_vertical(
     let entry = &xword.get_down(0, col);
     let words = get_matching_words(words_vec, entry);
 
-    if col == SIZE - 1 && !used_words.contains(entry) {
+    if col == xword.width - 1 && !used_words.contains(entry) {
         if let Ok(_i) = words_vec.binary_search(entry) {
             // we found a solution!
             println!("{:?}", xword);
@@ -168,10 +172,14 @@ fn insert_horizontal(
 }
 
 fn main() {
-    let words = get_words();
+    let height = 5;
+    let width = 5;
+
+    // TODO: pass smaller value first when width and height are different sizes
+    let words = get_words(width, height);
     println!("{}", words.len());
 
-    let mut xword = XWord::new();
+    let mut xword = XWord::new(width, height);
 
     insert_horizontal(&mut xword, 0, &words, &mut HashSet::new());
 
