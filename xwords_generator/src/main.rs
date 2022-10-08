@@ -70,9 +70,6 @@ fn get_words(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec<Str
     // let mut words = vec![];
     let mut words_map: HashMap<usize, Vec<String>> = HashMap::new();
 
-    // for word in vec![
-    //     "TOADS", "ANGEL", "LEAVE", "CUTIE", "SPELT", "TALCS", "ONEUP", "AGATE", "DEVIL", "SLEET",
-    // ] {
     for result in results.records() {
         let record = result.expect("a CSV record");
         let word = record[2].to_string();
@@ -153,7 +150,7 @@ fn insert_vertical(
         insert_horizontal(xword, col + 1, words_vec, used_words);
 
         // reset the xword
-        xword.set_down(0, col, &format!("{: <5}", entry));
+        xword.set_down(0, col, &format!("{:height$}", entry, height = xword.height));
         used_words.remove(&word.chars().collect::<String>());
     }
 }
@@ -183,16 +180,15 @@ fn insert_horizontal(
         insert_vertical(xword, row, words_vec, used_words);
 
         // reset the xword
-        xword.set_across(row, 0, &format!("{: <5}", entry));
+        xword.set_across(row, 0, &format!("{:width$}", entry, width = xword.width));
         used_words.remove(&word.chars().collect::<String>());
     }
 }
 
 fn main() {
-    let height = 5;
-    let width = 5;
+    let height = 3;
+    let width = 3;
 
-    // TODO: pass smaller value first when width and height are different sizes
     let words = get_words(1, 300);
 
     let mut xword = XWord::new(width, height);
