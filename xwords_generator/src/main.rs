@@ -1,13 +1,28 @@
 use std::{
+    cmp,
     collections::{HashMap, HashSet},
     str,
 };
+
+#[derive(Debug)]
+enum Direction {
+    Across,
+    Down,
+}
 
 #[derive(Clone, Debug)]
 struct XWord {
     grid: Vec<Vec<char>>,
     pub width: usize,
     pub height: usize,
+}
+
+#[derive(Debug)]
+struct XWordEntry {
+    row: usize,
+    col: usize,
+    direction: Direction,
+    length: usize,
 }
 
 impl XWord {
@@ -185,20 +200,67 @@ fn insert_horizontal(
     }
 }
 
+fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: usize) {
+    // last row is xword.height - 1
+    if row >= xword.height {
+        return;
+    }
+
+    entries.push(XWordEntry {
+        row,
+        col: 0,
+        direction: Direction::Across,
+        length: xword.width,
+    });
+}
+
+fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usize) {
+    // last col is xword.width - 1
+    if col >= xword.width {
+        return;
+    }
+
+    entries.push(XWordEntry {
+        row: 0,
+        col,
+        direction: Direction::Down,
+        length: xword.height,
+    });
+}
+
+fn get_xword_entries(xword: &XWord) -> Vec<XWordEntry> {
+    let mut entries = vec![];
+
+    for i in 0..cmp::max(xword.width, xword.height) {
+        get_xword_entries_across(xword, &mut entries, i);
+        get_xword_entries_down(xword, &mut entries, i);
+    }
+
+    entries
+}
+
 fn main() {
     let height = 3;
     let width = 3;
 
     let words = get_words(1, 300);
 
+    // TODO: the empty crossword should be given some kind of grid, for now it's just a width and height
     let mut xword = XWord::new(width, height);
 
-    insert_horizontal(
-        &mut xword,
-        0,
-        words.get(&width).unwrap(),
-        &mut HashSet::new(),
-    );
+    // generate a list of the words we need:
+    // [0,0] needs an across word of length 3, [0,4] needs an across word of length 5
+
+    let entries = get_xword_entries(&xword);
+
+    println!("{:?}", entries);
+
+    // insert_horizontal(
+    //     &mut xword,
+    //     0,
+    //     words.get(&width).unwrap(),
+    //     &mut HashSet::new(),
+    // );
 
     println!("{:?}", xword);
 }
