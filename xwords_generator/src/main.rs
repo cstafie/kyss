@@ -1,6 +1,6 @@
 use std::{
     cmp,
-    collections::{HashMap, HashSet, VecDeque},
+    collections::{HashMap, HashSet},
     str,
 };
 
@@ -147,71 +147,6 @@ fn get_matching_words<'a>(words_vec: &'a Vec<String>, entry: &String) -> &'a [St
     };
 }
 
-// fn insert_vertical(
-//     xword: &mut XWord,
-//     col: usize,
-//     words_vec: &Vec<String>,
-//     used_words: &mut HashSet<String>,
-// ) {
-//     let entry = &xword.get_down(0, col);
-//     let words = get_matching_words(words_vec, entry);
-
-//     if col == xword.width - 1 && !used_words.contains(entry) {
-//         if let Ok(_i) = words_vec.binary_search(entry) {
-//             // we found a solution!
-//             println!("{:?}", xword);
-//             return;
-//         }
-//     }
-
-//     for word in words {
-//         if used_words.contains(word) {
-//             continue;
-//         }
-
-//         let used_word: String = word.chars().collect();
-//         xword.set_down(0, col, &used_word);
-//         used_words.insert(used_word);
-
-//         // move to the next iteration
-//         insert_horizontal(xword, col + 1, words_vec, used_words);
-
-//         // reset the xword
-//         xword.set_down(0, col, &format!("{:height$}", entry, height = xword.height));
-//         used_words.remove(&word.chars().collect::<String>());
-//     }
-// }
-
-// fn insert_horizontal(
-//     xword: &mut XWord,
-//     row: usize,
-//     words_vec: &Vec<String>,
-//     used_words: &mut HashSet<String>,
-// ) {
-//     let entry = &xword.get_across(row, 0);
-//     let words = get_matching_words(words_vec, entry);
-
-//     for (i, word) in words.iter().enumerate() {
-//         if used_words.contains(word) {
-//             continue;
-//         }
-
-//         if row == 0 {
-//             println!("{}% {}", i * 100 / words.len(), word);
-//         }
-
-//         let used_word: String = word.chars().collect();
-//         xword.set_across(row, 0, &used_word);
-//         used_words.insert(used_word);
-
-//         insert_vertical(xword, row, words_vec, used_words);
-
-//         // reset the xword
-//         xword.set_across(row, 0, &format!("{:width$}", entry, width = xword.width));
-//         used_words.remove(&word.chars().collect::<String>());
-//     }
-// }
-
 fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: usize) {
     // last row is xword.height - 1
     if row >= xword.height {
@@ -253,34 +188,37 @@ fn get_xword_entries(xword: &XWord) -> Vec<XWordEntry> {
 
 fn generate_xwords(
     xword: &mut XWord,
-    entries: &mut VecDeque<XWordEntry>,
+    entries: &Vec<XWordEntry>,
+    entry_index: usize,
     words_map: &HashMap<usize, Vec<String>>,
     used_words: &mut HashSet<String>,
 ) {
-    if entries.is_empty() {
-        // we found a solution?
-        println!("{:?}", xword);
-        return;
-    }
-
-    let entry = entries.pop_front().unwrap();
+    let entry = &entries[entry_index];
     let old_entry_string = xword.get_entry(&entry);
     let words_vec = words_map.get(&entry.length).unwrap();
     let matching_words = get_matching_words(words_vec, &old_entry_string);
 
-    for word in matching_words {
+    for (i, word) in matching_words.iter().enumerate() {
+        if entry_index == 0 {
+            println!("{}% {}", i * 100 / matching_words.len(), word);
+        }
+
         if used_words.contains(word) {
             continue;
+        } else if entry_index >= entries.len() {
+            // we found a solution?
+            println!("{:?}", xword);
+            return;
         }
 
         let used_word = word.clone();
+
         used_words.insert(used_word);
+        xword.set_entry(entry, word);
 
-        xword.set_entry(&entry, word);
+        generate_xwords(xword, entries, entry_index + 1, words_map, used_words);
 
-        generate_xwords(xword, entries, words_map, used_words);
-
-        xword.set_entry(&entry, &old_entry_string);
+        xword.set_entry(entry, &old_entry_string);
         used_words.remove(word);
     }
 }
@@ -294,11 +232,11 @@ fn main() {
     // TODO: the empty crossword should be given some kind of grid, for now it's just a width and height
     let mut xword = XWord::new(width, height);
 
-    let mut entries = VecDeque::from(get_xword_entries(&xword));
+    let entries = get_xword_entries(&xword);
 
     println!("{:?}", entries);
 
-    generate_xwords(&mut xword, &mut entries, &words_map, &mut HashSet::new());
+    generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
 
     // insert_horizontal(
     //     &mut xword,
