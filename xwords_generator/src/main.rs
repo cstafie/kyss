@@ -57,18 +57,18 @@ impl XWord {
 
     pub fn set_entry(&mut self, entry: &XWordEntry, s: &str) {
         match entry.direction {
-            Direction::Across => self.set_across(entry.row, entry.col, s),
-            Direction::Down => self.set_down(entry.row, entry.col, s),
+            Direction::Across => self.set_across(entry.row, entry.col, entry.length, s),
+            Direction::Down => self.set_down(entry.row, entry.col, entry.length, s),
         }
     }
-    fn set_across(&mut self, row: usize, col: usize, word: &str) {
-        for (i, char) in word.chars().enumerate() {
-            self.grid[row][col + i] = char;
+    fn set_across(&mut self, row: usize, col: usize, length: usize, word: &str) {
+        for i in 0..length {
+            self.grid[row][col + i] = word.chars().nth(i).unwrap_or(' ')
         }
     }
-    fn set_down(&mut self, row: usize, col: usize, word: &str) {
-        for (i, char) in word.chars().enumerate() {
-            self.grid[row + i][col] = char
+    fn set_down(&mut self, row: usize, col: usize, length: usize, word: &str) {
+        for i in 0..length {
+            self.grid[row + i][col] = word.chars().nth(i).unwrap_or(' ');
         }
     }
 
@@ -205,8 +205,8 @@ fn generate_xwords(
 
         if used_words.contains(word) {
             continue;
-        } else if entry_index >= entries.len() {
-            // we found a solution?
+        } else if entry_index >= entries.len() - 1 {
+            // we found a solution!
             println!("{:?}", xword);
             return;
         }
@@ -246,4 +246,78 @@ fn main() {
     // );
 
     println!("{:?}", xword);
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn it_should_get_and_set_entry_down() {
+        let direction = Direction::Down;
+
+        let width = 3;
+        let height = 4;
+        let mut xword = XWord::new(width, height);
+
+        let xword_entry = XWordEntry {
+            row: 0,
+            col: 0,
+            length: height,
+            direction,
+        };
+
+        assert_eq!(xword.get_entry(&xword_entry), "");
+        xword.set_entry(&xword_entry, "1234");
+
+        // get twice to make sure get is non destructive
+        assert_eq!(xword.get_entry(&xword_entry), "1234");
+        assert_eq!(xword.get_entry(&xword_entry), "1234");
+
+        xword.set_entry(&xword_entry, "");
+        assert_eq!(xword.get_entry(&xword_entry), "");
+
+        xword.set_entry(&xword_entry, "12");
+        assert_eq!(xword.get_entry(&xword_entry), "12");
+    }
+
+    #[test]
+    fn it_should_get_and_set_entry_across() {
+        let direction = Direction::Across;
+
+        let width = 3;
+        let height = 4;
+        let mut xword = XWord::new(width, height);
+
+        let xword_entry = XWordEntry {
+            row: 0,
+            col: 0,
+            length: width,
+            direction,
+        };
+
+        assert_eq!(xword.get_entry(&xword_entry), "");
+        xword.set_entry(&xword_entry, "123");
+
+        // get twice to make sure get is non destructive
+        assert_eq!(xword.get_entry(&xword_entry), "123");
+        assert_eq!(xword.get_entry(&xword_entry), "123");
+    }
+
+    #[test]
+    fn it_should_create_a_xword() {
+        let width = 3;
+        let height = 4;
+        let xword = XWord::new(width, height);
+
+        assert_eq!(xword.grid.len(), height);
+
+        for row in xword.grid {
+            assert_eq!(row.len(), width);
+        }
+
+        assert_eq!(xword.height, height);
+        assert_eq!(xword.width, width);
+    }
 }
