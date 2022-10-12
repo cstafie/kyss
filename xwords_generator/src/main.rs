@@ -91,40 +91,50 @@ impl XWord {
     // }
 }
 
-fn get_words(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec<String>> {
+fn get_word_data(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec<(String, i32)>> {
     let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
     // let mut words = vec![];
-    let mut words_map: HashMap<usize, Vec<String>> = HashMap::new();
+
+    let mut word_frequency: HashMap<String, i32> = HashMap::new();
 
     for result in results.records() {
         let record = result.expect("a CSV record");
+
         let word = record[2].to_string();
 
         let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
+        let is_ascii_alphabetic = word.chars().all(|c| c.is_ascii_alphabetic());
 
-        if is_good_len && word.chars().all(|c| c.is_ascii_alphabetic()) {
-            if !words_map.contains_key(&word.len()) {
-                words_map.insert(word.len(), vec![]);
-            }
-
-            let words = words_map.get_mut(&word.len()).unwrap();
-
-            let uppercase_word = word.to_ascii_uppercase();
-            if !words.contains(&uppercase_word) {
-                words.push(uppercase_word);
-                // TODO: super inefficient, but doesn't slow down program
-                words.sort();
-            }
+        if is_good_len && is_ascii_alphabetic {
+            word_frequency
+                .entry(word.to_ascii_uppercase())
+                .and_modify(|count| *count += 1)
+                .or_insert(1);
         }
     }
 
-    // print
-    for i in min_word_len..=max_word_len {
-        if let Some(words) = words_map.get(&i) {
-            println!("{} \t {:?}", i, words.len());
-        }
+    let mut word_frequency_vector: Vec<(String, i32)> = word_frequency.into_iter().collect();
+    word_frequency_vector.sort_by(|(word_a, _), (word_b, _)| word_a.cmp(word_b));
+
+    let mut words_map: HashMap<usize, Vec<(String, i32)>> = HashMap::new();
+
+    for (word, frequency) in word_frequency_vector.into_iter() {
+        words_map
+            .entry(word.len())
+            .and_modify(|word_vec| word_vec.push((word.clone(), frequency)))
+            .or_insert(vec![(word, frequency)]);
     }
+
+    // sort by freq for learning
+    words_map
+        .get_mut(&7)
+        .unwrap()
+        .sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(&freq_b));
+
+    println!("{:?}", words_map.get(&7));
+
+    // print words_map
 
     words_map
 }
@@ -227,7 +237,8 @@ fn main() {
     let height = 5;
     let width = 5;
 
-    let words_map = get_words(1, 300);
+    // rn the longest word is 21 will probably not need words that long
+    let words_map = get_word_data(3, 30);
 
     // TODO: the empty crossword should be given some kind of grid, for now it's just a width and height
     let mut xword = XWord::new(width, height);
@@ -236,7 +247,7 @@ fn main() {
 
     println!("{:?}", entries);
 
-    generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
+    // generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
 
     // insert_horizontal(
     //     &mut xword,
