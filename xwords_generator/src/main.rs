@@ -246,7 +246,8 @@ fn get_matching_words<'a>(
         Err(start) => {
             let mut end_string = entry.to_string();
             end_string.push('Z');
-            return match words_vec.binary_search_by(|(word, _)| word.cmp(entry)) {
+
+            return match words_vec.binary_search_by(|(word, _)| word.cmp(&end_string)) {
                 Ok(end) => &words_vec[start..end],
                 Err(end) => &words_vec[start..end],
             };
@@ -319,6 +320,20 @@ fn main() {
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn it_should_get_matching_words() {
+        // NOTE: upper case  (unfortunately) really matters
+        let words_vec = vec![
+            ("APIAN".to_string(), 3),
+            ("APPLE".to_string(), 2),
+            ("STUFF".to_string(), 1),
+        ];
+
+        let matching_words = get_matching_words(&words_vec, &"AP".to_string());
+
+        assert_eq!(matching_words.len(), 2);
+    }
 
     #[test]
     fn it_should_get_and_set_entry_down() {
