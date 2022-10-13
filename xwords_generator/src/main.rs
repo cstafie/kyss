@@ -94,7 +94,6 @@ impl XWord {
 fn get_word_data(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec<(String, i32)>> {
     let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
-    // let mut words = vec![];
 
     let mut word_frequency: HashMap<String, i32> = HashMap::new();
 
@@ -126,35 +125,19 @@ fn get_word_data(min_word_len: usize, max_word_len: usize) -> HashMap<usize, Vec
             .or_insert(vec![(word, frequency)]);
     }
 
-    // sort by freq for learning
-    words_map
-        .get_mut(&7)
-        .unwrap()
-        .sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(&freq_b));
+    // let num = 5;
 
-    println!("{:?}", words_map.get(&7));
+    // // sort by freq for learning
+    // words_map
+    //     .get_mut(&num)
+    //     .unwrap()
+    //     .sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(&freq_b));
+
+    // println!("{:?}", words_map.get(&num));
 
     // print words_map
 
     words_map
-}
-
-fn get_matching_words<'a>(words_vec: &'a Vec<String>, entry: &String) -> &'a [String] {
-    if entry.is_empty() {
-        return words_vec;
-    }
-
-    return match words_vec.binary_search(entry) {
-        Ok(start) => &words_vec[start..=start],
-        Err(start) => {
-            let mut end_string = entry.to_string();
-            end_string.push('Z');
-            return match words_vec.binary_search(&end_string) {
-                Ok(end) => &words_vec[start..end],
-                Err(end) => &words_vec[start..end],
-            };
-        }
-    };
 }
 
 fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: usize) {
@@ -196,19 +179,52 @@ fn get_xword_entries(xword: &XWord) -> Vec<XWordEntry> {
     entries
 }
 
+fn slice_to_vec(slice: &[(String, i32)]) -> Vec<(String, i32)> {
+    let mut vec = vec![];
+
+    for (word, freq) in slice {
+        vec.push((word.clone(), freq.to_owned()));
+    }
+
+    vec
+}
+
+fn get_matching_words<'a>(
+    words_vec: &'a Vec<(String, i32)>,
+    entry: &String,
+) -> &'a [(String, i32)] {
+    if entry.is_empty() {
+        return words_vec;
+    }
+
+    return match words_vec.binary_search_by(|(word, _)| word.cmp(entry)) {
+        Ok(start) => &words_vec[start..=start],
+        Err(start) => {
+            let mut end_string = entry.to_string();
+            end_string.push('Z');
+            return match words_vec.binary_search_by(|(word, _)| word.cmp(entry)) {
+                Ok(end) => &words_vec[start..end],
+                Err(end) => &words_vec[start..end],
+            };
+        }
+    };
+}
+
 fn generate_xwords(
     xword: &mut XWord,
     entries: &Vec<XWordEntry>,
     entry_index: usize,
-    words_map: &HashMap<usize, Vec<String>>,
+    words_map: &HashMap<usize, Vec<(String, i32)>>,
     used_words: &mut HashSet<String>,
 ) {
     let entry = &entries[entry_index];
     let old_entry_string = xword.get_entry(&entry);
     let words_vec = words_map.get(&entry.length).unwrap();
-    let matching_words = get_matching_words(words_vec, &old_entry_string);
+    let mut matching_words = slice_to_vec(get_matching_words(words_vec, &old_entry_string));
 
-    for (i, word) in matching_words.iter().enumerate() {
+    matching_words.sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(freq_b));
+
+    for (i, (word, _)) in matching_words.iter().enumerate() {
         if entry_index == 0 {
             println!("{}% {}", i * 100 / matching_words.len(), word);
         }
@@ -247,7 +263,7 @@ fn main() {
 
     println!("{:?}", entries);
 
-    // generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
+    generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
 
     // insert_horizontal(
     //     &mut xword,
