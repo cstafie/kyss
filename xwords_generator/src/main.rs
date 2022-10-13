@@ -12,7 +12,7 @@ enum Direction {
 
 #[derive(Clone, Debug)]
 struct XWord {
-    grid: Vec<Vec<char>>,
+    pub grid: Vec<Vec<char>>,
     pub width: usize,
     pub height: usize,
 }
@@ -26,9 +26,15 @@ struct XWordEntry {
 }
 
 impl XWord {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: usize, height: usize, blocks: Vec<(usize, usize)>) -> Self {
+        let mut grid = vec![vec![' '; width]; height];
+
+        for (col, row) in blocks {
+            grid[col][row] = '!';
+        }
+
         Self {
-            grid: vec![vec![' '; width]; height],
+            grid,
             width,
             height,
         }
@@ -146,12 +152,31 @@ fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: u
         return;
     }
 
-    entries.push(XWordEntry {
-        row,
-        col: 0,
-        direction: Direction::Across,
-        length: xword.width,
-    });
+    let mut starting_col = 0;
+
+    for col in 0..xword.width {
+        if xword.grid[row][col] == '!' {
+            if starting_col < col {
+                entries.push(XWordEntry {
+                    row,
+                    col: starting_col,
+                    direction: Direction::Across,
+                    length: col - starting_col,
+                });
+            }
+
+            starting_col = col + 1;
+        }
+    }
+
+    if starting_col < xword.width {
+        entries.push(XWordEntry {
+            row,
+            col: starting_col,
+            direction: Direction::Across,
+            length: xword.width - starting_col,
+        });
+    }
 }
 
 fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usize) {
@@ -160,12 +185,31 @@ fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usi
         return;
     }
 
-    entries.push(XWordEntry {
-        row: 0,
-        col,
-        direction: Direction::Down,
-        length: xword.height,
-    });
+    let mut starting_row = 0;
+
+    for row in 0..xword.height {
+        if xword.grid[row][col] == '!' {
+            if starting_row < row {
+                entries.push(XWordEntry {
+                    row: starting_row,
+                    col,
+                    direction: Direction::Down,
+                    length: row - starting_row,
+                });
+            }
+
+            starting_row = row + 1;
+        }
+    }
+
+    if starting_row < xword.height {
+        entries.push(XWordEntry {
+            row: starting_row,
+            col,
+            direction: Direction::Down,
+            length: xword.height - starting_row,
+        });
+    }
 }
 
 fn get_xword_entries(xword: &XWord) -> Vec<XWordEntry> {
@@ -256,23 +300,19 @@ fn main() {
     // rn the longest word is 21 will probably not need words that long
     let words_map = get_word_data(3, 30);
 
-    // TODO: the empty crossword should be given some kind of grid, for now it's just a width and height
-    let mut xword = XWord::new(width, height);
+    let height = 7;
+    let width = 7;
+
+    let mut xword = XWord::new(width, height, vec![(3, 3)]);
 
     let entries = get_xword_entries(&xword);
 
-    println!("{:?}", entries);
+    println!("entries length: {:?}", entries.len());
+    println!("entries: {:?}", entries);
 
     generate_xwords(&mut xword, &entries, 0, &words_map, &mut HashSet::new());
 
-    // insert_horizontal(
-    //     &mut xword,
-    //     0,
-    //     words.get(&width).unwrap(),
-    //     &mut HashSet::new(),
-    // );
-
-    println!("{:?}", xword);
+    println!("xword {:?}", xword);
 }
 
 #[cfg(test)]
@@ -286,7 +326,7 @@ mod tests {
 
         let width = 3;
         let height = 4;
-        let mut xword = XWord::new(width, height);
+        let mut xword = XWord::new(width, height, vec![]);
 
         let xword_entry = XWordEntry {
             row: 0,
@@ -315,7 +355,7 @@ mod tests {
 
         let width = 3;
         let height = 4;
-        let mut xword = XWord::new(width, height);
+        let mut xword = XWord::new(width, height, vec![]);
 
         let xword_entry = XWordEntry {
             row: 0,
@@ -336,7 +376,7 @@ mod tests {
     fn it_should_create_a_xword() {
         let width = 3;
         let height = 4;
-        let xword = XWord::new(width, height);
+        let xword = XWord::new(width, height, vec![]);
 
         assert_eq!(xword.grid.len(), height);
 
