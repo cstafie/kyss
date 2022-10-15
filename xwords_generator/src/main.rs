@@ -1,10 +1,11 @@
 use std::{
     cmp,
-    collections::{HashMap, HashSet},
+    collections::{btree_set::Intersection, HashMap, HashSet},
+    hash::Hash,
     str,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum Direction {
     Across,
     Down,
@@ -23,6 +24,38 @@ struct XWordEntry {
     col: usize,
     direction: Direction,
     length: usize,
+}
+
+impl XWordEntry {
+    pub fn intersects(&self, other: &XWordEntry) -> bool {
+        // we don't want to intersect with ourselves or anyone going the same direction
+        if self.direction == other.direction {
+            return false;
+        }
+
+        let (self_max_row, self_max_col) = match self.direction {
+            Direction::Across => (self.row, self.col + self.length - 1),
+            Direction::Down => (self.row + self.length - 1, self.col),
+        };
+
+        let (other_max_row, other_max_col) = match other.direction {
+            Direction::Across => (other.row, other.col + other.length - 1),
+            Direction::Down => (other.row + other.length - 1, other.col),
+        };
+
+        // is self above other? or is other above self?
+        if self_max_row < other.row || other_max_row < self.row {
+            return false;
+        }
+
+        // is self left of other? or is other left of self?
+        if self_max_col < other.col || other_max_col < self.col {
+            return false;
+        }
+
+        // then the two must intersect
+        true
+    }
 }
 
 impl XWord {
@@ -255,6 +288,14 @@ fn get_matching_words<'a>(
     };
 }
 
+fn score(
+    word: &String,
+    intersections: Vec<&XWordEntry>,
+    words_map: &HashMap<usize, Vec<(String, i32)>>,
+) -> i32 {
+    0
+}
+
 fn generate_xwords(
     xword: &mut XWord,
     entries: &Vec<XWordEntry>,
@@ -267,12 +308,29 @@ fn generate_xwords(
     let words_vec = words_map.get(&entry.length).unwrap();
     let mut matching_words = slice_to_vec(get_matching_words(words_vec, &old_entry_string));
 
-    matching_words.sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(freq_b));
+    // sort most frequent to least frequent
+    // matching_words.sort_by(|(_, freq_a), (_, freq_b)| freq_b.cmp(freq_a));
+
+    let intersections: Vec<&XWordEntry> = entries.iter().filter(|e| entry.intersects(e)).collect();
+
+    matching_words.sort_by(|(word_a, _), (word_b, _)| {
+        return score(word_a, intersections, words_map).cmp(&score(
+            word_b,
+            intersections,
+            words_map,
+        ));
+    });
+
+    // compute score for each word
+    // score = for each letter in the word: score += number of words that could fit across that letter
+    //
+
+    // let limit = 60;
 
     for (i, (word, _)) in matching_words.iter().enumerate() {
-        if entry_index == 0 {
-            println!("{}% {}", i * 100 / matching_words.len(), word);
-        }
+        // if entry_index < 1 {
+        //     println!("{} {}% {}", entry_index, i * 100 / limit, word);
+        // }
 
         if used_words.contains(word) {
             continue;
@@ -295,17 +353,11 @@ fn generate_xwords(
 }
 
 fn main() {
-    let height = 5;
-    let width = 5;
-
-    // rn the longest word is 21 will probably not need words that long
+    // right now the longest word is 21 letters, we probably won't need words that long
     let words_map = get_word_data(3, 30);
 
-    let height = 7;
-    let width = 7;
-
-    let mut xword = XWord::new(width, height, vec![(3, 3)]);
-
+    // vec![(3, 3)]
+    let mut xword = XWord::new(7, 7, vec![(3, 3)]);
     let entries = get_xword_entries(&xword);
 
     println!("entries length: {:?}", entries.len());
@@ -320,6 +372,44 @@ fn main() {
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn it_should_intersect() {
+        let entry_a = XWordEntry {
+            row: 1,
+            col: 1,
+            length: 5,
+            direction: Direction::Across,
+        };
+
+        let entry_b = XWordEntry {
+            row: 1,
+            col: 3,
+            length: 3,
+            direction: Direction::Down,
+        };
+
+        assert!(entry_a.intersects(&entry_b));
+    }
+
+    #[test]
+    fn it_should_not_intersect() {
+        let entry_a = XWordEntry {
+            row: 1,
+            col: 1,
+            length: 5,
+            direction: Direction::Across,
+        };
+
+        let entry_b = XWordEntry {
+            row: 3,
+            col: 3,
+            length: 3,
+            direction: Direction::Down,
+        };
+
+        assert!(!entry_a.intersects(&entry_b));
+    }
 
     #[test]
     fn it_should_get_matching_words() {
