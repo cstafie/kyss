@@ -1,7 +1,6 @@
 use std::{
     cmp,
-    collections::{btree_set::Intersection, HashMap, HashSet},
-    hash::Hash,
+    collections::{HashMap, HashSet},
     str,
 };
 
@@ -63,7 +62,7 @@ impl XWord {
         let mut grid = vec![vec![' '; width]; height];
 
         for (col, row) in blocks {
-            grid[col][row] = '!';
+            grid[col][row] = '#';
         }
 
         Self {
@@ -188,7 +187,7 @@ fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: u
     let mut starting_col = 0;
 
     for col in 0..xword.width {
-        if xword.grid[row][col] == '!' {
+        if xword.grid[row][col] == '#' {
             if starting_col < col {
                 entries.push(XWordEntry {
                     row,
@@ -221,7 +220,7 @@ fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usi
     let mut starting_row = 0;
 
     for row in 0..xword.height {
-        if xword.grid[row][col] == '!' {
+        if xword.grid[row][col] == '#' {
             if starting_row < row {
                 entries.push(XWordEntry {
                     row: starting_row,
@@ -289,11 +288,40 @@ fn get_matching_words<'a>(
 }
 
 fn score(
+    xword: &mut XWord,
     word: &String,
-    intersections: Vec<&XWordEntry>,
+    entry: &XWordEntry,
+    old_entry_string: &String,
+    intersections: &Vec<&XWordEntry>,
     words_map: &HashMap<usize, Vec<(String, i32)>>,
 ) -> i32 {
-    0
+    // place the word so get_entry works
+    xword.set_entry(entry, word);
+
+    let mut total: i32 = 0;
+
+    assert_eq!(intersections.len(), entry.length);
+
+    for i in 0..entry.length {
+        let intersection_entry = intersections.get(i).unwrap();
+        let test_string = xword.get_entry(intersection_entry);
+        let words_vec = words_map.get(&intersection_entry.length).unwrap();
+        let matches = get_matching_words(words_vec, &test_string);
+
+        if matches.is_empty() {
+            total = 0;
+            break;
+        }
+
+        total += matches.len() as i32;
+    }
+
+    // put back the old word
+    xword.set_entry(entry, old_entry_string);
+
+    // println!("{:?}", total);
+
+    return total;
 }
 
 fn generate_xwords(
@@ -306,31 +334,46 @@ fn generate_xwords(
     let entry = &entries[entry_index];
     let old_entry_string = xword.get_entry(&entry);
     let words_vec = words_map.get(&entry.length).unwrap();
-    let mut matching_words = slice_to_vec(get_matching_words(words_vec, &old_entry_string));
+    let matching_words = slice_to_vec(get_matching_words(words_vec, &old_entry_string));
 
     // sort most frequent to least frequent
     // matching_words.sort_by(|(_, freq_a), (_, freq_b)| freq_b.cmp(freq_a));
 
     let intersections: Vec<&XWordEntry> = entries.iter().filter(|e| entry.intersects(e)).collect();
 
-    matching_words.sort_by(|(word_a, _), (word_b, _)| {
-        return score(word_a, intersections, words_map).cmp(&score(
-            word_b,
-            intersections,
-            words_map,
-        ));
-    });
+    let mut scored_matching_words: Vec<(String, i32)> = matching_words
+        .into_iter()
+        .map(|(word, _)| {
+            (
+                word.clone(),
+                score(
+                    xword,
+                    &word,
+                    entry,
+                    &old_entry_string,
+                    &intersections,
+                    words_map,
+                ),
+            )
+        })
+        .filter(|(_, score)| *score != 0)
+        .collect();
+
+    scored_matching_words.sort_by(|(_, score_a), (_, score_b)| score_b.cmp(score_a));
+    // println!("{:?}", matching_words);
 
     // compute score for each word
     // score = for each letter in the word: score += number of words that could fit across that letter
-    //
 
-    // let limit = 60;
-
-    for (i, (word, _)) in matching_words.iter().enumerate() {
-        // if entry_index < 1 {
-        //     println!("{} {}% {}", entry_index, i * 100 / limit, word);
-        // }
+    for (i, (word, _)) in scored_matching_words.iter().enumerate() {
+        if entry_index < 5 {
+            println!(
+                "{} {}% {}",
+                entry_index,
+                i * 100 / scored_matching_words.len(),
+                word
+            );
+        }
 
         if used_words.contains(word) {
             continue;
@@ -357,7 +400,38 @@ fn main() {
     let words_map = get_word_data(3, 30);
 
     // vec![(3, 3)]
-    let mut xword = XWord::new(7, 7, vec![(3, 3)]);
+    // 11,
+    // 11,
+    // vec![
+    //     (0, 5),
+    //     (1, 5),
+    //     (3, 3),
+    //     (3, 7),
+    //     (5, 0),
+    //     (5, 1),
+    //     (5, 9),
+    //     (5, 10),
+    //     (7, 3),
+    //     (7, 7),
+    //     (9, 5),
+    //     (10, 5),
+    // ],
+    let mut xword = XWord::new(
+        9,
+        9,
+        vec![
+            (0, 3),
+            (1, 3),
+            (3, 0),
+            (3, 1),
+            (3, 5),
+            (5, 3),
+            (5, 7),
+            (5, 8),
+            (7, 5),
+            (8, 5),
+        ],
+    );
     let entries = get_xword_entries(&xword);
 
     println!("entries length: {:?}", entries.len());
