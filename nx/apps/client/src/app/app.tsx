@@ -21,6 +21,7 @@ export const App = () => {
         />
       </div>
       <div>{m.message}</div>
+      <a href="/xword"> xword </a>
     </>
   );
 };
