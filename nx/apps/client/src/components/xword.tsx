@@ -8,11 +8,12 @@ interface GridContainerProps {
 }
 
 const GridContainer = styled.section`
-  color: red;
-  display: grid;
+  display: inline-grid;
+  padding: 2px;
+  gap: 2px;
   ${({ numCols, numRows }: GridContainerProps) => `
-    grid-template-columns:  repeat(${numCols}, 30px);
-    grid-template-rows:  repeat(${numRows}, 30px);
+    grid-template-columns:  repeat(${numCols}, 50px);
+    grid-template-rows:  repeat(${numRows}, 50px);
   `}
 `;
 
@@ -44,15 +45,17 @@ const XWord = () => {
       onDragUpdate={onDragUpdate}
       onDragEnd={onDragEnd}
     >
-      <GridContainer numCols={9} numRows={9}>
+      <GridContainer numCols={9} numRows={9} className="bg-black">
         {Array(81)
           .fill(null)
           .map((_, i) => (
-            <div key={i}> i </div>
+            <div key={i} className="bg-white flex justify-center items-center">
+              <div className="font-bold"> C </div>
+            </div>
           ))}
       </GridContainer>
 
-      <section className="flex">
+      <section className="flex flex-row">
         <div> A </div>
         <div> B </div>
         <div> C </div>
