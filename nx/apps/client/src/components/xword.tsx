@@ -78,6 +78,7 @@ const XWord = () => {
         newTileBar.splice(di, 0, tileBar[si]);
 
         setTileBar(newTileBar);
+        return;
       }
 
       // tile bar to cell
@@ -98,6 +99,35 @@ const XWord = () => {
             draft.grid[row][col] = tileBar[si];
           })
         );
+        return;
+      }
+
+      // cell to cell
+      if (
+        source.droppableId !== TILE_BAR_ID &&
+        destination.droppableId !== TILE_BAR_ID
+      ) {
+        const [_d, dRow, dCol] = destination.droppableId.split('-').map(Number);
+        const [_s, sRow, sCol] = source.droppableId.split('-').map(Number);
+
+        setXword(
+          produce(xword, (draft) => {
+            [draft.grid[dRow][dCol], draft.grid[sRow][sCol]] = [
+              draft.grid[sRow][sCol],
+              draft.grid[dRow][dCol],
+            ];
+          })
+        );
+
+        return;
+      }
+
+      // cell to tile bar
+      if (
+        source.droppableId !== TILE_BAR_ID &&
+        destination.droppableId === TILE_BAR_ID
+      ) {
+        return;
       }
     },
     [tileBar, xword]
