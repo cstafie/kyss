@@ -32,7 +32,3 @@ export const emptyXword: XWord = {
   width: 9,
   height: 9,
 };
-
-// console.log(
-//   xword.grid.map((row) => row.map((char) => (char === '#' ? '#' : ' ')))
-// );

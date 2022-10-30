@@ -1,24 +1,33 @@
 import { useCallback, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import produce from 'immer';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  OnDragEndResponder,
+} from '@hello-pangea/dnd';
 import styled from 'styled-components';
 import { charToTile } from '../utils';
 import { emptyXword } from '../xword_mock_data';
 import Block from './block';
 import Cell from './cell';
 import Tile from './tile';
+import { SourceMap } from 'module';
 
 interface GridContainerProps {
   numCols: number;
   numRows: number;
 }
 
+const TILE_BAR_ID = 'tile-bar';
+
 const GridContainer = styled.section`
   display: inline-grid;
   padding: 2px;
   gap: 2px;
   ${({ numCols, numRows }: GridContainerProps) => `
-    grid-template-columns:  repeat(${numCols}, 50px);
-    grid-template-rows:  repeat(${numRows}, 50px);
+    grid-template-columns:  repeat(${numCols}, 48px);
+    grid-template-rows:  repeat(${numRows}, 48px);
   `}
 `;
 
@@ -41,11 +50,58 @@ const XWord = () => {
   const onDragUpdate = useCallback(() => {
     /*...*/
   }, []);
-  const onDragEnd = useCallback((...stuff: any[]) => {
-    // the only one that is required
+  const onDragEnd: OnDragEndResponder = useCallback(
+    (dropResult) => {
+      const { destination, source, draggableId } = dropResult;
 
-    console.log(stuff);
-  }, []);
+      // user dropped outside of a droppable
+      if (!destination) {
+        return;
+      }
+
+      const di = destination.index;
+      const si = source.index;
+
+      // user dropped the item into the same place where it started
+      if (destination.droppableId === source.droppableId && di === si) {
+        return;
+      }
+
+      // tile bar to tile bar
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.droppableId === TILE_BAR_ID
+      ) {
+        const newTileBar = [...tileBar];
+
+        newTileBar.splice(si, 1);
+        newTileBar.splice(di, 0, tileBar[si]);
+
+        setTileBar(newTileBar);
+      }
+
+      // tile bar to cell
+      if (
+        source.droppableId === TILE_BAR_ID &&
+        destination.droppableId !== TILE_BAR_ID
+      ) {
+        const newTileBar = [...tileBar];
+
+        // remove value from tile-bar
+        newTileBar.splice(si, 1);
+        setTileBar(newTileBar);
+
+        const [_, row, col] = destination.droppableId.split('-').map(Number);
+
+        setXword(
+          produce(xword, (draft) => {
+            draft.grid[row][col] = tileBar[si];
+          })
+        );
+      }
+    },
+    [tileBar, xword]
+  );
 
   return (
     <section className="flex items-center flex-col m-12">
@@ -75,11 +131,11 @@ const XWord = () => {
           })}
         </GridContainer>
 
-        <Droppable droppableId="tile-bar" direction="horizontal">
+        <Droppable droppableId={TILE_BAR_ID} direction="horizontal">
           {(provided) => (
             <section
               ref={provided.innerRef}
-              className="m-6 flex justify-center border-2  border-black"
+              className="m-6 flex border-2 border-black w-60"
               {...provided.droppableProps}
             >
               {tileBar.map((tile, i) => (

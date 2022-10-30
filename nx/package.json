@@ -12,6 +12,7 @@
     "@hello-pangea/dnd": "^16.0.1",
     "core-js": "^3.6.5",
     "express": "^4.18.1",
+    "immer": "^9.0.16",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-is": "18.2.0",
