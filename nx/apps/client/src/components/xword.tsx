@@ -1,10 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { emptyXword } from '../xword_mock_data';
 import Block from './block';
-import Empty from './empty';
-import Letter from './letter';
+import Cell from './cell';
 
 interface GridContainerProps {
   numCols: number;
@@ -23,6 +22,8 @@ const GridContainer = styled.section`
 `;
 
 const XWord = () => {
+  const [xword, setXword] = useState(emptyXword);
+
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
     /*...*/
@@ -52,28 +53,36 @@ const XWord = () => {
         onDragEnd={onDragEnd}
       >
         <GridContainer
-          numCols={emptyXword.width}
-          numRows={emptyXword.height}
+          numCols={xword.width}
+          numRows={xword.height}
           className="bg-black"
         >
-          {emptyXword.grid.flat().map((char, i) => {
-            switch (char) {
+          {xword.grid.flat().map((tile, i) => {
+            const row = Math.floor(i / xword.width);
+            const col = i % xword.width;
+            const cellId = `cell-${row}-${col}`;
+
+            switch (tile.char) {
               case '#':
-                return <Block />;
-              case ' ':
-                return <Empty />;
+                return <Block key={cellId} />;
               default:
-                return <Letter char={char} />;
+                return <Cell key={cellId} id={cellId} tile={tile} />;
             }
           })}
         </GridContainer>
 
         <GridContainer numCols={5} numRows={1} className="bg-black">
-          <Letter char={'A'} />
-          <Letter char={'B'} />
-          <Letter char={'C'} />
-          <Letter char={'D'} />
-          <Letter char={'E'} />
+          <Droppable droppableId="tile-bar">
+            {(provided) => (
+              <div
+                className="bg-white flex justify-center items-center font-bold"
+                {...provided.droppableProps}
+              >
+                {/* TODO: array of tiles on the tile bar */}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </GridContainer>
       </DragDropContext>
     </section>
