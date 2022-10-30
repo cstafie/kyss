@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
-import { xword } from '../xword_mock_data';
-import { Square } from './square';
+import { emptyXword } from '../xword_mock_data';
+import Block from './block';
+import Empty from './empty';
+import Letter from './letter';
 
 interface GridContainerProps {
   numCols: number;
@@ -12,6 +14,7 @@ interface GridContainerProps {
 const GridContainer = styled.section`
   display: inline-grid;
   padding: 2px;
+  margin: 12px;
   gap: 2px;
   ${({ numCols, numRows }: GridContainerProps) => `
     grid-template-columns:  repeat(${numCols}, 50px);
@@ -48,30 +51,30 @@ const XWord = () => {
         onDragUpdate={onDragUpdate}
         onDragEnd={onDragEnd}
       >
-        <GridContainer numCols={9} numRows={9} className="bg-black">
-          {xword.grid.flat().map((char, i) => {
-            const isBlock = char === '#';
-
-            return (
-              <div
-                key={i}
-                className={`${
-                  isBlock ? 'bg-black' : 'bg-white'
-                } flex justify-center items-center`}
-              >
-                <Square char={char} />
-              </div>
-            );
+        <GridContainer
+          numCols={emptyXword.width}
+          numRows={emptyXword.height}
+          className="bg-black"
+        >
+          {emptyXword.grid.flat().map((char, i) => {
+            switch (char) {
+              case '#':
+                return <Block />;
+              case ' ':
+                return <Empty />;
+              default:
+                return <Letter char={char} />;
+            }
           })}
         </GridContainer>
 
-        <section className="flex flex-row m-2">
-          <div> A </div>
-          <div> B </div>
-          <div> C </div>
-          <div> D </div>
-          <div> E </div>
-        </section>
+        <GridContainer numCols={5} numRows={1} className="bg-black">
+          <Letter char={'A'} />
+          <Letter char={'B'} />
+          <Letter char={'C'} />
+          <Letter char={'D'} />
+          <Letter char={'E'} />
+        </GridContainer>
       </DragDropContext>
     </section>
   );
