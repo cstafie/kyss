@@ -61,7 +61,7 @@ impl XWord {
     pub fn new(width: usize, height: usize, blocks: Vec<(usize, usize)>) -> Self {
         let mut grid = vec![vec![' '; width]; height];
 
-        for (col, row) in blocks {
+        for (row, col) in blocks {
             grid[col][row] = '#';
         }
 
@@ -518,14 +518,26 @@ fn main() {
         vec![
             (0, 3),
             (1, 3),
-            (3, 0),
-            (3, 1),
-            (3, 5),
-            (5, 3),
-            (5, 7),
-            (5, 8),
+            (2, 3),
+            (3, 6),
+            (3, 7),
+            (3, 8),
+            (5, 0),
+            (5, 1),
+            (5, 2),
+            (6, 5),
             (7, 5),
             (8, 5),
+            // (0, 3),
+            // (1, 3),
+            // (3, 0),
+            // (3, 1),
+            // (3, 5),
+            // (5, 3),
+            // (5, 7),
+            // (5, 8),
+            // (7, 5),
+            // (8, 5),
         ],
     );
     // let mut xword = XWord::new(
@@ -595,7 +607,7 @@ mod tests {
         assert!(!entry_a.intersects(&entry_b));
     }
 
-    #[test]
+    // #[test]
     // fn it_should_get_matching_words() {
     //     // NOTE: upper case  (unfortunately) really matters
     //     let words_vec = vec![
