@@ -1,8 +1,5 @@
 import { XWord } from './types';
-
-import { v4 as uuidv4 } from 'uuid';
-
-const charToTile = (char: string) => ({ id: uuidv4(), char });
+import { charToTile } from './utils';
 
 export const xword: XWord = {
   grid: [

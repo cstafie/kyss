@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import styled from 'styled-components';
+import { charToTile } from '../utils';
 import { emptyXword } from '../xword_mock_data';
 import Block from './block';
 import Cell from './cell';
+import Tile from './tile';
 
 interface GridContainerProps {
   numCols: number;
@@ -13,7 +15,6 @@ interface GridContainerProps {
 const GridContainer = styled.section`
   display: inline-grid;
   padding: 2px;
-  margin: 12px;
   gap: 2px;
   ${({ numCols, numRows }: GridContainerProps) => `
     grid-template-columns:  repeat(${numCols}, 50px);
@@ -23,6 +24,9 @@ const GridContainer = styled.section`
 
 const XWord = () => {
   const [xword, setXword] = useState(emptyXword);
+  const [tileBar, setTileBar] = useState(
+    ['A', 'B', 'C', 'D', 'E'].map(charToTile)
+  );
 
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
@@ -44,7 +48,7 @@ const XWord = () => {
   }, []);
 
   return (
-    <section className="flex items-center flex-col m-2">
+    <section className="flex items-center flex-col m-12">
       <DragDropContext
         onBeforeCapture={onBeforeCapture}
         onBeforeDragStart={onBeforeDragStart}
@@ -55,7 +59,7 @@ const XWord = () => {
         <GridContainer
           numCols={xword.width}
           numRows={xword.height}
-          className="bg-black"
+          className="bg-black  m-6"
         >
           {xword.grid.flat().map((tile, i) => {
             const row = Math.floor(i / xword.width);
@@ -71,19 +75,20 @@ const XWord = () => {
           })}
         </GridContainer>
 
-        <GridContainer numCols={5} numRows={1} className="bg-black">
-          <Droppable droppableId="tile-bar">
-            {(provided) => (
-              <div
-                className="bg-white flex justify-center items-center font-bold"
-                {...provided.droppableProps}
-              >
-                {/* TODO: array of tiles on the tile bar */}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </GridContainer>
+        <Droppable droppableId="tile-bar" direction="horizontal">
+          {(provided) => (
+            <section
+              ref={provided.innerRef}
+              className="m-6 flex justify-center border-2  border-black"
+              {...provided.droppableProps}
+            >
+              {tileBar.map((tile, i) => (
+                <Tile key={tile.id} tile={tile} index={i} />
+              ))}
+              {provided.placeholder}
+            </section>
+          )}
+        </Droppable>
       </DragDropContext>
     </section>
   );

@@ -1,4 +1,4 @@
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import { Tile as TileType } from '../types';
 import Tile from './tile';
 
@@ -12,10 +12,11 @@ const Cell = ({ id, tile }: Props) => {
     <Droppable droppableId={`cell-${id}`}>
       {(provided) => (
         <div
+          ref={provided.innerRef}
           className="bg-white flex justify-center items-center font-bold"
           {...provided.droppableProps}
         >
-          {tile.char !== ' ' && <Tile tile={tile} />}
+          {tile.char !== ' ' && <Tile tile={tile} index={0} />}
           {provided.placeholder}
         </div>
       )}

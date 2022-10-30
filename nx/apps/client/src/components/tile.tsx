@@ -1,14 +1,24 @@
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import { Tile as TileType } from '../types';
 
 interface Props {
   tile: TileType;
+  index: number;
 }
 
-const Tile = ({ tile }: Props) => {
+const Tile = ({ tile, index }: Props) => {
   return (
-    <Draggable draggableId={tile.id} index={0}>
-      {(provided) => <div {...provided.draggableProps}>{tile.char}</div>}
+    <Draggable draggableId={tile.id} index={index}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className="p-4 bg-slate-300"
+        >
+          {tile.char}
+        </div>
+      )}
     </Draggable>
   );
 };
