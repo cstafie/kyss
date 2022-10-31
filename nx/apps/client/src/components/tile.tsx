@@ -14,7 +14,7 @@ const Tile = ({ tile, index }: Props) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="bg-orange-300 hover:bg-orange-200 ac w-12 h-12 flex justify-center items-center font-bold"
+          className="bg-orange-200 hover:bg-orange-300 active:shadow-lg active:bg-orange-300 w-12 h-12 flex justify-center items-center font-bold"
         >
           {tile.char}
         </div>

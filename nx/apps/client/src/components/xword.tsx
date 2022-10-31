@@ -12,7 +12,6 @@ import { emptyXword } from '../xword_mock_data';
 import Block from './block';
 import Cell from './cell';
 import Tile from './tile';
-import { SourceMap } from 'module';
 
 interface GridContainerProps {
   numCols: number;
@@ -127,6 +126,18 @@ const XWord = () => {
         source.droppableId !== TILE_BAR_ID &&
         destination.droppableId === TILE_BAR_ID
       ) {
+        const [_, row, col] = source.droppableId.split('-').map(Number);
+
+        const newTileBar = [...tileBar];
+        newTileBar.splice(di, 0, xword.grid[row][col]);
+        setTileBar(newTileBar);
+
+        setXword(
+          produce(xword, (draft) => {
+            draft.grid[row][col] = charToTile(' ');
+          })
+        );
+
         return;
       }
     },
@@ -165,7 +176,7 @@ const XWord = () => {
           {(provided) => (
             <section
               ref={provided.innerRef}
-              className="m-6 flex border-2 border-black w-60"
+              className="m-6 flex border-2 border-black w-60 h-[52px]"
               {...provided.droppableProps}
             >
               {tileBar.map((tile, i) => (
