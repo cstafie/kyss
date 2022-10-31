@@ -20,7 +20,10 @@
         "styles": [],
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack",
-        "postcssConfig": "apps/client/postcss.config.js"
+        "postcssConfig": "apps/client/postcss.config.js",
+        "historyApiFallback": true,
+        "contentBase": "./",
+        "hot": true
       },
       "configurations": {
         "development": {
