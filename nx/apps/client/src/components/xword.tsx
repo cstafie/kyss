@@ -3,7 +3,6 @@ import produce from 'immer';
 import {
   DragDropContext,
   Droppable,
-  Draggable,
   OnDragEndResponder,
 } from '@hello-pangea/dnd';
 import styled from 'styled-components';
@@ -20,6 +19,7 @@ interface GridContainerProps {
 
 const TILE_BAR_ID = 'tile-bar';
 
+// TODO: look into solving this using tailwind only
 const GridContainer = styled.section`
   display: inline-grid;
   padding: 2px;

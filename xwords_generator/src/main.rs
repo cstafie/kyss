@@ -72,7 +72,9 @@ impl XWord {
         }
     }
 
-    // TODO: this feels a bit gross
+    // TODO: this feels a bit gross, maybe we can just keep
+    // track of tiles filled in constant space / time?
+    // but that might be over engineering
     pub fn is_filled(&self) -> bool {
         for col in 0..self.width {
             for row in 0..self.height {
