@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Message } from '@nx/api-interfaces';
+import { Link } from 'react-router-dom';
 
 export const App = () => {
   const [m, setMessage] = useState<Message>({ message: '' });
@@ -21,7 +22,7 @@ export const App = () => {
         />
       </div>
       <div>{m.message}</div>
-      <a href="/xword"> xword </a>
+      <Link to="/xword">xword</Link>
     </>
   );
 };
