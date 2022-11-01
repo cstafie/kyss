@@ -1,6 +1,5 @@
 use rand::distributions::{Alphanumeric, DistString};
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use std::{
     cmp,
     collections::{HashMap, HashSet},
@@ -138,39 +137,63 @@ impl XWord {
     // }
 }
 
-fn get_word_data(
+fn get_words_clues_map(
     min_word_len: usize,
     max_word_len: usize,
-) -> HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>> {
+) -> HashMap<String, HashSet<String>> {
     let file_path = "../xwords_data/1976_to_2018.csv";
     let mut results = csv::Reader::from_path(file_path).unwrap();
 
-    let mut word_frequency: HashMap<String, i32> = HashMap::new();
-
-    let mut longest_word = 0;
+    let mut words_clues: HashMap<String, HashSet<String>> = HashMap::new();
 
     for result in results.records() {
         let record = result.expect("a CSV record");
 
-        let word = record[2].to_string();
+        let word = match record.get(1) {
+            None => continue,
+            Some(word) => word.to_string(),
+        };
 
+        let clue = match record.get(2) {
+            None => continue,
+            Some(clue) => clue.to_string(),
+        };
+
+        // let word = record[2].to_string();
+        // let clue = record[3].to_string();
+
+        // TODO: is clue good?
         let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
         let is_ascii_alphabetic = word.chars().all(|c| c.is_ascii_alphabetic());
 
         if is_good_len && is_ascii_alphabetic {
-            word_frequency
+            words_clues
                 .entry(word.to_ascii_uppercase())
-                .and_modify(|count| *count += 1)
-                .or_insert(1);
-            longest_word = cmp::max(longest_word, word.len());
+                .and_modify(|clues| {
+                    clues.insert(clue.clone());
+                })
+                .or_insert(HashSet::from([clue]));
         }
     }
 
-    let mut word_frequency_vector: Vec<(String, i32)> = word_frequency.into_iter().collect();
+    words_clues
+}
+
+fn get_word_data(
+    words_clues: &HashMap<String, HashSet<String>>,
+) -> HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>> {
+    let mut word_frequency_vector: Vec<(String, HashSet<String>)> =
+        words_clues.clone().into_iter().collect();
+
     word_frequency_vector.sort_by(|(word_a, _), (word_b, _)| word_a.cmp(word_b));
 
-    // words_map: word_length -> position -> character (A-Z) -> Vec<Str>
+    let longest_word: usize = word_frequency_vector
+        .iter()
+        .fold(0, |longest, (word, _clues)| {
+            std::cmp::max(longest, word.len())
+        });
 
+    // words_map: word_length -> position -> character (A-Z) -> Vec<Str>
     let mut words_map: HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>> =
         HashMap::new();
 
@@ -201,36 +224,7 @@ fn get_word_data(
                 .unwrap()
                 .insert(word.clone());
         }
-
-        // words_map
-        //     .entry(word.len())
-        //     .and_modify(|position_map| {
-        //         for position in 0..word.len() {
-        //             position_map
-        //                 .entry(position)
-        //                 .and_modify(|char_map| char_map)
-        //                 .or_insert(HashMap::new())
-        //         }
-        //     })
-        //     .or_insert(HashMap::from());
-
-        // words_map
-        //     .entry(word.len())
-        //     .and_modify(|word_vec| word_vec.push((word.clone(), frequency)))
-        //     .or_insert(vec![(word, frequency)]);
     }
-
-    // let num = 5;
-
-    // // sort by freq for learning
-    // words_map
-    //     .get_mut(&num)
-    //     .unwrap()
-    //     .sort_by(|(_, freq_a), (_, freq_b)| freq_a.cmp(&freq_b));
-
-    // println!("{:?}", words_map.get(&num));
-
-    // print words_map
 
     words_map
 }
@@ -528,33 +522,44 @@ fn generate_xword(
 
 // TODO: remove unneeded clones and unwraps
 
+fn populate_entries(
+    entries: &mut Vec<XWordEntry>,
+    xword: &XWord,
+    words_clues_map: &HashMap<String, HashSet<String>>,
+) {
+    for entry in entries {
+        let entry_word = xword.get_entry(entry);
+
+        entry.clue = words_clues_map
+            .get(&entry_word)
+            .unwrap()
+            .iter()
+            .next()
+            .unwrap()
+            .clone();
+    }
+}
+
+fn number_entries(entries: &mut Vec<XWordEntry>) {
+    entries.sort_by(|entry_a, entry_b| {
+        if entry_a.row == entry_b.row {
+            return entry_a.col.cmp(&entry_b.col);
+        }
+
+        return entry_a.row.cmp(&entry_b.row);
+    });
+
+    for (i, entry) in entries.iter_mut().enumerate() {
+        entry.number = i as i32 + 1;
+    }
+}
+
 fn main() -> std::io::Result<()> {
     // right now the longest word is 21 letters, we probably won't need words that long
-    let words_map = get_word_data(3, 30);
+    let words_clues_map = get_words_clues_map(3, 30);
+    let words_map = get_word_data(&words_clues_map);
 
-    // let mut xword = XWord::new(
-    //     11,
-    //     11,
-    //     vec![
-    //         (0, 4),
-    //         (1, 4),
-    //         (3, 3),
-    //         (3, 7),
-    //         (4, 5),
-    //         (4, 9),
-    //         (4, 10),
-    //         (5, 4),
-    //         (5, 5),
-    //         (5, 6),
-    //         (6, 0),
-    //         (6, 1),
-    //         (6, 5),
-    //         (7, 3),
-    //         (7, 7),
-    //         (9, 6),
-    //         (10, 6),
-    //     ],
-    // );
+    // println!("{:?}", words_clues_map);
 
     let mut xword = XWord::new(
         7,
@@ -571,7 +576,7 @@ fn main() -> std::io::Result<()> {
         ],
     );
 
-    let entries = get_xword_entries(&xword);
+    let mut entries = get_xword_entries(&xword);
 
     println!("entries length: {:?}", entries.len());
     println!("entries: {:?}", entries);
@@ -588,6 +593,11 @@ fn main() -> std::io::Result<()> {
     ) {
         println!("found after {:?} iterations", iterations);
         println!("xword {:?}", xword);
+
+        populate_entries(&mut entries, &xword, &words_clues_map);
+        number_entries(&mut entries);
+
+        xword.entries = entries;
 
         let xword_json = serde_json::to_string(&xword).unwrap();
 
