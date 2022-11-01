@@ -1,4 +1,6 @@
 use rand::distributions::{Alphanumeric, DistString};
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
 use std::{
     cmp,
     collections::{HashMap, HashSet},
@@ -7,21 +9,22 @@ use std::{
     str,
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 enum Direction {
     Across,
     Down,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct XWord {
     pub grid: Vec<Vec<char>>,
     pub width: usize,
     pub height: usize,
+    pub entries: Vec<XWordEntry>,
 }
 
 // TODO: impl new
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct XWordEntry {
     row: usize,
     col: usize,
@@ -75,6 +78,7 @@ impl XWord {
             grid,
             width,
             height,
+            entries: Vec::new(),
         }
     }
 
@@ -417,7 +421,13 @@ fn generate_xword(
     words_map: &HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>>,
     used_words: &mut HashSet<String>,
     depth: &usize,
+    iterations: &mut i32,
 ) -> bool {
+    if *iterations >= 100_000 {
+        return false;
+    }
+    *iterations += 1;
+
     if xword.is_filled() {
         // we found a solution!
         return true;
@@ -481,10 +491,11 @@ fn generate_xword(
     for (i, (word, _)) in scored_matching_words.iter().enumerate() {
         if *depth < 4 {
             println!(
-                "{} {}% {}",
+                "{} {}% {} {}",
                 "\t".repeat(*depth),
                 i * 100 / scored_matching_words.len(),
-                word
+                word,
+                *iterations
             );
         }
 
@@ -497,7 +508,14 @@ fn generate_xword(
         used_words.insert(used_word);
         xword.set_entry(&entry, &word);
 
-        if generate_xword(xword, entries, words_map, used_words, &(depth + 1)) {
+        if generate_xword(
+            xword,
+            entries,
+            words_map,
+            used_words,
+            &(depth + 1),
+            iterations,
+        ) {
             return true;
         }
 
@@ -514,93 +532,70 @@ fn main() -> std::io::Result<()> {
     // right now the longest word is 21 letters, we probably won't need words that long
     let words_map = get_word_data(3, 30);
 
-    // vec![(3, 3)]
-    // 11,
-    // 11,
-    // vec![
-    //     (0, 5),
-    //     (1, 5),
-    //     (3, 3),
-    //     (3, 7),
-    //     (5, 0),
-    //     (5, 1),
-    //     (5, 9),
-    //     (5, 10),
-    //     (7, 3),
-    //     (7, 7),
-    //     (9, 5),
-    //     (10, 5),
-    // ],
-    let mut xword = XWord::new(
-        11,
-        11,
-        vec![
-            (0, 4),
-            (1, 4),
-            (3, 3),
-            (3, 7),
-            (4, 5),
-            (4, 9),
-            (4, 10),
-            (5, 4),
-            (5, 5),
-            (5, 6),
-            (6, 0),
-            (6, 1),
-            (6, 5),
-            (7, 3),
-            (7, 7),
-            (9, 6),
-            (10, 6),
-            // (0, 3),
-            // (1, 3),
-            // (2, 3),
-            // (3, 6),
-            // (3, 7),
-            // (3, 8),
-            // (5, 0),
-            // (5, 1),
-            // (5, 2),
-            // (6, 5),
-            // (7, 5),
-            // (8, 5),
-            // ---
-            // (0, 3),
-            // (1, 3),
-            // (3, 0),
-            // (3, 1),
-            // (3, 5),
-            // (5, 3),
-            // (5, 7),
-            // (5, 8),
-            // (7, 5),
-            // (8, 5),
-        ],
-    );
     // let mut xword = XWord::new(
-    //     7,
-    //     7,
+    //     11,
+    //     11,
     //     vec![
-    //         (0, 3),
-    //         (1, 3),
-    //         (3, 0),
-    //         (3, 1),
-    //         (3, 5),
-    //         (3, 6),
-    //         (5, 3),
-    //         (6, 3),
+    //         (0, 4),
+    //         (1, 4),
+    //         (3, 3),
+    //         (3, 7),
+    //         (4, 5),
+    //         (4, 9),
+    //         (4, 10),
+    //         (5, 4),
+    //         (5, 5),
+    //         (5, 6),
+    //         (6, 0),
+    //         (6, 1),
+    //         (6, 5),
+    //         (7, 3),
+    //         (7, 7),
+    //         (9, 6),
+    //         (10, 6),
     //     ],
     // );
+
+    let mut xword = XWord::new(
+        7,
+        7,
+        vec![
+            (0, 3),
+            (1, 3),
+            (3, 0),
+            (3, 1),
+            (3, 5),
+            (3, 6),
+            (5, 3),
+            (6, 3),
+        ],
+    );
+
     let entries = get_xword_entries(&xword);
 
     println!("entries length: {:?}", entries.len());
     println!("entries: {:?}", entries);
 
-    if (generate_xword(&mut xword, &entries, &words_map, &mut HashSet::new(), &0)) {
-        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 16);
-        let file_name: String = "../generated_xwords/".to_owned() + &random_string[..];
+    let mut iterations = 0;
+
+    if generate_xword(
+        &mut xword,
+        &entries,
+        &words_map,
+        &mut HashSet::new(),
+        &0,
+        &mut iterations,
+    ) {
+        println!("found after {:?} iterations", iterations);
+        println!("xword {:?}", xword);
+
+        let xword_json = serde_json::to_string(&xword).unwrap();
+
+        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
+        let file_name: String = format!("generated_xwords/{}.json", random_string);
+
         let mut file = File::create(&file_name[..])?;
-        file.write_all(format!("xword {:?}", xword).as_bytes())?;
+        file.write_all(xword_json.as_bytes())?;
     }
 
     println!("xword {:?}", xword);
