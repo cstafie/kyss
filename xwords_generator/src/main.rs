@@ -1,6 +1,9 @@
+use rand::distributions::{Alphanumeric, DistString};
 use std::{
     cmp,
     collections::{HashMap, HashSet},
+    fs::File,
+    io::prelude::*,
     str,
 };
 
@@ -17,12 +20,15 @@ struct XWord {
     pub height: usize,
 }
 
+// TODO: impl new
 #[derive(Debug, Clone)]
 struct XWordEntry {
     row: usize,
     col: usize,
     direction: Direction,
     length: usize,
+    number: i32,
+    clue: String,
 }
 
 impl XWordEntry {
@@ -241,6 +247,8 @@ fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: u
                     col: starting_col,
                     direction: Direction::Across,
                     length: col - starting_col,
+                    number: 0,
+                    clue: "".to_string(),
                 });
             }
 
@@ -254,6 +262,8 @@ fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: u
             col: starting_col,
             direction: Direction::Across,
             length: xword.width - starting_col,
+            number: 0,
+            clue: "".to_string(),
         });
     }
 }
@@ -274,6 +284,8 @@ fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usi
                     col,
                     direction: Direction::Down,
                     length: row - starting_row,
+                    number: 0,
+                    clue: "".to_string(),
                 });
             }
 
@@ -287,6 +299,8 @@ fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usi
             col,
             direction: Direction::Down,
             length: xword.height - starting_row,
+            number: 0,
+            clue: "".to_string(),
         });
     }
 }
@@ -397,17 +411,16 @@ fn score(
     return total;
 }
 
-fn generate_xwords(
+fn generate_xword(
     xword: &mut XWord,
     entries: &Vec<XWordEntry>,
     words_map: &HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>>,
     used_words: &mut HashSet<String>,
     depth: &usize,
-) {
+) -> bool {
     if xword.is_filled() {
         // we found a solution!
-        println!("{:?}", xword);
-        return;
+        return true;
     }
 
     let mut matching_words = HashSet::new();
@@ -466,7 +479,7 @@ fn generate_xwords(
     // println!("{:?}", matching_words);
 
     for (i, (word, _)) in scored_matching_words.iter().enumerate() {
-        if *depth < 6 {
+        if *depth < 4 {
             println!(
                 "{} {}% {}",
                 "\t".repeat(*depth),
@@ -484,16 +497,20 @@ fn generate_xwords(
         used_words.insert(used_word);
         xword.set_entry(&entry, &word);
 
-        generate_xwords(xword, entries, words_map, used_words, &(depth + 1));
+        if generate_xword(xword, entries, words_map, used_words, &(depth + 1)) {
+            return true;
+        }
 
         xword.set_entry(&entry, &old_entry_string);
         used_words.remove(word);
     }
+
+    return false;
 }
 
 // TODO: remove unneeded clones and unwraps
 
-fn main() {
+fn main() -> std::io::Result<()> {
     // right now the longest word is 21 letters, we probably won't need words that long
     let words_map = get_word_data(3, 30);
 
@@ -515,21 +532,39 @@ fn main() {
     //     (10, 5),
     // ],
     let mut xword = XWord::new(
-        9,
-        9,
+        11,
+        11,
         vec![
-            (0, 3),
-            (1, 3),
-            (2, 3),
-            (3, 6),
+            (0, 4),
+            (1, 4),
+            (3, 3),
             (3, 7),
-            (3, 8),
-            (5, 0),
-            (5, 1),
-            (5, 2),
+            (4, 5),
+            (4, 9),
+            (4, 10),
+            (5, 4),
+            (5, 5),
+            (5, 6),
+            (6, 0),
+            (6, 1),
             (6, 5),
-            (7, 5),
-            (8, 5),
+            (7, 3),
+            (7, 7),
+            (9, 6),
+            (10, 6),
+            // (0, 3),
+            // (1, 3),
+            // (2, 3),
+            // (3, 6),
+            // (3, 7),
+            // (3, 8),
+            // (5, 0),
+            // (5, 1),
+            // (5, 2),
+            // (6, 5),
+            // (7, 5),
+            // (8, 5),
+            // ---
             // (0, 3),
             // (1, 3),
             // (3, 0),
@@ -561,9 +596,16 @@ fn main() {
     println!("entries length: {:?}", entries.len());
     println!("entries: {:?}", entries);
 
-    generate_xwords(&mut xword, &entries, &words_map, &mut HashSet::new(), &0);
+    if (generate_xword(&mut xword, &entries, &words_map, &mut HashSet::new(), &0)) {
+        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 16);
+        let file_name: String = "../generated_xwords/".to_owned() + &random_string[..];
+        let mut file = File::create(&file_name[..])?;
+        file.write_all(format!("xword {:?}", xword).as_bytes())?;
+    }
 
     println!("xword {:?}", xword);
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -578,6 +620,8 @@ mod tests {
             col: 1,
             length: 5,
             direction: Direction::Across,
+            number: 0,
+            clue: "".to_string(),
         };
 
         let entry_b = XWordEntry {
@@ -585,6 +629,8 @@ mod tests {
             col: 3,
             length: 3,
             direction: Direction::Down,
+            number: 0,
+            clue: "".to_string(),
         };
 
         assert!(entry_a.intersects(&entry_b));
@@ -597,6 +643,8 @@ mod tests {
             col: 1,
             length: 5,
             direction: Direction::Across,
+            number: 0,
+            clue: "".to_string(),
         };
 
         let entry_b = XWordEntry {
@@ -604,6 +652,8 @@ mod tests {
             col: 3,
             length: 3,
             direction: Direction::Down,
+            number: 0,
+            clue: "".to_string(),
         };
 
         assert!(!entry_a.intersects(&entry_b));
@@ -635,6 +685,8 @@ mod tests {
             col: 0,
             length: height,
             direction,
+            number: 0,
+            clue: "".to_string(),
         };
 
         assert_eq!(xword.get_entry(&xword_entry), "    ");

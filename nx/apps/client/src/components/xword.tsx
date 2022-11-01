@@ -7,10 +7,11 @@ import {
 } from '@hello-pangea/dnd';
 import styled from 'styled-components';
 import { charToTile } from '../utils';
-import { emptyXword } from '../xword_mock_data';
+import { xword11x11 } from '../mocks/xword_mock_data';
 import Block from './block';
 import Cell from './cell';
 import Tile from './tile';
+import { Tile as TyleType } from '../types';
 
 interface GridContainerProps {
   numCols: number;
@@ -31,9 +32,10 @@ const GridContainer = styled.section`
 `;
 
 const XWord = () => {
-  const [xword, setXword] = useState(emptyXword);
-  const [tileBar, setTileBar] = useState(
-    ['A', 'B', 'C', 'D', 'E'].map(charToTile)
+  const [xword, setXword] = useState(xword11x11);
+  const [tileBar, setTileBar] = useState<Array<TyleType>>(
+    []
+    // ['A', 'B', 'C', 'D', 'E'].map(charToTile)
   );
 
   // using useCallback is optional

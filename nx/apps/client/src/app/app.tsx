@@ -22,7 +22,7 @@ export const App = () => {
         />
       </div>
       <div>{m.message}</div>
-      <Link to="/xword">xword</Link>
+      <Link to="xword">xword</Link>
     </>
   );
 };
