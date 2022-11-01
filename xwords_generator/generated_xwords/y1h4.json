@@ -1,12 +1,12 @@
 {
   "grid": [
-    ["H", "O", "O", "#", "O", "H", "I"],
-    ["U", "G", "A", "#", "R", "U", "N"],
-    ["T", "S", "K", "T", "S", "K", "S"],
-    ["#", "#", "L", "E", "T", "#", "#"],
-    ["A", "G", "E", "L", "O", "N", "G"],
-    ["L", "Y", "A", "#", "N", "E", "U"],
-    ["S", "P", "F", "#", "E", "I", "N"]
+    ["G", "O", "W", "#", "A", "A", "U"],
+    ["D", "R", "I", "#", "T", "R", "H"],
+    ["N", "Y", "M", "P", "H", "O", "S"],
+    ["#", "#", "P", "E", "R", "#", "#"],
+    ["M", "I", "O", "C", "E", "N", "E"],
+    ["S", "T", "L", "#", "A", "E", "A"],
+    ["U", "I", "E", "#", "T", "Z", "U"]
   ],
   "width": 7,
   "height": 7,
@@ -17,175 +17,175 @@
       "direction": "Across",
       "length": 3,
       "number": 1,
-      "clue": "Sob syllable"
+      "clue": "Playwright James or Ronald"
     },
     {
       "row": 0,
       "col": 0,
       "direction": "Down",
       "length": 3,
-      "number": 2,
-      "clue": "Rough housing"
+      "number": 1,
+      "clue": "Eden, e.g.: Abbr."
     },
     {
       "row": 0,
       "col": 1,
       "direction": "Down",
       "length": 3,
-      "number": 3,
-      "clue": "Curved moldings"
+      "number": 2,
+      "clue": "Suffix with audit or transit"
     },
     {
       "row": 0,
       "col": 2,
       "direction": "Down",
       "length": 7,
-      "number": 4,
-      "clue": "Item on a G.I. medal"
+      "number": 3,
+      "clue": "Street of the Barretts"
     },
     {
       "row": 0,
       "col": 4,
       "direction": "Across",
       "length": 3,
-      "number": 5,
-      "clue": "\"___ get it!\" (\"Aha!\")"
+      "number": 4,
+      "clue": "Track's governing org."
     },
     {
       "row": 0,
       "col": 4,
       "direction": "Down",
       "length": 7,
-      "number": 6,
-      "clue": "\"Like rock ___ . . . \": Wordsworth"
+      "number": 4,
+      "clue": "Pose ___ (endanger)"
     },
     {
       "row": 0,
       "col": 5,
       "direction": "Down",
       "length": 3,
-      "number": 7,
-      "clue": "Philippine guerrilla in W.W. II"
+      "number": 5,
+      "clue": "Orinoco feeder"
     },
     {
       "row": 0,
       "col": 6,
       "direction": "Down",
       "length": 3,
-      "number": 8,
-      "clue": "Election victors"
+      "number": 6,
+      "clue": "Relatives of ers"
     },
     {
       "row": 1,
       "col": 0,
       "direction": "Across",
       "length": 3,
-      "number": 9,
-      "clue": "Bulldogs' sch."
+      "number": 7,
+      "clue": "Bacheller hero"
     },
     {
       "row": 1,
       "col": 4,
       "direction": "Across",
       "length": 3,
-      "number": 10,
-      "clue": "Triathlon part"
+      "number": 8,
+      "clue": "Abbr. for royal personages"
     },
     {
       "row": 2,
       "col": 0,
       "direction": "Across",
       "length": 7,
-      "number": 11,
-      "clue": "Sounds of censure (max opening score of 80 points)"
+      "number": 9,
+      "clue": "Lolitas"
     },
     {
       "row": 2,
       "col": 3,
       "direction": "Down",
       "length": 3,
-      "number": 12,
-      "clue": "___ no."
+      "number": 10,
+      "clue": "Muscle-builder's pride"
     },
     {
       "row": 3,
       "col": 2,
       "direction": "Across",
       "length": 3,
-      "number": 13,
-      "clue": "Tennis do-over"
+      "number": 11,
+      "clue": "___ usual"
     },
     {
       "row": 4,
       "col": 0,
       "direction": "Down",
       "length": 3,
-      "number": 14,
-      "clue": "Geiberger and Capone"
+      "number": 12,
+      "clue": "U.S.C. defeater in the 1988 Rose Bowl"
     },
     {
       "row": 4,
       "col": 0,
       "direction": "Across",
       "length": 7,
-      "number": 15,
-      "clue": "Everlasting"
+      "number": 12,
+      "clue": "A Tertiary epoch"
     },
     {
       "row": 4,
       "col": 1,
       "direction": "Down",
       "length": 3,
-      "number": 16,
-      "clue": "Shortchange"
+      "number": 13,
+      "clue": "\"What was ___ was saying?\""
     },
     {
       "row": 4,
       "col": 5,
       "direction": "Down",
       "length": 3,
-      "number": 17,
-      "clue": "Estonian chess master"
+      "number": 14,
+      "clue": "Cyrano's nose"
     },
     {
       "row": 4,
       "col": 6,
       "direction": "Down",
       "length": 3,
-      "number": 18,
-      "clue": "Report maker"
+      "number": 15,
+      "clue": "Semisweet liqueur"
     },
     {
       "row": 5,
       "col": 0,
+      "direction": "Across",
+      "length": 3,
+      "number": 16,
+      "clue": "Cap initials at Busch Stadium"
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "direction": "Across",
+      "length": 3,
+      "number": 17,
+      "clue": "Actors' org."
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "direction": "Across",
+      "length": 3,
+      "number": 18,
+      "clue": "Turnabout, for short"
+    },
+    {
+      "row": 6,
+      "col": 4,
       "direction": "Across",
       "length": 3,
       "number": 19,
-      "clue": "___ de Putti, 1920's screen star"
-    },
-    {
-      "row": 5,
-      "col": 4,
-      "direction": "Across",
-      "length": 3,
-      "number": 20,
-      "clue": "Popular word in German product packaging"
-    },
-    {
-      "row": 6,
-      "col": 0,
-      "direction": "Across",
-      "length": 3,
-      "number": 21,
-      "clue": "Letters at the beach"
-    },
-    {
-      "row": 6,
-      "col": 4,
-      "direction": "Across",
-      "length": 3,
-      "number": 22,
-      "clue": "An, in Ansbach"
+      "clue": "China's Lao-___"
     }
   ]
 }

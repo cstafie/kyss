@@ -549,8 +549,24 @@ fn number_entries(entries: &mut Vec<XWordEntry>) {
         return entry_a.row.cmp(&entry_b.row);
     });
 
-    for (i, entry) in entries.iter_mut().enumerate() {
-        entry.number = i as i32 + 1;
+    let mut number = 0;
+    let mut prev_row_col: Option<(usize, usize)> = None;
+
+    for entry in entries.iter_mut() {
+        match prev_row_col {
+            Some((row, col)) => {
+                if entry.row != row || entry.col != col {
+                    number += 1;
+                    prev_row_col = Some((entry.row, entry.col));
+                }
+            }
+            None => {
+                number += 1;
+                prev_row_col = Some((entry.row, entry.col));
+            }
+        }
+
+        entry.number = number;
     }
 }
 
