@@ -7,11 +7,11 @@ import {
 } from '@hello-pangea/dnd';
 import styled from 'styled-components';
 import { charToTile } from '../utils';
-import { xword11x11 } from '../mocks/xword_mock_data';
+import { xword7x7 } from '../mocks/xword_mock_data';
 import Block from './block';
 import Cell from './cell';
 import Tile from './tile';
-import { Tile as TyleType } from '../types';
+import { Direction, Tile as TyleType } from '../types';
 
 interface GridContainerProps {
   numCols: number;
@@ -32,7 +32,7 @@ const GridContainer = styled.section`
 `;
 
 const XWord = () => {
-  const [xword, setXword] = useState(xword11x11);
+  const [xword, setXword] = useState(xword7x7);
   const [tileBar, setTileBar] = useState<Array<TyleType>>(
     []
     // ['A', 'B', 'C', 'D', 'E'].map(charToTile)
@@ -155,6 +155,7 @@ const XWord = () => {
         onDragUpdate={onDragUpdate}
         onDragEnd={onDragEnd}
       >
+        {/* // xword grid */}
         <GridContainer
           numCols={xword.width}
           numRows={xword.height}
@@ -174,6 +175,7 @@ const XWord = () => {
           })}
         </GridContainer>
 
+        {/* tile bar */}
         <Droppable droppableId={TILE_BAR_ID} direction="horizontal">
           {(provided) => (
             <section
@@ -189,6 +191,37 @@ const XWord = () => {
           )}
         </Droppable>
       </DragDropContext>
+
+      {/* clues - TODO: only filter once (use_callback)*/}
+      <section>
+        <h2>ACROSS</h2>
+        <ol>
+          <li>
+            {xword.entries
+              .filter((entry) => entry.direction === Direction.ACROSS)
+              .map((entry) => (
+                <div key={entry.clue}>
+                  {entry.number} {entry.clue}
+                </div>
+              ))}
+          </li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>DOWN</h2>
+        <ol>
+          <li>
+            {xword.entries
+              .filter((entry) => entry.direction === Direction.DOWN)
+              .map((entry) => (
+                <div key={entry.clue}>
+                  {entry.number} {entry.clue}
+                </div>
+              ))}
+          </li>
+        </ol>
+      </section>
     </section>
   );
 };

@@ -18,8 +18,8 @@ export enum Direction {
 export interface XWordEntry {
   row: number;
   col: number;
-  direction: Direction,
+  direction: Direction;
   length: number;
   number: number;
-  clue: String;
+  clue: string;
 }
