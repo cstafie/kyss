@@ -7,3 +7,4 @@ takes crossword data from `xwords_data` directory and tries to generate crosswor
 - generate grids of all shapes and sizes
 - address TODOs in code
 - break down main.rs into a few modules
+- gen typescript types from rust types

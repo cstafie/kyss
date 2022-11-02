@@ -1,52 +1,202 @@
-import { XWord } from '../types';
+import { XWord, Tile, Direction} from '../types';
 import { charToTile } from '../utils';
 
-export const xword11x11: XWord = {
-  grid: [
-    ['H', 'O', 'A', 'R', 'D', 'S', '#', 'C', 'O', 'D', 'A'].map(charToTile),
-    ['E', 'N', 'S', 'U', 'R', 'E', '#', 'A', 'P', 'E', 'D'].map(charToTile),
-    ['R', 'E', 'S', 'T', 'O', 'R', 'A', 'T', 'I', 'V', 'E'].map(charToTile),
-    ['O', 'R', 'E', '#', 'V', 'E', 'X', '#', 'N', 'I', 'P'].map(charToTile),
-    ['#', '#', 'V', 'E', 'E', '#', 'E', 'D', 'I', 'C', 'T'].map(charToTile),
-    ['A', 'R', 'E', 'A', '#', '#', '#', 'N', 'O', 'E', 'S'].map(charToTile),
-    ['D', 'A', 'R', 'T', 'S', '#', 'W', 'A', 'N', '#', '#'].map(charToTile),
-    ['V', 'I', 'A', '#', 'U', 'S', 'E', '#', 'A', 'C', 'E'].map(charToTile),
-    ['I', 'N', 'T', 'I', 'M', 'I', 'D', 'A', 'T', 'E', 'D'].map(charToTile),
-    ['S', 'E', 'E', 'K', '#', 'N', 'E', 'R', 'E', 'I', 'D'].map(charToTile),
-    ['E', 'R', 'S', 'E', '#', 'G', 'L', 'A', 'D', 'L', 'Y'].map(charToTile),
-  ],
-  width: 11,
-  height: 11,
-};
+const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {
+  return grid.map(row => row.map(s => charToTile(s)));
+}
 
-export const xword9x9: XWord = {
-  grid: [
-    ['H', 'A', 'U', 'L', 'S', '#', 'M', 'I', 'B'].map(charToTile),
-    ['A', 'S', 'S', 'E', 'T', '#', 'U', 'N', 'O'].map(charToTile),
-    ['S', 'P', 'E', 'A', 'R', '#', 'T', 'U', 'N'].map(charToTile),
-    ['#', '#', '#', 'R', 'E', 'V', 'E', 'R', 'E'].map(charToTile),
-    ['S', 'C', 'H', 'N', 'E', 'I', 'D', 'E', 'R'].map(charToTile),
-    ['C', 'R', 'E', 'S', 'T', 'S', '#', '#', '#'].map(charToTile),
-    ['R', 'U', 'E', '#', 'C', 'A', 'D', 'E', 'T'].map(charToTile),
-    ['A', 'D', 'D', '#', 'A', 'G', 'O', 'R', 'A'].map(charToTile),
-    ['Y', 'E', 'S', '#', 'R', 'E', 'C', 'A', 'P'].map(charToTile),
-  ],
-  width: 9,
-  height: 9,
-};
+const emptyGrid = (grid: Array<Array<string>>): Array<Array<String>> => {
+  return grid.map(row => row.map(s => s === "#" ?  s : " "));
+}
 
-export const emptyXword9x9: XWord = {
-  grid: [
-    [' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' '].map(charToTile),
-    ['#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', ' ', ' ', ' ', '#', '#', '#'].map(charToTile),
-    [' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' '].map(charToTile),
-    [' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' '].map(charToTile),
-  ],
-  width: 9,
-  height: 9,
-};
+export const xword7x7: XWord = {
+  "grid": mapGrid([
+    ["G", "O", "W", "#", "A", "A", "U"],
+    ["D", "R", "I", "#", "T", "R", "H"],
+    ["N", "Y", "M", "P", "H", "O", "S"],
+    ["#", "#", "P", "E", "R", "#", "#"],
+    ["M", "I", "O", "C", "E", "N", "E"],
+    ["S", "T", "L", "#", "A", "E", "A"],
+    ["U", "I", "E", "#", "T", "Z", "U"],
+  ]),
+  "width": 7,
+  "height": 7,
+  "entries": [
+    {
+      "row": 0,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 1,
+      "clue": "Playwright James or Ronald"
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 1,
+      "clue": "Eden, e.g.: Abbr."
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 2,
+      "clue": "Suffix with audit or transit"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "direction": Direction.DOWN,
+      "length": 7,
+      "number": 3,
+      "clue": "Street of the Barretts"
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 4,
+      "clue": "Track's governing org."
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "direction": Direction.DOWN,
+      "length": 7,
+      "number": 4,
+      "clue": "Pose ___ (endanger)"
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 5,
+      "clue": "Orinoco feeder"
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 6,
+      "clue": "Relatives of ers"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 7,
+      "clue": "Bacheller hero"
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 8,
+      "clue": "Abbr. for royal personages"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 7,
+      "number": 9,
+      "clue": "Lolitas"
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 10,
+      "clue": "Muscle-builder's pride"
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 11,
+      "clue": "___ usual"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 12,
+      "clue": "U.S.C. defeater in the 1988 Rose Bowl"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 7,
+      "number": 12,
+      "clue": "A Tertiary epoch"
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 13,
+      "clue": "\"What was ___ was saying?\""
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 14,
+      "clue": "Cyrano's nose"
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "direction": Direction.DOWN,
+      "length": 3,
+      "number": 15,
+      "clue": "Semisweet liqueur"
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 16,
+      "clue": "Cap initials at Busch Stadium"
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 17,
+      "clue": "Actors' org."
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 18,
+      "clue": "Turnabout, for short"
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "direction": Direction.ACROSS,
+      "length": 3,
+      "number": 19,
+      "clue": "China's Lao-___"
+    }
+  ]
+}

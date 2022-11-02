@@ -2,9 +2,24 @@ export interface XWord {
   grid: Array<Array<Tile>>;
   width: number;
   height: number;
+  entries: Array<XWordEntry>;
 }
 
 export interface Tile {
   id: string;
   char: string;
+}
+
+export enum Direction {
+  ACROSS = 'across',
+  DOWN = 'down',
+}
+
+export interface XWordEntry {
+  row: number;
+  col: number;
+  direction: Direction,
+  length: number;
+  number: number;
+  clue: String;
 }
