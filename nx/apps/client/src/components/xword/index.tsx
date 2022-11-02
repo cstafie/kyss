@@ -1,35 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import produce from 'immer';
-import {
-  DragDropContext,
-  Droppable,
-  OnDragEndResponder,
-} from '@hello-pangea/dnd';
-import styled from 'styled-components';
-import { charToTile } from '../utils';
-import { xword7x7 } from '../mocks/xword_mock_data';
-import Block from './block';
-import Cell from './cell';
-import Tile from './tile';
-import { Direction, Tile as TyleType } from '../types';
+import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
 
-interface GridContainerProps {
-  numCols: number;
-  numRows: number;
-}
+import { charToTile } from '../../utils';
+import { xword7x7 } from '../../mocks/xword_mock_data';
 
-const TILE_BAR_ID = 'tile-bar';
+import { Direction, Tile as TyleType } from '../../types';
+import Clues from './clues';
+import Grid from './grid';
+import TileBar from './tile_bar';
+import { TILE_BAR_ID } from './constants';
 
 // TODO: look into solving this using tailwind only
-const GridContainer = styled.section`
-  display: inline-grid;
-  padding: 2px;
-  gap: 2px;
-  ${({ numCols, numRows }: GridContainerProps) => `
-    grid-template-columns:  repeat(${numCols}, 48px);
-    grid-template-rows:  repeat(${numRows}, 48px);
-  `}
-`;
 
 const XWord = () => {
   const [xword, setXword] = useState(xword7x7);
@@ -146,81 +128,39 @@ const XWord = () => {
     [tileBar, xword]
   );
 
+  const acrossEntries = useMemo(
+    () => xword.entries.filter((entry) => entry.direction === Direction.ACROSS),
+    [xword.entries]
+  );
+
+  const downEntries = useMemo(
+    () => xword.entries.filter((entry) => entry.direction === Direction.DOWN),
+    [xword.entries]
+  );
+
   return (
-    <section className="flex items-center flex-col m-12">
-      <DragDropContext
-        onBeforeCapture={onBeforeCapture}
-        onBeforeDragStart={onBeforeDragStart}
-        onDragStart={onDragStart}
-        onDragUpdate={onDragUpdate}
-        onDragEnd={onDragEnd}
-      >
-        {/* // xword grid */}
-        <GridContainer
-          numCols={xword.width}
-          numRows={xword.height}
-          className="bg-black  m-6"
+    <section className="flex flex-row justify-center items-center">
+      <section className="flex items-center flex-col m-12">
+        <DragDropContext
+          onBeforeCapture={onBeforeCapture}
+          onBeforeDragStart={onBeforeDragStart}
+          onDragStart={onDragStart}
+          onDragUpdate={onDragUpdate}
+          onDragEnd={onDragEnd}
         >
-          {xword.grid.flat().map((tile, i) => {
-            const row = Math.floor(i / xword.width);
-            const col = i % xword.width;
-            const cellId = `cell-${row}-${col}`;
-
-            switch (tile.char) {
-              case '#':
-                return <Block key={cellId} />;
-              default:
-                return <Cell key={cellId} id={cellId} tile={tile} />;
-            }
-          })}
-        </GridContainer>
-
-        {/* tile bar */}
-        <Droppable droppableId={TILE_BAR_ID} direction="horizontal">
-          {(provided) => (
-            <section
-              ref={provided.innerRef}
-              className="m-6 flex border-2 border-black w-60 h-[52px]"
-              {...provided.droppableProps}
-            >
-              {tileBar.map((tile, i) => (
-                <Tile key={tile.id} tile={tile} index={i} />
-              ))}
-              {provided.placeholder}
-            </section>
-          )}
-        </Droppable>
-      </DragDropContext>
-
-      {/* clues - TODO: only filter once (use_callback)*/}
-      <section>
-        <h2>ACROSS</h2>
-        <ol>
-          <li>
-            {xword.entries
-              .filter((entry) => entry.direction === Direction.ACROSS)
-              .map((entry) => (
-                <div key={entry.clue}>
-                  {entry.number} {entry.clue}
-                </div>
-              ))}
-          </li>
-        </ol>
+          <Grid xword={xword} />
+          <TileBar tiles={tileBar} />
+        </DragDropContext>
       </section>
 
       <section>
-        <h2>DOWN</h2>
-        <ol>
-          <li>
-            {xword.entries
-              .filter((entry) => entry.direction === Direction.DOWN)
-              .map((entry) => (
-                <div key={entry.clue}>
-                  {entry.number} {entry.clue}
-                </div>
-              ))}
-          </li>
-        </ol>
+        <h2 className="font-bold text-lg">ACROSS</h2>
+        <Clues entries={acrossEntries} />
+      </section>
+
+      <section>
+        <h2 className="font-bold text-lg">DOWN</h2>
+        <Clues entries={downEntries} />
       </section>
     </section>
   );

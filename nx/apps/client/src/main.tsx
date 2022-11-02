@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './main.css';
 
 import App from './app/app';
-import XWord from './components/xword';
+import XWord from './components/xword/index';
 
 // const router = createBrowserRouter([
 //   {
