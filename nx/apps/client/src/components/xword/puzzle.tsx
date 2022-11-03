@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
 import produce from 'immer';
-import { Tile as TileType, XWord } from '../../types';
+import { Tile as TileType, XWord, XWordEntry } from '../../types';
 import { TILE_BAR_ID } from './constants';
 import { charToTile } from '../../utils';
 import Grid from './grid';
@@ -12,7 +12,8 @@ interface Props {
   setXword: (xword: XWord) => void;
   tileBar: Array<TileType>;
   setTileBar: (tileBar: Array<TileType>) => void;
-  currentCell: [number, number];
+  // currentCell: [number, number];
+  currentEntry: XWordEntry;
 }
 
 const Puzzle = ({
@@ -20,8 +21,9 @@ const Puzzle = ({
   setXword,
   tileBar,
   setTileBar,
-  currentCell,
-}: Props) => {
+  currentEntry,
+}: // currentCell,
+Props) => {
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
     /*...*/
@@ -36,6 +38,7 @@ const Puzzle = ({
     /*...*/
   }, []);
   const onDragEnd: OnDragEndResponder = useCallback(
+    // TODO: this should be a reducer
     (dropResult) => {
       const { destination, source, draggableId } = dropResult;
 
@@ -139,7 +142,8 @@ const Puzzle = ({
         onDragUpdate={onDragUpdate}
         onDragEnd={onDragEnd}
       >
-        <Grid xword={xword} />
+        {/* TODO: these should be composed so no prop drilling*/}
+        <Grid xword={xword} currentEntry={currentEntry} />
         <TileBar tiles={tileBar} />
       </DragDropContext>
     </section>

@@ -5,9 +5,11 @@ import Tile from './tile';
 interface Props {
   id: string;
   tile: TileType;
+  number: number;
+  isHighlighted: boolean;
 }
 
-const Cell = ({ id, tile }: Props) => {
+const Cell = ({ id, tile, number, isHighlighted }: Props) => {
   const isEmpty = tile.char === ' ';
 
   return (
@@ -15,9 +17,10 @@ const Cell = ({ id, tile }: Props) => {
       {(provided) => (
         <div
           ref={provided.innerRef}
-          className="bg-white "
+          className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'}`}
           {...provided.droppableProps}
         >
+          <div className="fixed">{number}</div>
           {/* only one tile per cell allowed so it will always be index 0 */}
           {!isEmpty && <Tile tile={tile} index={0} />}
           {provided.placeholder}
