@@ -18,10 +18,6 @@ push or pull model for client / server communication
 
 ## todo
 
-- generate crosswords
-
-  - use these nyt archive for words and clues: https://github.com/doshea/nyt_crosswords
-
 - game board (grid)
 
   - entering letters

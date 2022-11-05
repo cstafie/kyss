@@ -1,12 +1,25 @@
 import * as express from 'express';
-import { Message } from '@nx/api-interfaces';
+import { Server } from 'socket.io';
+import * as http from 'http';
 
 const app = express();
+const httpServer = http.createServer(app);
+const io = new Server(httpServer);
 
-const greeting: Message = { message: 'Welcome to api!' };
+io.listen(3000);
 
 app.get('/api', (req, res) => {
-  res.send(greeting);
+  console.log('api');
+  res.send('TODO');
+});
+
+app.get('/socket.io', (req, res) => {
+  console.log('socket');
+  res.send('WTF');
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
 });
 
 const port = process.env.port || 3333;

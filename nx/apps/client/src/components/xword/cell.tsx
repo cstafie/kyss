@@ -20,7 +20,7 @@ const Cell = ({ id, tile, number, isHighlighted }: Props) => {
           className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'}`}
           {...provided.droppableProps}
         >
-          <div className="fixed">{number}</div>
+          <div className="fixed text-xs pl-1">{number}</div>
           {/* only one tile per cell allowed so it will always be index 0 */}
           {!isEmpty && <Tile tile={tile} index={0} />}
           {provided.placeholder}
