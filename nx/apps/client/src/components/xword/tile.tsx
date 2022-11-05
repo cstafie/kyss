@@ -1,5 +1,5 @@
 import { Draggable } from '@hello-pangea/dnd';
-import { Tile as TileType } from '../../types';
+import { Tile as TileType } from '@nx/api-interfaces';
 
 interface Props {
   tile: TileType;

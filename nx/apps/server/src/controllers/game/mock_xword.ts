@@ -1,5 +1,4 @@
-import { XWord, Tile, Direction } from '../types';
-import { charToTile } from '../utils';
+import { XWord, Direction, Tile, charToTile } from '@nx/api-interfaces';
 
 const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {
   return grid.map((row) => row.map((s) => charToTile(s)));

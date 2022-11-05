@@ -1,17 +1,17 @@
 import { useState, useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { empty7x7 } from '../../mocks/xword_mock_data';
-
-import { Direction, Tile as TyleType } from '../../types';
-import { charToTile } from '../../utils';
+import {
+  Direction,
+  Tile as TyleType,
+  XWord,
+  charToTile,
+} from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 
-// TODO: look into solving this using tailwind only
-
 const XWord = () => {
-  const [xword, setXword] = useState(empty7x7);
+  const [xword, setXword] = useState<XWord>(empty7x7);
   const [tileBar, setTileBar] = useState<Array<TyleType>>(
     ['A', 'B', 'C', 'D', 'E'].map(charToTile)
   );

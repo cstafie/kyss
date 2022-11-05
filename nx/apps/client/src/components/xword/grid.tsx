@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Direction, XWord, XWordEntry } from '../../types';
+import { Direction, XWord, XWordEntry } from '@nx/api-interfaces';
 import Block from './block';
 import Cell from './cell';
 
@@ -9,6 +9,7 @@ interface GridContainerProps {
   numRows: number;
 }
 
+// TODO: look into solving this using tailwind only
 const GridContainer = styled.section`
   display: inline-grid;
   padding: 2px;

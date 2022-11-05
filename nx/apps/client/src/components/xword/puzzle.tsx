@@ -1,9 +1,14 @@
 import { useCallback } from 'react';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
 import produce from 'immer';
-import { Tile as TileType, XWord, XWordEntry } from '../../types';
+import {
+  Tile as TileType,
+  XWord,
+  XWordEntry,
+  charToTile,
+} from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
-import { charToTile } from '../../utils';
+
 import Grid from './grid';
 import TileBar from './tile_bar';
 

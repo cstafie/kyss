@@ -1,4 +1,4 @@
-import { XWordEntry } from '../../types';
+import { XWordEntry } from '@nx/api-interfaces';
 
 interface Props {
   entries: Array<XWordEntry>;

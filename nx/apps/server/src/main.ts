@@ -2,6 +2,7 @@ import * as express from 'express';
 import { Server } from 'socket.io';
 import * as http from 'http';
 
+// TODO: should i separate express and socket servers into separate apps?
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);
