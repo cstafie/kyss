@@ -1,20 +1,34 @@
-import XWord from '../components/xword';
+import XWord from '../components/xWord';
 import io from 'socket.io-client';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import reactUseCookie from 'react-use-cookie';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { PlayerUpdate, Tile, XWord as XWordType } from '@nx/api-interfaces';
 
 // TODO: socket server url as env variable
 const socket = io();
 
-const xword = null;
-
 export const App = () => {
-  useEffect(() => {
-    fetch('/api');
-  });
+  // useEffect(() => {
+  //   fetch('/api');
+  // }, []);
 
-  const [playerId, setPlayerId] = reactUseCookie('playerId');
+  const [xWord, setXWord] = useState<XWordType | null>(null);
+  const [tileBar, setTileBar] = useState<Array<Tile>>([]);
+
+  useEffect(() => {
+    socket.on('update', ({ xWord, tileBar }: PlayerUpdate) => {
+      setXWord(xWord);
+      setTileBar(tileBar);
+    });
+  }, []);
+
+  const updateTileBar = useCallback((updatedTileBar: Array<Tile>) => {
+    setTileBar(updatedTileBar);
+    socket.emit('update-tilebar', updatedTileBar);
+  }, []);
+
+  // const [playerId, setPlayerId] = reactUseCookie('playerId');
 
   return (
     <>
@@ -23,8 +37,20 @@ export const App = () => {
       </nav>
       <BrowserRouter>
         <Routes>
-          {xword && <Route path="/" element={<XWord xword={xword} />} />}
-          {/* <Route path="/xword" element={<XWord />} /> */}
+          {xWord && (
+            <Route
+              path="/"
+              element={
+                <XWord
+                  xWord={xWord}
+                  tileBar={tileBar}
+                  setTileBar={updateTileBar}
+                  setXWord={() => 'todo: set xword'}
+                />
+              }
+            />
+          )}
+          {/* <Route path="/xWord" element={<XWord />} /> */}
         </Routes>
       </BrowserRouter>
     </>

@@ -3,27 +3,29 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   Direction,
-  Tile as TyleType,
+  Tile as TileType,
   XWord as XWordType,
-  charToTile,
 } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 
 interface Props {
-  xword: XWordType;
+  xWord: XWordType;
+  tileBar: Array<TileType>;
+  setTileBar: (tileBar: Array<TileType>) => void;
+  setXWord: (xword: XWordType) => void;
 }
 
-const XWord = ({ xword }: Props) => {
-  // const [xword, setXword] = useState<XWord>(empty7x7);
-  const [tileBar, setTileBar] = useState<Array<TyleType>>(
-    ['A', 'B', 'C', 'D', 'E'].map(charToTile)
-  );
+const XWord = ({ xWord, tileBar, setTileBar }: Props) => {
+  // const [xWord, setXWord] = useState<XWord>(empty7x7);
+  // const [tileBar, setTileBar] = useState<Array<TileType>>(
+  //   ['A', 'B', 'C', 'D', 'E'].map(charToTile)
+  // );
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
 
   const currentEntry = useMemo(
-    () => xword.entries[currentEntryIndex],
-    [xword.entries, currentEntryIndex]
+    () => xWord.entries[currentEntryIndex],
+    [xWord.entries, currentEntryIndex]
   );
 
   // const [currentCell, setCurrentCell] = useState<[number, number]>([
@@ -34,25 +36,25 @@ const XWord = ({ xword }: Props) => {
   useHotkeys('shift+tab', (e) => {
     e.preventDefault();
     setCurrentEntryIndex(
-      (prev) => (prev - 1 + xword.entries.length) % xword.entries.length
+      (prev) => (prev - 1 + xWord.entries.length) % xWord.entries.length
     );
   });
   useHotkeys('tab', (e) => {
     e.preventDefault();
-    setCurrentEntryIndex((prev) => (prev + 1) % xword.entries.length);
+    setCurrentEntryIndex((prev) => (prev + 1) % xWord.entries.length);
   });
 
   useHotkeys('space', (e) => {
     e.preventDefault();
     setCurrentEntryIndex((prev) => {
-      const targetNumber = xword.entries[prev].number;
+      const targetNumber = xWord.entries[prev].number;
 
-      for (let i = 0; i < xword.entries.length; i++) {
+      for (let i = 0; i < xWord.entries.length; i++) {
         if (i === prev) {
           continue;
         }
 
-        if (targetNumber === xword.entries[i].number) {
+        if (targetNumber === xWord.entries[i].number) {
           return i;
         }
       }
@@ -63,20 +65,20 @@ const XWord = ({ xword }: Props) => {
   });
 
   const acrossEntries = useMemo(
-    () => xword.entries.filter((entry) => entry.direction === Direction.ACROSS),
-    [xword.entries]
+    () => xWord.entries.filter((entry) => entry.direction === Direction.ACROSS),
+    [xWord.entries]
   );
 
   const downEntries = useMemo(
-    () => xword.entries.filter((entry) => entry.direction === Direction.DOWN),
-    [xword.entries]
+    () => xWord.entries.filter((entry) => entry.direction === Direction.DOWN),
+    [xWord.entries]
   );
 
   return (
     <section className="flex flex-row justify-center items-center">
       <Puzzle
-        xword={xword}
-        setXword={() => console.log('todo: call socket')}
+        xWord={xWord}
+        setXWord={() => console.log('todo: call socket')}
         tileBar={tileBar}
         setTileBar={setTileBar}
         currentEntry={currentEntry}

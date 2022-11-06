@@ -1,4 +1,4 @@
-// let mut xword = XWord::new(
+// let mut xWord = XWord::new(
 //     7,
 //     7,
 //     vec![
@@ -56,7 +56,7 @@
 //     (10, 5),
 // ],
 
-// let mut xword = XWord::new(
+// let mut xWord = XWord::new(
 //     11,
 //     11,
 //     vec![

@@ -33,6 +33,7 @@ app.get('/api/login', (req, res) => {
 io.on('connection', (socket: Socket) => {
   console.log('a user connected');
   gameManager.newPlayer(uuidv4(), socket);
+  gameManager.updatePlayers();
 });
 
 const port = process.env.port || 3333;

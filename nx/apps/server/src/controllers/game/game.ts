@@ -1,7 +1,7 @@
 import { XWord, Tile } from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { empty7x7, xword7x7 } from './mock_xword';
+import { empty7x7, xWord7x7 } from './mock_xWord';
 
 const TILE_BAR_SIZE = 5;
 
@@ -19,15 +19,17 @@ class Entity {
 }
 
 export class Game extends Entity {
-  xword: XWord;
+  xWord: XWord;
   players: Map<string, PlayerInfo>;
   tiles: Set<Tile>;
 
   constructor() {
     super();
-    this.xword = empty7x7;
+    this.xWord = empty7x7;
     this.players = new Map();
-    this.initTiles(xword7x7.grid.flat());
+
+    // TODO: shuffle
+    this.initTiles(xWord7x7.grid.flat().filter((tile) => tile.char !== '#'));
   }
 
   initTiles(tiles: Array<Tile>) {
@@ -104,15 +106,23 @@ export class GameManager {
   }
 
   subscribeSocket(socket: Socket, playerId: string) {
-    // socket should
-    // socket.on('move', (move: GameMove) => {
-    //   this.game.makeMove(move);
-    // });
+    socket.on('update-tilebar', (tileBar: Array<Tile>) => {
+      this.game.players.get(playerId).tileBar = tileBar;
+
+      // TODO: cleaner more specific updates
+      socket.emit('update', {
+        xWord: this.game.xWord,
+        tileBar,
+      });
+    });
   }
 
   updatePlayers() {
-    for (const player in this.players.values()) {
-      console.log(player);
+    for (const player of this.players.values()) {
+      player.socket.emit('update', {
+        xWord: this.game.xWord,
+        tileBar: this.game.players.get(player.id).tileBar,
+      });
     }
   }
 }

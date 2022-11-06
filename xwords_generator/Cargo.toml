@@ -1,5 +1,5 @@
 [package]
-name = "xword-generator"
+name = "xWord-generator"
 version = "0.1.0"
 edition = "2021"
 

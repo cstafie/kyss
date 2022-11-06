@@ -21,20 +21,20 @@ const GridContainer = styled.section`
 `;
 
 interface Props {
-  xword: XWord;
+  xWord: XWord;
   currentEntry: XWordEntry;
 }
 
-const Grid = ({ xword, currentEntry }: Props) => {
+const Grid = ({ xWord, currentEntry }: Props) => {
   const numberLookUp = useMemo(() => {
     const numberMap = new Map();
-    for (const entry of xword.entries) {
+    for (const entry of xWord.entries) {
       for (let i = 0; i < entry.length; i++) {
         numberMap.set(`${entry.row}-${entry.col}`, entry.number);
       }
     }
     return numberMap;
-  }, [xword]);
+  }, [xWord]);
 
   const isCellInCurrentEntry = useCallback(
     (row: number, col: number) => {
@@ -58,13 +58,13 @@ const Grid = ({ xword, currentEntry }: Props) => {
 
   return (
     <GridContainer
-      numCols={xword.width}
-      numRows={xword.height}
+      numCols={xWord.width}
+      numRows={xWord.height}
       className="bg-black  m-6"
     >
-      {xword.grid.flat().map((tile, i) => {
-        const row = Math.floor(i / xword.width);
-        const col = i % xword.width;
+      {xWord.grid.flat().map((tile, i) => {
+        const row = Math.floor(i / xWord.width);
+        const col = i % xWord.width;
         const cellId = `cell-${row}-${col}`;
         const isHighlighted = isCellInCurrentEntry(row, col);
 

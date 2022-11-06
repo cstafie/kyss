@@ -13,8 +13,8 @@ import Grid from './grid';
 import TileBar from './tile_bar';
 
 interface Props {
-  xword: XWord;
-  setXword: (xword: XWord) => void;
+  xWord: XWord;
+  setXWord: (xWord: XWord) => void;
   tileBar: Array<TileType>;
   setTileBar: (tileBar: Array<TileType>) => void;
   // currentCell: [number, number];
@@ -22,8 +22,8 @@ interface Props {
 }
 
 const Puzzle = ({
-  xword,
-  setXword,
+  xWord,
+  setXWord,
   tileBar,
   setTileBar,
   currentEntry,
@@ -87,8 +87,8 @@ Props) => {
 
         const [_, row, col] = destination.droppableId.split('-').map(Number);
 
-        setXword(
-          produce(xword, (draft) => {
+        setXWord(
+          produce(xWord, (draft) => {
             draft.grid[row][col] = tileBar[si];
           })
         );
@@ -103,8 +103,8 @@ Props) => {
         const [_d, dRow, dCol] = destination.droppableId.split('-').map(Number);
         const [_s, sRow, sCol] = source.droppableId.split('-').map(Number);
 
-        setXword(
-          produce(xword, (draft) => {
+        setXWord(
+          produce(xWord, (draft) => {
             [draft.grid[dRow][dCol], draft.grid[sRow][sCol]] = [
               draft.grid[sRow][sCol],
               draft.grid[dRow][dCol],
@@ -123,11 +123,11 @@ Props) => {
         const [_, row, col] = source.droppableId.split('-').map(Number);
 
         const newTileBar = [...tileBar];
-        newTileBar.splice(di, 0, xword.grid[row][col]);
+        newTileBar.splice(di, 0, xWord.grid[row][col]);
         setTileBar(newTileBar);
 
-        setXword(
-          produce(xword, (draft) => {
+        setXWord(
+          produce(xWord, (draft) => {
             draft.grid[row][col] = charToTile(' ');
           })
         );
@@ -135,7 +135,7 @@ Props) => {
         return;
       }
     },
-    [tileBar, xword, setTileBar, setXword]
+    [tileBar, xWord, setTileBar, setXWord]
   );
 
   return (
@@ -148,7 +148,7 @@ Props) => {
         onDragEnd={onDragEnd}
       >
         {/* TODO: these should be composed so no prop drilling*/}
-        <Grid xword={xword} currentEntry={currentEntry} />
+        <Grid xWord={xWord} currentEntry={currentEntry} />
         <TileBar tiles={tileBar} />
       </DragDropContext>
     </section>

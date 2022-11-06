@@ -7,7 +7,7 @@ import {
   emptyGrid,
 } from '@nx/api-interfaces';
 
-export const xword7x7: XWord = {
+export const xWord7x7: XWord = {
   grid: mapGrid([
     ['G', 'O', 'W', '#', 'A', 'A', 'U'],
     ['D', 'R', 'I', '#', 'T', 'R', 'H'],
@@ -200,7 +200,7 @@ export const xword7x7: XWord = {
 };
 
 export const empty7x7: XWord = {
-  ...xword7x7,
+  ...xWord7x7,
   grid: mapGrid(
     emptyGrid([
       ['G', 'O', 'W', '#', 'A', 'A', 'U'],

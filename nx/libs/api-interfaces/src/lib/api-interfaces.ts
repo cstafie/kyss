@@ -23,3 +23,8 @@ export interface XWordEntry {
   number: number;
   clue: string;
 }
+
+export interface PlayerUpdate {
+  xWord: XWord;
+  tileBar: Array<Tile>;
+}

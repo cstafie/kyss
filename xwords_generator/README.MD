@@ -1,6 +1,6 @@
 # Crossword Generator
 
-takes crossword data from `xwords_data` directory and tries to generate crosswords
+takes crossword data from `xWords_data` directory and tries to generate crosswords
 
 ## TODO
 

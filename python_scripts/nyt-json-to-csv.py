@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 
 def generate_json_paths(year):
-    year_path = 'nyt_xwords/'+str(year)+'/*'
+    year_path = 'nyt_xWords/'+str(year)+'/*'
     month_paths = glob.glob(year_path)
 
     json_paths = []
@@ -40,4 +40,4 @@ df = pd.DataFrame()
 df['words'] = answers
 df['clues'] = clues
 
-csv_data = df.to_csv("xwords_data/{}_to_{}.csv".format(start_year, end_year))
+csv_data = df.to_csv("xWords_data/{}_to_{}.csv".format(start_year, end_year))
