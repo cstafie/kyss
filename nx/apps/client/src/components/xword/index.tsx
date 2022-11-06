@@ -4,14 +4,18 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import {
   Direction,
   Tile as TyleType,
-  XWord,
+  XWord as XWordType,
   charToTile,
 } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 
-const XWord = () => {
-  const [xword, setXword] = useState<XWord>(empty7x7);
+interface Props {
+  xword: XWordType;
+}
+
+const XWord = ({ xword }: Props) => {
+  // const [xword, setXword] = useState<XWord>(empty7x7);
   const [tileBar, setTileBar] = useState<Array<TyleType>>(
     ['A', 'B', 'C', 'D', 'E'].map(charToTile)
   );
@@ -72,7 +76,7 @@ const XWord = () => {
     <section className="flex flex-row justify-center items-center">
       <Puzzle
         xword={xword}
-        setXword={setXword}
+        setXword={() => console.log('todo: call socket')}
         tileBar={tileBar}
         setTileBar={setTileBar}
         currentEntry={currentEntry}

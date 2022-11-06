@@ -1,12 +1,11 @@
-import { XWord, Direction, Tile, charToTile } from '@nx/api-interfaces';
-
-const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {
-  return grid.map((row) => row.map((s) => charToTile(s)));
-};
-
-const emptyGrid = (grid: Array<Array<string>>): Array<Array<string>> => {
-  return grid.map((row) => row.map((s) => (s === '#' ? s : ' ')));
-};
+import {
+  XWord,
+  Direction,
+  Tile,
+  charToTile,
+  mapGrid,
+  emptyGrid,
+} from '@nx/api-interfaces';
 
 export const xword7x7: XWord = {
   grid: mapGrid([
