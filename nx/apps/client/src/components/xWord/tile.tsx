@@ -4,11 +4,16 @@ import { Tile as TileType } from '@nx/api-interfaces';
 interface Props {
   tile: TileType;
   index: number;
+  isDragDisabled: boolean;
 }
 
-const Tile = ({ tile, index }: Props) => {
+const Tile = ({ tile, index, isDragDisabled }: Props) => {
   return (
-    <Draggable draggableId={tile.id} index={index}>
+    <Draggable
+      draggableId={tile.id}
+      index={index}
+      isDragDisabled={isDragDisabled}
+    >
       {(provided) => (
         <div
           ref={provided.innerRef}

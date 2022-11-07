@@ -1,7 +1,13 @@
-import { XWord, Tile, sameXWord, GameUpdate } from '@nx/api-interfaces';
+import {
+  XWord,
+  Tile,
+  sameXWord,
+  GameUpdate,
+  shuffleArray,
+} from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { empty7x7, xWord7x7 } from './mock_xWord';
+import { empty5x5, xWord5x5 } from './mock_xWord';
 
 const TILE_BAR_SIZE = 5;
 
@@ -25,14 +31,15 @@ export class Game extends Entity {
 
   constructor() {
     super();
-    this.xWord = empty7x7;
+    this.xWord = empty5x5;
     this.players = new Map();
 
     // TODO: shuffle
-    this.initTiles(xWord7x7.grid.flat().filter((tile) => tile.char !== '#'));
+    this.initTiles(xWord5x5.grid.flat().filter((tile) => tile.char !== '#'));
   }
 
   initTiles(tiles: Array<Tile>) {
+    shuffleArray<Tile>(tiles);
     this.tiles = new Set(tiles);
   }
 
@@ -54,6 +61,23 @@ export class Game extends Entity {
     }
 
     return tileBar;
+  }
+
+  fillTileBar(tileBar) {
+    if (tileBar.length >= TILE_BAR_SIZE) {
+      return;
+    }
+
+    const tileIterator = this.tiles.values();
+    const tileIteratorResult = tileIterator.next();
+
+    if (tileIteratorResult.done) {
+      return;
+    }
+
+    const tile = tileIteratorResult.value;
+    tileBar.push(tile);
+    this.tiles.delete(tile);
   }
 
   addPlayer(playerId: string) {
@@ -107,7 +131,7 @@ export class GameManager {
 
   subscribeSocket(socket: Socket, playerId: string) {
     socket.on('update', ({ tileBar, xWord }: GameUpdate) => {
-      if (!sameXWord(xWord7x7, xWord)) {
+      if (!sameXWord(xWord5x5, xWord)) {
         return socket.emit('update', {
           xWord: this.game.xWord,
           tileBar: this.game.players.get(playerId).tileBar,
@@ -115,6 +139,9 @@ export class GameManager {
       }
 
       this.game.xWord = xWord;
+
+      this.game.fillTileBar(tileBar);
+
       this.game.players.get(playerId).tileBar = tileBar;
       this.updatePlayers();
     });

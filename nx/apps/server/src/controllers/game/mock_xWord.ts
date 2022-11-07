@@ -1,11 +1,111 @@
-import {
-  XWord,
-  Direction,
-  Tile,
-  charToTile,
-  mapGrid,
-  emptyGrid,
-} from '@nx/api-interfaces';
+import { XWord, Direction, mapGrid, emptyGrid } from '@nx/api-interfaces';
+
+export const xWord5x5: XWord = {
+  grid: mapGrid([
+    ['A', 'U', 'D', 'R', 'A'],
+    ['S', 'M', 'E', 'A', 'R'],
+    ['A', 'B', 'A', 'N', 'D'],
+    ['F', 'E', 'R', 'D', 'E'],
+    ['E', 'R', 'S', 'I', 'N'],
+  ]),
+  width: 5,
+  height: 5,
+  entries: [
+    {
+      row: 0,
+      col: 0,
+      direction: Direction.ACROSS,
+      length: 5,
+      number: 1,
+      clue: 'Actress Lindley of "Three\'s Company"',
+    },
+    {
+      row: 0,
+      col: 0,
+      direction: Direction.DOWN,
+      length: 5,
+      number: 1,
+      clue: 'In ___ place',
+    },
+    {
+      row: 0,
+      col: 1,
+      direction: Direction.DOWN,
+      length: 5,
+      number: 2,
+      clue: "It's burnt or raw",
+    },
+    {
+      row: 0,
+      col: 2,
+      direction: Direction.DOWN,
+      length: 5,
+      number: 3,
+      clue: 'Darlings',
+    },
+    {
+      row: 0,
+      col: 3,
+      direction: Direction.DOWN,
+      length: 5,
+      number: 4,
+      clue: '"Amazing" debunker of the paranormal',
+    },
+    {
+      row: 0,
+      col: 4,
+      direction: Direction.DOWN,
+      length: 5,
+      number: 5,
+      clue: '"As You Like It" site',
+    },
+    {
+      row: 1,
+      col: 0,
+      direction: Direction.ACROSS,
+      length: 5,
+      number: 6,
+      clue: 'Sully',
+    },
+    {
+      row: 2,
+      col: 0,
+      direction: Direction.ACROSS,
+      length: 5,
+      number: 7,
+      clue: '"___ of angels . . . "',
+    },
+    {
+      row: 3,
+      col: 0,
+      direction: Direction.ACROSS,
+      length: 5,
+      number: 8,
+      clue: 'Composer Grofé',
+    },
+    {
+      row: 4,
+      col: 0,
+      direction: Direction.ACROSS,
+      length: 5,
+      number: 9,
+      clue: 'Abrading action',
+    },
+  ],
+};
+
+export const empty5x5: XWord = {
+  ...xWord5x5,
+  grid: mapGrid(
+    emptyGrid([
+      ['A', 'U', 'D', 'R', 'A'],
+      ['S', 'M', 'E', 'A', 'R'],
+      ['A', 'B', 'A', 'N', 'D'],
+      ['F', 'E', 'R', 'D', 'E'],
+      ['E', 'R', 'S', 'I', 'N'],
+    ])
+  ),
+};
 
 export const xWord7x7: XWord = {
   grid: mapGrid([
