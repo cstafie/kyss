@@ -6,6 +6,7 @@ import {
   XWord,
   XWordEntry,
   charToTile,
+  GameUpdate,
 } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
 
@@ -14,19 +15,17 @@ import TileBar from './tile_bar';
 
 interface Props {
   xWord: XWord;
-  setXWord: (xWord: XWord) => void;
   tileBar: Array<TileType>;
-  setTileBar: (tileBar: Array<TileType>) => void;
   // currentCell: [number, number];
   currentEntry: XWordEntry;
+  updatePuzzle: (gameUpdate: GameUpdate) => void;
 }
 
 const Puzzle = ({
   xWord,
-  setXWord,
   tileBar,
-  setTileBar,
   currentEntry,
+  updatePuzzle,
 }: // currentCell,
 Props) => {
   // using useCallback is optional
@@ -70,7 +69,10 @@ Props) => {
         newTileBar.splice(si, 1);
         newTileBar.splice(di, 0, tileBar[si]);
 
-        setTileBar(newTileBar);
+        updatePuzzle({
+          xWord,
+          tileBar: newTileBar,
+        });
         return;
       }
 
@@ -83,59 +85,63 @@ Props) => {
 
         // remove value from tile-bar
         newTileBar.splice(si, 1);
-        setTileBar(newTileBar);
 
         const [_, row, col] = destination.droppableId.split('-').map(Number);
+        const newXword = produce(xWord, (draft) => {
+          draft.grid[row][col] = tileBar[si];
+        });
 
-        setXWord(
-          produce(xWord, (draft) => {
-            draft.grid[row][col] = tileBar[si];
-          })
-        );
+        updatePuzzle({
+          xWord: newXword,
+          tileBar: newTileBar,
+        });
+
         return;
       }
+
+      // TODO: this code will be useful in a different game mode
 
       // cell to cell
-      if (
-        source.droppableId !== TILE_BAR_ID &&
-        destination.droppableId !== TILE_BAR_ID
-      ) {
-        const [_d, dRow, dCol] = destination.droppableId.split('-').map(Number);
-        const [_s, sRow, sCol] = source.droppableId.split('-').map(Number);
+      // if (
+      //   source.droppableId !== TILE_BAR_ID &&
+      //   destination.droppableId !== TILE_BAR_ID
+      // ) {
+      //   const [_d, dRow, dCol] = destination.droppableId.split('-').map(Number);
+      //   const [_s, sRow, sCol] = source.droppableId.split('-').map(Number);
 
-        setXWord(
-          produce(xWord, (draft) => {
-            [draft.grid[dRow][dCol], draft.grid[sRow][sCol]] = [
-              draft.grid[sRow][sCol],
-              draft.grid[dRow][dCol],
-            ];
-          })
-        );
+      //   setXWord(
+      //     produce(xWord, (draft) => {
+      //       [draft.grid[dRow][dCol], draft.grid[sRow][sCol]] = [
+      //         draft.grid[sRow][sCol],
+      //         draft.grid[dRow][dCol],
+      //       ];
+      //     })
+      //   );
 
-        return;
-      }
+      //   return;
+      // }
 
-      // cell to tile bar
-      if (
-        source.droppableId !== TILE_BAR_ID &&
-        destination.droppableId === TILE_BAR_ID
-      ) {
-        const [_, row, col] = source.droppableId.split('-').map(Number);
+      // // cell to tile bar
+      // if (
+      //   source.droppableId !== TILE_BAR_ID &&
+      //   destination.droppableId === TILE_BAR_ID
+      // ) {
+      //   const [_, row, col] = source.droppableId.split('-').map(Number);
 
-        const newTileBar = [...tileBar];
-        newTileBar.splice(di, 0, xWord.grid[row][col]);
-        setTileBar(newTileBar);
+      //   const newTileBar = [...tileBar];
+      //   newTileBar.splice(di, 0, xWord.grid[row][col]);
+      //   setTileBar(newTileBar);
 
-        setXWord(
-          produce(xWord, (draft) => {
-            draft.grid[row][col] = charToTile(' ');
-          })
-        );
+      //   setXWord(
+      //     produce(xWord, (draft) => {
+      //       draft.grid[row][col] = charToTile(' ');
+      //     })
+      //   );
 
-        return;
-      }
+      //   return;
+      // }
     },
-    [tileBar, xWord, setTileBar, setXWord]
+    [tileBar, xWord, updatePuzzle]
   );
 
   return (

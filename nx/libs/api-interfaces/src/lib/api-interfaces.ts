@@ -24,7 +24,7 @@ export interface XWordEntry {
   clue: string;
 }
 
-export interface PlayerUpdate {
+export interface GameUpdate {
   xWord: XWord;
   tileBar: Array<Tile>;
 }

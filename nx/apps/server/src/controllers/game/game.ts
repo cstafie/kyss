@@ -1,4 +1,4 @@
-import { XWord, Tile } from '@nx/api-interfaces';
+import { XWord, Tile, sameXWord, GameUpdate } from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { empty7x7, xWord7x7 } from './mock_xWord';
@@ -106,14 +106,17 @@ export class GameManager {
   }
 
   subscribeSocket(socket: Socket, playerId: string) {
-    socket.on('update-tilebar', (tileBar: Array<Tile>) => {
-      this.game.players.get(playerId).tileBar = tileBar;
+    socket.on('update', ({ tileBar, xWord }: GameUpdate) => {
+      if (!sameXWord(xWord7x7, xWord)) {
+        return socket.emit('update', {
+          xWord: this.game.xWord,
+          tileBar: this.game.players.get(playerId).tileBar,
+        });
+      }
 
-      // TODO: cleaner more specific updates
-      socket.emit('update', {
-        xWord: this.game.xWord,
-        tileBar,
-      });
+      this.game.xWord = xWord;
+      this.game.players.get(playerId).tileBar = tileBar;
+      this.updatePlayers();
     });
   }
 

@@ -3,6 +3,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   Direction,
+  GameUpdate,
   Tile as TileType,
   XWord as XWordType,
 } from '@nx/api-interfaces';
@@ -12,11 +13,10 @@ import Puzzle from './puzzle';
 interface Props {
   xWord: XWordType;
   tileBar: Array<TileType>;
-  setTileBar: (tileBar: Array<TileType>) => void;
-  setXWord: (xword: XWordType) => void;
+  updateGame: (gameUpdate: GameUpdate) => void;
 }
 
-const XWord = ({ xWord, tileBar, setTileBar }: Props) => {
+const XWord = ({ xWord, tileBar, updateGame }: Props) => {
   // const [xWord, setXWord] = useState<XWord>(empty7x7);
   // const [tileBar, setTileBar] = useState<Array<TileType>>(
   //   ['A', 'B', 'C', 'D', 'E'].map(charToTile)
@@ -78,9 +78,8 @@ const XWord = ({ xWord, tileBar, setTileBar }: Props) => {
     <section className="flex flex-row justify-center items-center">
       <Puzzle
         xWord={xWord}
-        setXWord={() => console.log('todo: call socket')}
         tileBar={tileBar}
-        setTileBar={setTileBar}
+        updatePuzzle={updateGame}
         currentEntry={currentEntry}
         // currentCell={current}
       />
