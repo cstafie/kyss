@@ -32,6 +32,9 @@ app.get('/api/login', (req, res) => {
 
 io.on('connection', (socket: Socket) => {
   console.log('a user connected');
+
+  // todo: maybe insert a socket manager layer
+
   gameManager.newPlayer(uuidv4(), socket);
   gameManager.updatePlayers();
 });

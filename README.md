@@ -4,6 +4,8 @@
 
 ### overall
 
+- address todos in code
+
 - points system
 - remember browser / user name (using cookies)
 - deploy to gcp (or anywhere else if that doesn't work)

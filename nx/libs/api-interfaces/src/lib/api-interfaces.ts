@@ -28,3 +28,8 @@ export interface GameUpdate {
   xWord: XWord;
   tileBar: Array<Tile>;
 }
+
+export interface User {
+  id: string;
+  name: string;
+}

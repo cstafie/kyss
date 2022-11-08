@@ -4,6 +4,7 @@ import {
   sameXWord,
   GameUpdate,
   shuffleArray,
+  User,
 } from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
@@ -130,21 +131,28 @@ export class GameManager {
   }
 
   subscribeSocket(socket: Socket, playerId: string) {
-    socket.on('update', ({ tileBar, xWord }: GameUpdate) => {
-      if (!sameXWord(xWord5x5, xWord)) {
-        return socket.emit('update', {
-          xWord: this.game.xWord,
-          tileBar: this.game.players.get(playerId).tileBar,
-        });
+    socket.on(
+      'update',
+      ({ user, gameUpdate }: { user: User; gameUpdate: GameUpdate }) => {
+        const { tileBar, xWord } = gameUpdate;
+
+        console.log(user);
+
+        if (!sameXWord(xWord5x5, xWord)) {
+          return socket.emit('update', {
+            xWord: this.game.xWord,
+            tileBar: this.game.players.get(playerId).tileBar,
+          });
+        }
+
+        this.game.xWord = xWord;
+
+        this.game.fillTileBar(tileBar);
+
+        this.game.players.get(playerId).tileBar = tileBar;
+        this.updatePlayers();
       }
-
-      this.game.xWord = xWord;
-
-      this.game.fillTileBar(tileBar);
-
-      this.game.players.get(playerId).tileBar = tileBar;
-      this.updatePlayers();
-    });
+    );
   }
 
   updatePlayers() {

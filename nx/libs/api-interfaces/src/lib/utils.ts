@@ -35,3 +35,30 @@ export function shuffleArray<T>(array: Array<T>) {
     array[j] = temp;
   }
 }
+
+export function random(n: number) {
+  return Math.floor(Math.random() * n);
+}
+
+export function getNRandom<T>(a: T[], n: number = a.length): Array<T> {
+  const aCopy = a.slice();
+  const nRandom: Array<T> = [];
+
+  for (let i = 0; i < n; i++) {
+    const chosenIndex = random(aCopy.length);
+    const lastIndex = aCopy.length - 1;
+    // swap
+    [aCopy[lastIndex], aCopy[chosenIndex]] = [
+      aCopy[chosenIndex],
+      aCopy[lastIndex],
+    ];
+
+    if (aCopy.length === 0) {
+      break;
+    }
+
+    nRandom.push(aCopy.pop() as T);
+  }
+
+  return nRandom;
+}
