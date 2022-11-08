@@ -1,28 +1,24 @@
-# kyss
-
-## what language / frame work to use?
-
-let's do this in TypeScript / React
-
-## what do we want to build?
-
-- no accounts
-- play from 2 different computers remotely
-
-client code computer 1 & 2
-which talks to the server that has the shared state of the game
-
-## decide
-
-push or pull model for client / server communication
+# xword game
 
 ## todo
 
-- game board (grid)
+### overall
 
-  - entering letters
-  - giving players letters
+- points system
+- remember browser / user name (using cookies)
+- deploy to gcp (or anywhere else if that doesn't work)
+- filter out bad clues
+- get more recent clues
 
-- game logic
-  - turns
-  - points
+### front-end
+
+- fix clue switching using tab and space keys
+- add handle click
+- add mobile view
+
+### back-end
+
+- setup a db
+- store generated xwords in db
+- store word / clue data in db
+- transfer existing systems to query db

@@ -31,16 +31,6 @@ export const App = () => {
     socket.emit('update', gameUpdate);
   }, []);
 
-  // const updateTileBar = useCallback((updatedTileBar: Array<Tile>) => {
-  //   setTileBar(updatedTileBar);
-  //   socket.emit('update-tilebar', updatedTileBar);
-  // }, []);
-
-  // const updateXWord = useCallback((updatedXWord: XWordType) => {
-  //   setXWord(updatedXWord);
-  //   socket.emit('update-xword', updatedXWord);
-  // }, []);
-
   // const [playerId, setPlayerId] = reactUseCookie('playerId');
 
   return (
