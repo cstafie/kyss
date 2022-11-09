@@ -7,7 +7,8 @@ import {
   User,
 } from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
+import Entity from '../entity/entity';
+import Player from '../player/player';
 import { empty5x5, xWord5x5 } from './mock_xWord';
 
 const TILE_BAR_SIZE = 5;
@@ -17,23 +18,17 @@ interface PlayerInfo {
   score: number;
 }
 
-class Entity {
-  id: string;
-
-  constructor() {
-    this.id = uuidv4();
-  }
-}
-
 export class Game extends Entity {
   xWord: XWord;
   players: Map<string, PlayerInfo>;
   tiles: Set<Tile>;
+  log: Array<string>;
 
   constructor() {
     super();
     this.xWord = empty5x5;
     this.players = new Map();
+    this.log = [];
 
     // TODO: shuffle
     this.initTiles(xWord5x5.grid.flat().filter((tile) => tile.char !== '#'));
@@ -90,77 +85,5 @@ export class Game extends Entity {
 
   removePlayer(playerId: string) {
     this.players.delete(playerId);
-  }
-}
-
-export class Player extends Entity {
-  name: string;
-  socket: Socket;
-
-  constructor(name: string, socket: Socket) {
-    super();
-    this.name = name;
-    this.socket = socket;
-  }
-}
-
-export class GameManager {
-  // games: Map<string, Game>;
-  game: Game;
-  players: Map<string, Player>;
-
-  constructor() {
-    // this.games = new Map();
-    this.game = new Game();
-    this.players = new Map();
-  }
-
-  // newGame(): Game {
-  //   const game = new Game();
-  //   this.games.set(game.id, game);
-  //   return game;
-  // }
-
-  newPlayer(name: string, socket: Socket): Player {
-    const player = new Player(name, socket);
-    this.players.set(player.id, player);
-    this.game.addPlayer(player.id);
-
-    this.subscribeSocket(socket, player.id);
-    return player;
-  }
-
-  subscribeSocket(socket: Socket, playerId: string) {
-    socket.on(
-      'update',
-      ({ user, gameUpdate }: { user: User; gameUpdate: GameUpdate }) => {
-        const { tileBar, xWord } = gameUpdate;
-
-        console.log(user);
-
-        if (!sameXWord(xWord5x5, xWord)) {
-          return socket.emit('update', {
-            xWord: this.game.xWord,
-            tileBar: this.game.players.get(playerId).tileBar,
-          });
-        }
-
-        this.game.xWord = xWord;
-
-        this.game.fillTileBar(tileBar);
-
-        this.game.players.get(playerId).tileBar = tileBar;
-        this.updatePlayers();
-      }
-    );
-  }
-
-  updatePlayers() {
-    for (const player of this.players.values()) {
-      player.socket.emit('update', {
-        xWord: this.game.xWord,
-        tileBar: this.game.players.get(player.id).tileBar,
-      });
-    }
   }
 }
