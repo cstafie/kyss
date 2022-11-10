@@ -1,7 +1,6 @@
 import XWord from '../screens/xWord';
 import io from 'socket.io-client';
-import { useCallback, useEffect, useState, SetStateAction } from 'react';
-import reactUseCookie from 'react-use-cookie';
+import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { GameUpdate, Tile, XWord as XWordType } from '@nx/api-interfaces';
 import { useAuthContext } from '../contexts/auth';
@@ -18,8 +17,17 @@ export const App = () => {
 
   const { user } = useAuthContext();
 
+  console.log(user);
+
   const [xWord, setXWord] = useState<XWordType | null>(null);
   const [tileBar, setTileBar] = useState<Array<Tile>>([]);
+
+  useEffect(() => {
+    socket.emit('join-server', {
+      id: user.id,
+      name: user.name,
+    });
+  }, [user]);
 
   useEffect(() => {
     socket.on('update', ({ xWord, tileBar }: GameUpdate) => {

@@ -2,7 +2,6 @@ import * as express from 'express';
 import { Server, Socket } from 'socket.io';
 import * as http from 'http';
 import * as cookieParser from 'cookie-parser';
-import { v4 as uuidv4 } from 'uuid';
 
 import Player from './controllers/player/player';
 import GameManager from './controllers/game_manager/game_manager';
@@ -30,11 +29,13 @@ app.get('/api/login', (req, res) => {
 io.on('connection', (socket: Socket) => {
   console.log('a user connected');
 
-  // todo: maybe insert a socket manager layer
-
   socket.on('join-server', ({ id, name }) => {
-    const newPlayer = new Player(name, socket, id);
-    gameManager.playerJoin(newPlayer);
+    const player = new Player(name, socket, id);
+    gameManager.playerJoin(player);
+
+    socket.on('disconnect', () => {
+      gameManager.playerLeave(player);
+    });
   });
 });
 

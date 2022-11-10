@@ -1,13 +1,32 @@
+import e = require('express');
 import { Game } from '../game/game';
 import Player from '../player/player';
+
+/*
+player actions
+- join-server (happens implicitly)
+- leave server (due to disconnect or any other reason)
+- create-game 
+- join-game
+- update-game
+- leave game 
+*/
+
+/* 
+server events
+- game-updated
+- server-updated
+*/
 
 export class GameManager {
   games: Map<string, Game>;
   players: Map<string, Player>;
+  disconnectedPlayers: Map<string, Player>;
 
   constructor() {
     this.games = new Map();
     this.players = new Map();
+    this.disconnectedPlayers = new Map();
   }
 
   newGame(): Game {
@@ -19,6 +38,16 @@ export class GameManager {
   playerJoin(player: Player) {
     this.players.set(player.id, player);
 
+    if (this.disconnectedPlayers.has(player.id)) {
+      console.log(`${player.name} rejoined the server`);
+    } else {
+      console.log(`${player.name} joined the server`);
+    }
+
+    // TODO: check if they were disconnected
+    // - remove them from disconnect map
+    // - if they have an ongoing game then reconnect them to that game
+
     player.socket.on('join-game', (gameId) => {
       const game = this.games.get(gameId);
 
@@ -27,6 +56,13 @@ export class GameManager {
         player.socket.emit('join-game', () => 'TODO: join-game');
       }
     });
+  }
+
+  playerLeave(player: Player) {
+    console.log(`${player.name} left the server`);
+
+    this.disconnectedPlayers.set(player.id, player);
+    this.players.delete(player.id);
   }
 
   // subscribeSocket(socket: Socket, playerId: string) {
