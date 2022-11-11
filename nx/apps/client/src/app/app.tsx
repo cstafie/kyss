@@ -6,9 +6,8 @@ import { GameUpdate, Tile, XWord as XWordType } from '@nx/api-interfaces';
 import { useAuthContext } from '../contexts/auth';
 
 // TODO: socket server url as env variable
+// TODO: we probably need a socket
 const socket = io();
-
-// TODO: we probably need a socket and login context
 
 export const App = () => {
   // useEffect(() => {
@@ -17,7 +16,7 @@ export const App = () => {
 
   const { user } = useAuthContext();
 
-  console.log(user);
+  const [games, setGames] = useState([]);
 
   const [xWord, setXWord] = useState<XWordType | null>(null);
   const [tileBar, setTileBar] = useState<Array<Tile>>([]);
@@ -27,7 +26,9 @@ export const App = () => {
       id: user.id,
       name: user.name,
     });
-  }, [user]);
+
+    socket.on('server-update', ({ games }) => {});
+  });
 
   useEffect(() => {
     socket.on('update', ({ xWord, tileBar }: GameUpdate) => {
@@ -57,9 +58,10 @@ export const App = () => {
       </nav>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Games games={games} />} />
           {xWord && (
             <Route
-              path="/"
+              path="/xword"
               element={
                 <XWord
                   xWord={xWord}

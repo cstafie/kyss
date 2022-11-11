@@ -1,14 +1,5 @@
-import {
-  XWord,
-  Tile,
-  sameXWord,
-  GameUpdate,
-  shuffleArray,
-  User,
-} from '@nx/api-interfaces';
-import { Socket } from 'socket.io';
+import { XWord, Tile, shuffleArray } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
-import Player from '../player/player';
 import { empty5x5, xWord5x5 } from './mock_xWord';
 
 const TILE_BAR_SIZE = 5;

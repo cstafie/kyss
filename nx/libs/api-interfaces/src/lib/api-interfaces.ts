@@ -33,3 +33,9 @@ export interface User {
   id: string;
   name: string;
 }
+
+export interface Game {
+  createdAt: Date;
+  name: string;
+  id: string;
+}

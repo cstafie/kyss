@@ -1,4 +1,3 @@
-import e = require('express');
 import { Game } from '../game/game';
 import Player from '../player/player';
 
@@ -14,8 +13,8 @@ player actions
 
 /* 
 server events
-- game-updated
-- server-updated
+- game-update
+- server-update
 */
 
 export class GameManager {
@@ -35,6 +34,7 @@ export class GameManager {
     return game;
   }
 
+  // TODO: ensure this is idempotent
   playerJoin(player: Player) {
     this.players.set(player.id, player);
 
@@ -58,6 +58,7 @@ export class GameManager {
     });
   }
 
+  // TODO: ensure this is idempotent
   playerLeave(player: Player) {
     console.log(`${player.name} left the server`);
 

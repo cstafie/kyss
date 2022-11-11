@@ -27,7 +27,7 @@ app.get('/api/login', (req, res) => {
 });
 
 io.on('connection', (socket: Socket) => {
-  console.log('a user connected');
+  console.log(`user connected with socket id: ${socket.id}`);
 
   socket.on('join-server', ({ id, name }) => {
     const player = new Player(name, socket, id);

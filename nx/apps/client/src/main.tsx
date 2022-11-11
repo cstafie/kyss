@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+// import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './app/app';
 import { AuthContextProvider } from './contexts/auth';
@@ -9,9 +9,9 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <StrictMode>
-    <AuthContextProvider>
-      <App />
-    </AuthContextProvider>
-  </StrictMode>
+  // <StrictMode> // TODO: test with strict mode
+  <AuthContextProvider>
+    <App />
+  </AuthContextProvider>
+  // </StrictMode>
 );
