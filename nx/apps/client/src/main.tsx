@@ -2,6 +2,7 @@
 import * as ReactDOM from 'react-dom/client';
 import App from './app/app';
 import { AuthContextProvider } from './contexts/auth';
+import { SocketContextProvider } from './contexts/socket';
 import './main.css';
 
 const root = ReactDOM.createRoot(
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 root.render(
   // <StrictMode> // TODO: test with strict mode
   <AuthContextProvider>
-    <App />
+    <SocketContextProvider>
+      <App />
+    </SocketContextProvider>
   </AuthContextProvider>
   // </StrictMode>
 );

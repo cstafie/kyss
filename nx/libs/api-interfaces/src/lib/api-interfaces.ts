@@ -38,4 +38,13 @@ export interface Game {
   createdAt: Date;
   name: string;
   id: string;
+  gameState: GameState;
 }
+
+const GameState = {
+  waitingToStart: 'waiting-to-start',
+  inProgress: 'in-progress',
+  complete: 'complete',
+} as const;
+
+export type GameState = typeof GameState[keyof typeof GameState];

@@ -18,7 +18,7 @@ interface Props {
   tileBar: Array<TileType>;
   // currentCell: [number, number];
   currentEntry: XWordEntry;
-  updatePuzzle: (gameUpdate: GameUpdate) => void;
+  updatePuzzle: (xWord: XWord) => void;
 }
 
 const Puzzle = ({

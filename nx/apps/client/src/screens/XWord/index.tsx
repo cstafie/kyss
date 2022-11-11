@@ -3,7 +3,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   Direction,
-  GameUpdate,
   Tile as TileType,
   XWord as XWordType,
 } from '@nx/api-interfaces';
@@ -13,7 +12,7 @@ import Puzzle from './puzzle';
 interface Props {
   xWord: XWordType;
   tileBar: Array<TileType>;
-  updateGame: (gameUpdate: GameUpdate) => void;
+  updateGame: (XWord: XWordType) => void;
 }
 
 const XWord = ({ xWord, tileBar, updateGame }: Props) => {

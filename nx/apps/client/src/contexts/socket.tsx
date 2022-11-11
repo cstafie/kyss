@@ -1,53 +1,77 @@
-import { Game, GameUpdate } from '@nx/api-interfaces';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { Game, GameUpdate, Tile, XWord } from '@nx/api-interfaces';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
+import io from 'socket.io-client';
+import { useAuthContext } from './auth';
 
 interface Socket {
-  createGame: () => void;
-  updateGame: (gameUpdate: GameUpdate) => void;
+  createGame: (gameName: string) => void;
+  updateGame: (xWord: XWord) => void;
   games: Array<Game>;
+  xWord: XWord | null;
+  tileBar: Array<Tile>;
 }
 
 const SocketContext = createContext<Socket>({
-  createGame: () => console.error('No matching provider for SocketContext'),
-  updateGame: () => console.error('No matching provider for SocketContext'),
+  createGame: (gameName: string) =>
+    console.error('No matching provider for SocketContext'),
+  updateGame: (xWord: XWord) =>
+    console.error('No matching provider for SocketContext'),
+  xWord: null,
+  games: [],
+  tileBar: [],
 });
 
 export const useSocketContext = () => useContext(SocketContext);
 
-export const SocketContextProvider = ({ children }: any) => {
-  const [id, setID] = reactUseCookie('id');
-  const [name, setName] = reactUseCookie('name');
+// TODO: socket server url as env variable
+const socket = io();
 
-  // no auth pages yet, so user is always signed in
-  const [signedIn, setSignedIn] = useState(true);
+const updateGame = (xword: XWord) => socket.emit('update-game', xword);
+const createGame = (gameName: string) => socket.emit('create-game', gameName);
 
-  // user auto "signs in"
+interface Props {
+  children: ReactNode;
+}
+
+export const SocketContextProvider = ({ children }: Props) => {
+  const { user } = useAuthContext();
+
+  const [games, setGames] = useState<Array<Game>>([]);
+  const [xWord, setXWord] = useState<XWord | null>(null);
+  const [tileBar, setTileBar] = useState<Array<Tile>>([]);
+
   useEffect(() => {
-    if (!id) {
-      setID(uuidv4());
-    } else {
-      // keep cookie fresh
-      setID(id);
-    }
+    socket.emit('join-server', {
+      id: user.id,
+      name: user.name,
+    });
 
-    if (!name) {
-      setName(uuidv4());
-    } else {
-      // keep cookie fresh
-      setName(name);
-    }
+    socket.on('server-update', ({ games }) => {
+      setGames(games);
+    });
   });
 
-  console.log(id, name);
+  useEffect(() => {
+    socket.on('update', ({ xWord, tileBar }: GameUpdate) => {
+      setXWord(xWord);
+      setTileBar(tileBar);
+    });
+  }, []);
 
   return (
     <SocketContext.Provider
       value={{
-        signedIn,
-        user: {
-          id,
-          name,
-        },
+        createGame,
+        updateGame,
+        games,
+        xWord,
+        tileBar,
       }}
     >
       {children}
