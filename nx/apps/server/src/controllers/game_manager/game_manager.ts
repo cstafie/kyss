@@ -1,3 +1,4 @@
+import { GameMetaData } from '@nx/api-interfaces';
 import { Game } from '../game/game';
 import Player from '../player/player';
 
@@ -28,10 +29,10 @@ export class GameManager {
     this.disconnectedPlayers = new Map();
   }
 
-  newGame(): Game {
-    const game = new Game();
+  newGame(name: string) {
+    const game = new Game(name);
     this.games.set(game.id, game);
-    return game;
+    this.updatePlayers();
   }
 
   // TODO: ensure this is idempotent
@@ -56,6 +57,12 @@ export class GameManager {
         player.socket.emit('join-game', () => 'TODO: join-game');
       }
     });
+
+    player.socket.on('create-game', (gameName: string) =>
+      this.newGame(gameName)
+    );
+
+    this.updatePlayers();
   }
 
   // TODO: ensure this is idempotent
@@ -91,14 +98,22 @@ export class GameManager {
   //   );
   // }
 
-  // updatePlayers() {
-  //   for (const player of this.players.values()) {
-  //     player.socket.emit('update', {
-  //       xWord: this.game.xWord,
-  //       tileBar: this.game.players.get(player.id).tileBar,
-  //     });
-  //   }
-  // }
+  updatePlayers() {
+    const gameValues = Array.from(this.games.values());
+    const games = gameValues.map(
+      (game) =>
+        ({
+          id: game.id,
+          name: game.name,
+          createdAt: game.createdAt,
+          numberOfPlayers: game.players.size,
+        } as GameMetaData)
+    );
+
+    for (const player of this.players.values()) {
+      player.socket.emit('server-update', games);
+    }
+  }
 }
 
 export default GameManager;

@@ -1,30 +1,31 @@
-import { Game, GameUpdate, Tile, XWord } from '@nx/api-interfaces';
+import { Game, GameMetaData, Tile, XWord } from '@nx/api-interfaces';
 import {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
+  useCallback,
+  useMemo,
 } from 'react';
+import { useMatch } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useAuthContext } from './auth';
 
 interface Socket {
   createGame: (gameName: string) => void;
-  updateGame: (xWord: XWord) => void;
-  games: Array<Game>;
-  xWord: XWord | null;
-  tileBar: Array<Tile>;
+  updateGame: (game: Game) => void;
+  games: Array<GameMetaData>;
+  game: Game | null;
 }
 
 const SocketContext = createContext<Socket>({
   createGame: (gameName: string) =>
     console.error('No matching provider for SocketContext'),
-  updateGame: (xWord: XWord) =>
+  updateGame: (game: Game) =>
     console.error('No matching provider for SocketContext'),
-  xWord: null,
   games: [],
-  tileBar: [],
+  game: null,
 });
 
 export const useSocketContext = () => useContext(SocketContext);
@@ -32,7 +33,7 @@ export const useSocketContext = () => useContext(SocketContext);
 // TODO: socket server url as env variable
 const socket = io();
 
-const updateGame = (xword: XWord) => socket.emit('update-game', xword);
+const updateGame = (game: Game) => socket.emit('update-game', game);
 const createGame = (gameName: string) => socket.emit('create-game', gameName);
 
 interface Props {
@@ -42,9 +43,8 @@ interface Props {
 export const SocketContextProvider = ({ children }: Props) => {
   const { user } = useAuthContext();
 
-  const [games, setGames] = useState<Array<Game>>([]);
-  const [xWord, setXWord] = useState<XWord | null>(null);
-  const [tileBar, setTileBar] = useState<Array<Tile>>([]);
+  const [games, setGames] = useState<Array<GameMetaData>>([]);
+  const [game, setGame] = useState<Game | null>(null);
 
   useEffect(() => {
     socket.emit('join-server', {
@@ -52,17 +52,14 @@ export const SocketContextProvider = ({ children }: Props) => {
       name: user.name,
     });
 
-    socket.on('server-update', ({ games }) => {
+    // subscribe
+    socket.on('server-update', (games) => {
       setGames(games);
     });
-  });
-
-  useEffect(() => {
-    socket.on('update', ({ xWord, tileBar }: GameUpdate) => {
-      setXWord(xWord);
-      setTileBar(tileBar);
+    socket.on('game-update', (updatedGame: Game) => {
+      setGame(updatedGame);
     });
-  }, []);
+  }, []); // TODO: why are we seeing this warning? i feel like i can ignore it
 
   return (
     <SocketContext.Provider
@@ -70,8 +67,7 @@ export const SocketContextProvider = ({ children }: Props) => {
         createGame,
         updateGame,
         games,
-        xWord,
-        tileBar,
+        game,
       }}
     >
       {children}

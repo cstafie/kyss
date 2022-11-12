@@ -35,10 +35,16 @@ export interface User {
 }
 
 export interface Game {
+  xWord: XWord;
+  tileBar: Array<Tile>;
+}
+
+export interface GameMetaData {
   createdAt: Date;
   name: string;
   id: string;
   gameState: GameState;
+  numberOfPlayers: number;
 }
 
 const GameState = {

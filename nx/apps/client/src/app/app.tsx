@@ -1,13 +1,14 @@
 import XWord from '../screens/XWord';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSocketContext } from '../contexts/socket';
+import GamesList from '../screens/GamesList';
 
 export const App = () => {
   // useEffect(() => {
   //   fetch('/api');
   // }, []);
 
-  const { games, xWord, tileBar, createGame, updateGame } = useSocketContext();
+  const { games, game, createGame, updateGame } = useSocketContext();
 
   // const [playerId, setPlayerId] = reactUseCookie('playerId');
 
@@ -20,18 +21,12 @@ export const App = () => {
         <Routes>
           <Route
             path="/"
-            element={<Games games={games} createGame={createGame} />}
+            element={<GamesList games={games} createGame={createGame} />}
           />
-          {xWord && (
+          {game && (
             <Route
               path="/xword"
-              element={
-                <XWord
-                  xWord={xWord}
-                  tileBar={tileBar}
-                  updateGame={updateGame}
-                />
-              }
+              element={<XWord game={game} updateGame={updateGame} />}
             />
           )}
           {/* <Route path="/xWord" element={<XWord />} /> */}
