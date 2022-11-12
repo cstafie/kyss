@@ -1,15 +1,12 @@
-import { Game, GameMetaData, Tile, XWord } from '@nx/api-interfaces';
 import {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
-  useCallback,
-  useMemo,
 } from 'react';
-import { useMatch } from 'react-router-dom';
 import io from 'socket.io-client';
+import { Game, GameMetaData } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 
 interface Socket {
