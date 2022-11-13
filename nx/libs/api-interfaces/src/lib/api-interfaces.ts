@@ -45,6 +45,7 @@ export interface GameMetaData {
   id: string;
   gameState: GameState;
   numberOfPlayers: number;
+  createdBy: string;
 }
 
 const GameState = {

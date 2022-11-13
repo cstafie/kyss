@@ -29,8 +29,8 @@ export class GameManager {
     this.disconnectedPlayers = new Map();
   }
 
-  newGame(name: string) {
-    const game = new Game(name);
+  newGame(gameName: string, playerName: string) {
+    const game = new Game(gameName, playerName);
     this.games.set(game.id, game);
     this.updatePlayers();
   }
@@ -59,7 +59,7 @@ export class GameManager {
     });
 
     player.socket.on('create-game', (gameName: string) =>
-      this.newGame(gameName)
+      this.newGame(gameName, player.name)
     );
 
     this.updatePlayers();
@@ -107,8 +107,12 @@ export class GameManager {
           name: game.name,
           createdAt: game.createdAt,
           numberOfPlayers: game.players.size,
+          createdBy: game.createdBy,
         } as GameMetaData)
     );
+    games.sort((gameA, gameB) => {
+      return gameB.createdAt.getTime() - gameA.createdAt.getTime();
+    });
 
     for (const player of this.players.values()) {
       player.socket.emit('server-update', games);

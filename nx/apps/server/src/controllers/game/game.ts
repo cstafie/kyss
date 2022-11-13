@@ -12,18 +12,19 @@ interface PlayerInfo {
 
 export class Game extends Entity {
   name: string;
+  createdBy: string;
   xWord: XWord;
   players: Map<string, PlayerInfo>;
   tiles: Set<Tile>;
   log: Array<string>;
 
-  constructor(name = uuidv4()) {
+  constructor(name, playerName) {
     super();
     this.name = name;
     this.xWord = empty5x5;
     this.players = new Map();
     this.log = [];
-
+    this.createdBy = playerName;
     this.initTiles(xWord5x5.grid.flat().filter((tile) => tile.char !== '#'));
   }
 

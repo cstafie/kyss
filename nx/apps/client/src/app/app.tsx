@@ -1,7 +1,7 @@
 import XWord from '../screens/XWord';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSocketContext } from '../contexts/socket';
-import GamesList from '../screens/GamesList';
+import Games from '../screens/Games';
 
 export const App = () => {
   // useEffect(() => {
@@ -21,7 +21,7 @@ export const App = () => {
         <Routes>
           <Route
             path="/"
-            element={<GamesList games={games} createGame={createGame} />}
+            element={<Games games={games} createGame={createGame} />}
           />
           {game && (
             <Route

@@ -56,7 +56,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('game-update', (updatedGame: Game) => {
       setGame(updatedGame);
     });
-  }, []); // TODO: why are we seeing this warning? i feel like i can ignore it
+  }, []); // TODO: hide this warning, empty dependency array is
 
   return (
     <SocketContext.Provider
