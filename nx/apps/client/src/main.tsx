@@ -11,6 +11,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // <StrictMode> // TODO: test with strict mode
+
   <AuthContextProvider>
     <SocketContextProvider>
       <App />
