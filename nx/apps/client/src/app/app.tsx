@@ -16,7 +16,7 @@ export const App = () => {
 
   return (
     <>
-      <nav className="flex justify-end p-2">{user.name}</nav>
+      <nav className="flex justify-between p-2">{user.name}</nav>
       <Routes>
         <Route
           path="/"
@@ -28,6 +28,10 @@ export const App = () => {
             element={<XWord game={game} updateGame={updateGame} />}
           />
         )}
+        <Route
+          path="*"
+          element={<Games games={games} createGame={createGame} />}
+        />
         {/* <Route path="/xWord" element={<XWord />} /> */}
       </Routes>
     </>

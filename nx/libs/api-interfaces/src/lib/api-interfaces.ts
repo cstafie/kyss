@@ -38,6 +38,7 @@ export interface User {
 export interface Game {
   xWord: XWord;
   tileBar: Array<Tile>;
+  score?: number;
 }
 
 export interface GameMetaData {

@@ -16,11 +16,6 @@ interface Props {
 }
 
 const XWord = ({ game, updateGame }: Props) => {
-  // const [xWord, setXWord] = useState<XWord>(empty7x7);
-  // const [tileBar, setTileBar] = useState<Array<TileType>>(
-  //   ['A', 'B', 'C', 'D', 'E'].map(charToTile)
-  // );
-
   const { xWord, tileBar } = game;
 
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
