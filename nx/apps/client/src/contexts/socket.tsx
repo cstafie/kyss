@@ -43,12 +43,18 @@ export const SocketContextProvider = ({ children }: Props) => {
   const [games, setGames] = useState<Array<GameMetaData>>([]);
   const [game, setGame] = useState<Game | null>(null);
 
-  useEffect(() => {
-    socket.emit('join-server', {
-      id: user.id,
-      name: user.name,
-    });
+  console.log(user);
 
+  useEffect(() => {
+    if (user.name && user.id) {
+      socket.emit('join-server', {
+        id: user.id,
+        name: user.name,
+      });
+    }
+  }, [user.name, user.id]);
+
+  useEffect(() => {
     // subscribe
     socket.on('server-update', (games) => {
       setGames(games);
@@ -56,7 +62,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('game-update', (updatedGame: Game) => {
       setGame(updatedGame);
     });
-  }, []); // TODO: hide this warning, empty dependency array is
+  }, []);
 
   return (
     <SocketContext.Provider

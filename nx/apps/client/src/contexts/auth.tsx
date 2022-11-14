@@ -16,6 +16,8 @@ const AuthContext = createContext<Auth>({
   },
 });
 
+const PLAYER_NAME_LENGTH = 6;
+
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthContextProvider = ({ children }: any) => {
@@ -35,12 +37,12 @@ export const AuthContextProvider = ({ children }: any) => {
     }
 
     if (!name) {
-      setName(uuidv4());
+      setName(`guest-${uuidv4().substring(0, PLAYER_NAME_LENGTH)}`);
     } else {
       // keep cookie fresh
       setName(name);
     }
-  });
+  }, []);
 
   console.log(id, name);
 

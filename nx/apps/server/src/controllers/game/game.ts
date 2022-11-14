@@ -1,7 +1,6 @@
 import { XWord, Tile, shuffleArray } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import { empty5x5, xWord5x5 } from './mock_xWord';
-import { v4 as uuidv4 } from 'uuid';
 
 const TILE_BAR_SIZE = 5;
 
@@ -12,19 +11,21 @@ interface PlayerInfo {
 
 export class Game extends Entity {
   name: string;
-  createdBy: string;
+  creatorName: string;
+  creatorId: string;
   xWord: XWord;
   players: Map<string, PlayerInfo>;
   tiles: Set<Tile>;
   log: Array<string>;
 
-  constructor(name, playerName) {
+  constructor(name, player) {
     super();
     this.name = name;
     this.xWord = empty5x5;
     this.players = new Map();
     this.log = [];
-    this.createdBy = playerName;
+    this.creatorId = player.id;
+    this.creatorName = player.name;
     this.initTiles(xWord5x5.grid.flat().filter((tile) => tile.char !== '#'));
   }
 

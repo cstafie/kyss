@@ -29,14 +29,16 @@ export class GameManager {
     this.disconnectedPlayers = new Map();
   }
 
-  newGame(gameName: string, playerName: string) {
-    const game = new Game(gameName, playerName);
+  newGame(gameName: string, player: Player) {
+    const game = new Game(gameName, player);
     this.games.set(game.id, game);
     this.updatePlayers();
   }
 
   // TODO: ensure this is idempotent
   playerJoin(player: Player) {
+    const playerAlreadyJoined = this.players.has(player.id);
+
     this.players.set(player.id, player);
 
     if (this.disconnectedPlayers.has(player.id)) {
@@ -49,6 +51,12 @@ export class GameManager {
     // - remove them from disconnect map
     // - if they have an ongoing game then reconnect them to that game
 
+    this.updatePlayers();
+
+    if (playerAlreadyJoined) {
+      return;
+    }
+
     player.socket.on('join-game', (gameId) => {
       const game = this.games.get(gameId);
 
@@ -59,10 +67,8 @@ export class GameManager {
     });
 
     player.socket.on('create-game', (gameName: string) =>
-      this.newGame(gameName, player.name)
+      this.newGame(gameName, player)
     );
-
-    this.updatePlayers();
   }
 
   // TODO: ensure this is idempotent
@@ -107,7 +113,8 @@ export class GameManager {
           name: game.name,
           createdAt: game.createdAt,
           numberOfPlayers: game.players.size,
-          createdBy: game.createdBy,
+          creatorId: game.creatorId,
+          creatorName: game.creatorName,
         } as GameMetaData)
     );
     games.sort((gameA, gameB) => {
