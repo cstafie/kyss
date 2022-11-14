@@ -1,4 +1,4 @@
-import { GameMetaData } from '@nx/api-interfaces';
+import { GameMetaData, Game as GameI } from '@nx/api-interfaces';
 import { Game } from '../game/game';
 import Player from '../player/player';
 
@@ -32,7 +32,11 @@ export class GameManager {
   newGame(gameName: string, player: Player) {
     const game = new Game(gameName, player);
     this.games.set(game.id, game);
-    this.updatePlayers();
+
+    // add the creator of the game to their own game
+    game.addPlayer(player.id);
+
+    this.updateMembers();
   }
 
   // TODO: ensure this is idempotent
@@ -51,7 +55,7 @@ export class GameManager {
     // - remove them from disconnect map
     // - if they have an ongoing game then reconnect them to that game
 
-    this.updatePlayers();
+    this.updateMembers();
 
     if (playerAlreadyJoined) {
       return;
@@ -62,7 +66,8 @@ export class GameManager {
 
       if (game) {
         game.addPlayer(player.id);
-        player.socket.emit('join-game', () => 'TODO: join-game');
+        // player.socket.emit('join-game', () => 'TODO: join-game');
+        this.updateMembers();
       }
     });
 
@@ -104,8 +109,23 @@ export class GameManager {
   //   );
   // }
 
-  updatePlayers() {
+  updateMembers() {
     const gameValues = Array.from(this.games.values());
+
+    gameValues.forEach((game) => {
+      Array.from(game.players.entries()).forEach(
+        ([playerId, { tileBar, score }]) => {
+          const gameUpdate: GameI = {
+            xWord: game.xWord,
+            tileBar,
+            score,
+          };
+
+          this.players.get(playerId).socket.emit('game-update', gameUpdate);
+        }
+      );
+    });
+
     const games = gameValues.map(
       (game) =>
         ({

@@ -27,6 +27,7 @@ export interface XWordEntry {
 export interface GameUpdate {
   xWord: XWord;
   tileBar: Array<Tile>;
+  score: number;
 }
 
 export interface User {

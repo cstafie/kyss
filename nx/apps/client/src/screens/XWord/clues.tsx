@@ -16,7 +16,7 @@ const Clues = ({ entries, currentEntry }: Props) => (
             // ok to use the index as key here since this list will (should?) never change size
             key={i}
             className={`flex flex-row items-center p-2 ${
-              isHighlighted ? 'bg-blue-300' : ''
+              isHighlighted ? 'bg-blue-500' : ''
             }`}
           >
             <div className="font-bold mr-2">{entry.number}.</div>

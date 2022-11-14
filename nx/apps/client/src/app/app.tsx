@@ -1,5 +1,5 @@
 import XWord from '../screens/XWord';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useSocketContext } from '../contexts/socket';
 import Games from '../screens/Games';
 import { useAuthContext } from '../contexts/auth';
@@ -17,21 +17,19 @@ export const App = () => {
   return (
     <>
       <nav className="flex justify-end p-2">{user.name}</nav>
-      <BrowserRouter>
-        <Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={<Games games={games} createGame={createGame} />}
+        />
+        {game && (
           <Route
-            path="/"
-            element={<Games games={games} createGame={createGame} />}
+            path="/xword"
+            element={<XWord game={game} updateGame={updateGame} />}
           />
-          {game && (
-            <Route
-              path="/xword"
-              element={<XWord game={game} updateGame={updateGame} />}
-            />
-          )}
-          {/* <Route path="/xWord" element={<XWord />} /> */}
-        </Routes>
-      </BrowserRouter>
+        )}
+        {/* <Route path="/xWord" element={<XWord />} /> */}
+      </Routes>
     </>
   );
 };
