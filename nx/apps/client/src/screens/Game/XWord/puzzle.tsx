@@ -7,7 +7,7 @@ import {
   XWordEntry,
   charToTile,
   GameUpdate,
-  Game,
+  PlayerGameUpdate,
 } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
 
@@ -19,7 +19,7 @@ interface Props {
   tileBar: Array<TileType>;
   // currentCell: [number, number];
   currentEntry: XWordEntry;
-  updatePuzzle: (game: Game) => void;
+  updatePuzzle: (game: PlayerGameUpdate) => void;
 }
 
 const Puzzle = ({
@@ -73,6 +73,7 @@ Props) => {
         updatePuzzle({
           xWord,
           tileBar: newTileBar,
+          ready: true, // TODO: decouple
         });
         return;
       }
@@ -95,6 +96,7 @@ Props) => {
         updatePuzzle({
           xWord: newXword,
           tileBar: newTileBar,
+          ready: true,
         });
 
         return;

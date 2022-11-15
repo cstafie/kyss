@@ -3,20 +3,24 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 import {
   Direction,
-  Game,
+  ServerGameUpdate,
+  PlayerGameUpdate,
   Tile as TileType,
   XWord as XWordType,
 } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
+import { useAuthContext } from 'apps/client/src/contexts/auth';
 
 interface Props {
-  game: Game;
-  updateGame: (game: Game) => void;
+  game: ServerGameUpdate;
+  updateGame: (game: PlayerGameUpdate) => void;
 }
 
 const XWord = ({ game, updateGame }: Props) => {
-  const { xWord, tileBar } = game;
+  const { xWord, players } = game;
+
+  const { user } = useAuthContext();
 
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
 
@@ -75,7 +79,7 @@ const XWord = ({ game, updateGame }: Props) => {
     <section className="flex flex-row justify-center items-center">
       <Puzzle
         xWord={xWord}
-        tileBar={tileBar}
+        tileBar={players.get(user.id)?.tileBar || []}
         updatePuzzle={updateGame}
         currentEntry={currentEntry}
         // currentCell={current}

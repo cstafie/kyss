@@ -1,8 +1,9 @@
-import XWord from '../screens/XWord';
+import XWord from '../screens/Game/XWord';
 import { Routes, Route } from 'react-router-dom';
 import { useSocketContext } from '../contexts/socket';
-import Games from '../screens/Games';
+import GamesList from '../screens/GamesList';
 import { useAuthContext } from '../contexts/auth';
+import Game from '../screens/Game';
 
 export const App = () => {
   // useEffect(() => {
@@ -20,17 +21,17 @@ export const App = () => {
       <Routes>
         <Route
           path="/"
-          element={<Games games={games} createGame={createGame} />}
+          element={<GamesList games={games} createGame={createGame} />}
         />
         {game && (
           <Route
             path="/xword"
-            element={<XWord game={game} updateGame={updateGame} />}
+            element={<Game game={game} updateGame={updateGame} />}
           />
         )}
         <Route
           path="*"
-          element={<Games games={games} createGame={createGame} />}
+          element={<GamesList games={games} createGame={createGame} />}
         />
         {/* <Route path="/xWord" element={<XWord />} /> */}
       </Routes>

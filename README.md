@@ -4,6 +4,8 @@
 
 ### overall
 
+- think about whole system holistically and rename / redesign parts for it to be more maintainable
+
 - address todos in code
 - design and implement a routing strategy
 -

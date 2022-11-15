@@ -24,6 +24,12 @@ export interface XWordEntry {
   clue: string;
 }
 
+export interface PlayerInfo {
+  tileBar: Array<Tile>;
+  score: number;
+  ready: boolean;
+}
+
 export interface GameUpdate {
   xWord: XWord;
   tileBar: Array<Tile>;
@@ -35,10 +41,16 @@ export interface User {
   name: string;
 }
 
-export interface Game {
+export interface PlayerGameUpdate {
   xWord: XWord;
+  ready: boolean;
   tileBar: Array<Tile>;
-  score?: number;
+}
+
+export interface ServerGameUpdate {
+  xWord: XWord;
+  gameState: GameState;
+  serializedPlayersMap: string;
 }
 
 export interface GameMetaData {
@@ -51,7 +63,8 @@ export interface GameMetaData {
   creatorId: string;
 }
 
-const GameState = {
+// TODO: look into this syntax
+export const GameState = {
   waitingToStart: 'waiting-to-start',
   inProgress: 'in-progress',
   complete: 'complete',

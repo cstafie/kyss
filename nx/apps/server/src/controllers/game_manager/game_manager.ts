@@ -1,4 +1,4 @@
-import { GameMetaData, Game as GameI } from '@nx/api-interfaces';
+import { GameMetaData, ServerGameUpdate } from '@nx/api-interfaces';
 import { Game } from '../game/game';
 import Player from '../player/player';
 
@@ -35,6 +35,8 @@ export class GameManager {
 
     // add the creator of the game to their own game
     game.addPlayer(player.id);
+
+    console.log('new game');
 
     this.updateMembers();
   }
@@ -115,10 +117,12 @@ export class GameManager {
     gameValues.forEach((game) => {
       Array.from(game.players.entries()).forEach(
         ([playerId, { tileBar, score }]) => {
-          const gameUpdate: GameI = {
+          const gameUpdate: ServerGameUpdate = {
             xWord: game.xWord,
-            tileBar,
-            score,
+            gameState: game.gameState,
+            serializedPlayersMap: JSON.stringify(
+              Array.from(game.players.entries())
+            ),
           };
 
           this.players.get(playerId).socket.emit('game-update', gameUpdate);
@@ -126,17 +130,16 @@ export class GameManager {
       );
     });
 
-    const games = gameValues.map(
-      (game) =>
-        ({
-          id: game.id,
-          name: game.name,
-          createdAt: game.createdAt,
-          numberOfPlayers: game.players.size,
-          creatorId: game.creatorId,
-          creatorName: game.creatorName,
-        } as GameMetaData)
-    );
+    const games: Array<GameMetaData> = gameValues.map((game) => ({
+      id: game.id,
+      name: game.name,
+      createdAt: game.createdAt,
+      numberOfPlayers: game.players.size,
+      creatorId: game.creatorId,
+      creatorName: game.creatorName,
+      gameState: game.gameState,
+    }));
+
     games.sort((gameA, gameB) => {
       return gameB.createdAt.getTime() - gameA.createdAt.getTime();
     });

@@ -9,7 +9,7 @@ interface Props {
 
 const GAME_NAME_LENGTH = 6;
 
-const Games = ({ games, createGame }: Props) => {
+const GamesList = ({ games, createGame }: Props) => {
   return (
     <section className="flex flex-col items-center">
       <nav className="flex flex-row justify-between w-1/2 m-4">
@@ -32,4 +32,4 @@ const Games = ({ games, createGame }: Props) => {
   );
 };
 
-export default Games;
+export default GamesList;
