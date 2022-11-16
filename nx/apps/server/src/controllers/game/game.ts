@@ -6,6 +6,7 @@ import {
   PlayerInfo,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
+import Player from '../player/player';
 import { empty5x5, xWord5x5 } from './mock_xWord';
 
 const TILE_BAR_SIZE = 5;
@@ -74,11 +75,12 @@ export class Game extends Entity {
     this.tiles.delete(tile);
   }
 
-  addPlayer(playerId: string) {
-    this.players.set(playerId, {
+  addPlayer(player: Player) {
+    this.players.set(player.id, {
       tileBar: this.initTileBar(),
       score: 0,
       ready: false,
+      name: player.name,
     });
   }
 

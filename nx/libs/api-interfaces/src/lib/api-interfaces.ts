@@ -28,6 +28,7 @@ export interface PlayerInfo {
   tileBar: Array<Tile>;
   score: number;
   ready: boolean;
+  name: string;
 }
 
 export interface GameUpdate {
@@ -51,6 +52,9 @@ export interface ServerGameUpdate {
   xWord: XWord;
   gameState: GameState;
   serializedPlayersMap: string;
+  ready: boolean;
+  tileBar: Array<Tile>;
+  score: number;
 }
 
 export interface GameMetaData {

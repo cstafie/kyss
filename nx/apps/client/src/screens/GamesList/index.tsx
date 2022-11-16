@@ -1,15 +1,18 @@
-import { GameMetaData } from '@nx/api-interfaces';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { useSocketContext } from '../../contexts/socket';
 import GamesTable from './games_table';
-
-interface Props {
-  createGame: (gameName: string) => void;
-  games: Array<GameMetaData>;
-}
 
 const GAME_NAME_LENGTH = 6;
 
-const GamesList = ({ games, createGame }: Props) => {
+const GamesList = () => {
+  const { games, game, createGame } = useSocketContext();
+  const navigate = useNavigate();
+
+  if (game !== null) {
+    navigate('/xword');
+  }
+
   return (
     <section className="flex flex-col items-center">
       <nav className="flex flex-row justify-between w-1/2 m-4">

@@ -1,19 +1,12 @@
-import {
-  ServerGameUpdate,
-  GameState,
-  PlayerGameUpdate,
-} from '@nx/api-interfaces';
+import { GameState } from '@nx/api-interfaces';
+import { useSocketContext } from '../../contexts/socket';
 import Lobby from './lobby';
 
-interface Props {
-  game: ServerGameUpdate | null;
-  updateGame: (game: PlayerGameUpdate) => void;
-}
+const Game = () => {
+  const { game, updateGame } = useSocketContext();
 
-const Game = ({ game, updateGame }: Props) => {
   if (game === null) {
-    // TODO: a spinner?
-    return <div> Loading... </div>;
+    return <>...</>;
   }
 
   switch (game.gameState) {

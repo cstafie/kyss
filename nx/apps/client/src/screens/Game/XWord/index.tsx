@@ -11,9 +11,10 @@ import {
 import Clues from './clues';
 import Puzzle from './puzzle';
 import { useAuthContext } from 'apps/client/src/contexts/auth';
+import { Game } from 'apps/client/src/contexts/socket';
 
 interface Props {
-  game: ServerGameUpdate;
+  game: Game;
   updateGame: (game: PlayerGameUpdate) => void;
 }
 

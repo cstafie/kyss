@@ -1,5 +1,12 @@
-import { GameMetaData, ServerGameUpdate } from '@nx/api-interfaces';
+import {
+  GameMetaData,
+  PlayerGameUpdate,
+  PlayerInfo,
+  sameXWord,
+  ServerGameUpdate,
+} from '@nx/api-interfaces';
 import { Game } from '../game/game';
+import { xWord5x5 } from '../game/mock_xWord';
 import Player from '../player/player';
 
 /*
@@ -34,11 +41,17 @@ export class GameManager {
     this.games.set(game.id, game);
 
     // add the creator of the game to their own game
-    game.addPlayer(player.id);
+    game.addPlayer(player);
+    this.updateGamePlayers(game);
+    this.updateServerMembers();
+  }
 
-    console.log('new game');
+  playerJoinGame(game: Game, player: Player) {
+    game.addPlayer(player);
 
-    this.updateMembers();
+    player.socket.on('update-game', (gameUpdate: PlayerGameUpdate) => {
+      this.updateGame(player, game, gameUpdate);
+    });
   }
 
   // TODO: ensure this is idempotent
@@ -55,9 +68,9 @@ export class GameManager {
 
     // TODO: check if they were disconnected
     // - remove them from disconnect map
-    // - if they have an ongoing game then reconnect them to that game
+    // - if they have an ongoing game then reconnect them to th at game
 
-    this.updateMembers();
+    this.updateServerMembers();
 
     if (playerAlreadyJoined) {
       return;
@@ -67,15 +80,70 @@ export class GameManager {
       const game = this.games.get(gameId);
 
       if (game) {
-        game.addPlayer(player.id);
-        // player.socket.emit('join-game', () => 'TODO: join-game');
-        this.updateMembers();
+        this.playerJoinGame(game, player);
+        this.updateServerMembers();
       }
     });
 
     player.socket.on('create-game', (gameName: string) =>
       this.newGame(gameName, player)
     );
+  }
+
+  makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
+    const { tileBar, score, ready } = playerInfo;
+    const gameUpdate: ServerGameUpdate = {
+      xWord: game.xWord,
+      gameState: game.gameState,
+      serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
+      ready,
+      score,
+      tileBar,
+    };
+
+    return gameUpdate;
+  }
+
+  updateGamePlayers(game: Game) {
+    Array.from(game.players.entries()).forEach(([playerId, playerInfo]) => {
+      this.players
+        .get(playerId)
+        .socket.emit(
+          'game-update',
+          this.makeServerGameUpdate(playerInfo, game)
+        );
+    });
+  }
+
+  updateGame(player: Player, game: Game, gameUpdate: PlayerGameUpdate) {
+    const { ready, xWord, tileBar } = gameUpdate;
+
+    console.log(ready);
+
+    const playerInfo = game.players.get(player.id);
+
+    if (!playerInfo) {
+      return;
+    }
+
+    if (!sameXWord(xWord5x5, xWord)) {
+      // TODO: maybe only need to update the player that made the update
+
+      player.socket.emit(
+        'game-update',
+        this.makeServerGameUpdate(playerInfo, game)
+      );
+      return;
+    }
+
+    game.players.set(player.id, {
+      ...playerInfo,
+      ready,
+      tileBar,
+    });
+    game.xWord = xWord;
+
+    this.updateGamePlayers(game);
   }
 
   // TODO: ensure this is idempotent
@@ -111,24 +179,27 @@ export class GameManager {
   //   );
   // }
 
-  updateMembers() {
+  updateServerMembers() {
     const gameValues = Array.from(this.games.values());
 
-    gameValues.forEach((game) => {
-      Array.from(game.players.entries()).forEach(
-        ([playerId, { tileBar, score }]) => {
-          const gameUpdate: ServerGameUpdate = {
-            xWord: game.xWord,
-            gameState: game.gameState,
-            serializedPlayersMap: JSON.stringify(
-              Array.from(game.players.entries())
-            ),
-          };
+    // gameValues.forEach((game) => {
+    //   Array.from(game.players.entries()).forEach(
+    //     ([playerId, { tileBar, score, ready }]) => {
+    //       const gameUpdate: ServerGameUpdate = {
+    //         xWord: game.xWord,
+    //         gameState: game.gameState,
+    //         serializedPlayersMap: JSON.stringify(
+    //           Array.from(game.players.entries())
+    //         ),
+    //         ready,
+    //         score,
+    //         tileBar,
+    //       };
 
-          this.players.get(playerId).socket.emit('game-update', gameUpdate);
-        }
-      );
-    });
+    //       this.players.get(playerId).socket.emit('game-update', gameUpdate);
+    //     }
+    //   );
+    // });
 
     const games: Array<GameMetaData> = gameValues.map((game) => ({
       id: game.id,

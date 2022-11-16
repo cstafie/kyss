@@ -13,14 +13,17 @@ import {
   PlayerInfo,
   XWord,
   GameState,
+  Tile,
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface Game {
   xWord: XWord;
   gameState: GameState;
   players: Map<string, PlayerInfo>;
+  ready: boolean;
+  tileBar: Array<Tile>;
 }
 
 interface Socket {
@@ -47,7 +50,11 @@ export const useSocketContext = () => useContext(SocketContext);
 // TODO: socket server url as env variable
 const socket = io();
 
-const updateGame = (game: PlayerGameUpdate) => socket.emit('update-game', game);
+const updateGame = (game: PlayerGameUpdate) => {
+  console.log('update-game');
+  socket.emit('update-game', game);
+};
+
 const createGame = (gameName: string) => socket.emit('create-game', gameName);
 const joinGame = (gameId: string) => socket.emit('join-game', gameId);
 
@@ -56,13 +63,24 @@ interface Props {
 }
 
 export const SocketContextProvider = ({ children }: Props) => {
-  const { user } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { user } = useAuthContext();
 
   const [games, setGames] = useState<Array<GameMetaData>>([]);
   const [game, setGame] = useState<Game | null>(null);
 
   console.log(game);
+
+  useEffect(() => {
+    // todo make these paths constants
+    if (location.pathname === '/xword' && game === null) {
+      navigate('/');
+    } else if (location.pathname === '/' && game !== null) {
+      navigate('/xword');
+    }
+  }, [navigate, location, game]);
 
   useEffect(() => {
     if (user.name && user.id) {
@@ -78,14 +96,15 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('server-update', (games) => {
       setGames(games);
     });
-    socket.on('game-update', (gameUpdate: ServerGameUpdate) => {
-      setGame({
-        xWord: gameUpdate.xWord,
-        gameState: gameUpdate.gameState,
-        players: new Map(JSON.parse(gameUpdate.serializedPlayersMap)),
-      });
-      navigate('/xword');
-    });
+    socket.on(
+      'game-update',
+      ({ serializedPlayersMap, ...rest }: ServerGameUpdate) => {
+        setGame({
+          players: new Map(JSON.parse(serializedPlayersMap)),
+          ...rest,
+        });
+      }
+    );
   }, []);
 
   return (
