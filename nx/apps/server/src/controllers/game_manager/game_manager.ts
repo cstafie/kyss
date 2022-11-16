@@ -41,8 +41,8 @@ export class GameManager {
     this.games.set(game.id, game);
 
     // add the creator of the game to their own game
-    game.addPlayer(player);
-    this.updateGamePlayers(game);
+    this.playerJoinGame(game, player);
+
     this.updateServerMembers();
   }
 
@@ -52,6 +52,8 @@ export class GameManager {
     player.socket.on('update-game', (gameUpdate: PlayerGameUpdate) => {
       this.updateGame(player, game, gameUpdate);
     });
+
+    this.updateGamePlayers(game);
   }
 
   // TODO: ensure this is idempotent

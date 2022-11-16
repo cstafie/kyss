@@ -27,13 +27,14 @@ const Lobby = ({ game, updateGame }: Props) => {
 
       <div
         className="flex items-center mb-4"
-        onClick={() =>
+        onClick={(e) => {
+          e.preventDefault();
           updateGame({
             xWord: game.xWord,
             tileBar: game.tileBar,
             ready: !ready,
-          })
-        }
+          });
+        }}
       >
         <input
           id="default-checkbox"
