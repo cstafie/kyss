@@ -1,30 +1,22 @@
 import { useCallback } from 'react';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
 import produce from 'immer';
-import {
-  Tile as TileType,
-  XWord,
-  XWordEntry,
-  charToTile,
-  GameUpdate,
-  PlayerGameUpdate,
-} from '@nx/api-interfaces';
+import { XWordEntry } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
 
 import Grid from './grid';
 import TileBar from './tile_bar';
+import { Game } from 'apps/client/src/contexts/socket';
 
 interface Props {
-  xWord: XWord;
-  tileBar: Array<TileType>;
+  game: Game;
   // currentCell: [number, number];
   currentEntry: XWordEntry;
-  updatePuzzle: (game: PlayerGameUpdate) => void;
+  updatePuzzle: (game: Game) => void;
 }
 
 const Puzzle = ({
-  xWord,
-  tileBar,
+  game,
   currentEntry,
   updatePuzzle,
 }: // currentCell,
@@ -60,6 +52,8 @@ Props) => {
         return;
       }
 
+      const { tileBar, xWord } = game;
+
       // tile bar to tile bar
       if (
         destination.droppableId === source.droppableId &&
@@ -71,9 +65,9 @@ Props) => {
         newTileBar.splice(di, 0, tileBar[si]);
 
         updatePuzzle({
+          ...game,
           xWord,
           tileBar: newTileBar,
-          ready: true, // TODO: decouple
         });
         return;
       }
@@ -94,9 +88,9 @@ Props) => {
         });
 
         updatePuzzle({
+          ...game,
           xWord: newXword,
           tileBar: newTileBar,
-          ready: true,
         });
 
         return;
@@ -144,7 +138,7 @@ Props) => {
       //   return;
       // }
     },
-    [tileBar, xWord, updatePuzzle]
+    [game, updatePuzzle]
   );
 
   return (
@@ -157,8 +151,8 @@ Props) => {
         onDragEnd={onDragEnd}
       >
         {/* TODO: these should be composed so no prop drilling*/}
-        <Grid xWord={xWord} currentEntry={currentEntry} />
-        <TileBar tiles={tileBar} />
+        <Grid xWord={game.xWord} currentEntry={currentEntry} />
+        <TileBar tiles={game.tileBar} />
       </DragDropContext>
     </section>
   );

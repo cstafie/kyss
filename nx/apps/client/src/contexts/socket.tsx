@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   ReactNode,
+  useCallback,
 } from 'react';
 import io from 'socket.io-client';
 import {
@@ -28,7 +29,7 @@ export interface Game {
 
 interface Socket {
   createGame: (gameName: string) => void;
-  updateGame: (game: PlayerGameUpdate) => void;
+  updateGame: (game: Game) => void;
   joinGame: (gameId: string) => void;
   games: Array<GameMetaData>;
   game: Game | null;
@@ -37,7 +38,7 @@ interface Socket {
 const SocketContext = createContext<Socket>({
   createGame: (gameName: string) =>
     console.error('No matching provider for SocketContext'),
-  updateGame: (game: PlayerGameUpdate) =>
+  updateGame: (game: Game) =>
     console.error('No matching provider for SocketContext'),
   joinGame: (gameId: string) =>
     console.error('No matching provider for SocketContext'),
@@ -49,11 +50,6 @@ export const useSocketContext = () => useContext(SocketContext);
 
 // TODO: socket server url as env variable
 const socket = io();
-
-const updateGame = (game: PlayerGameUpdate) => {
-  console.log('update-game');
-  socket.emit('update-game', game);
-};
 
 const createGame = (gameName: string) => socket.emit('create-game', gameName);
 const joinGame = (gameId: string) => socket.emit('join-game', gameId);
@@ -107,11 +103,22 @@ export const SocketContextProvider = ({ children }: Props) => {
     );
   }, []);
 
+  const optimisticUpdate = useCallback((gameUpdate: Game) => {
+    setGame(gameUpdate);
+
+    const playerGameUpdate: PlayerGameUpdate = {
+      xWord: gameUpdate.xWord,
+      tileBar: gameUpdate.tileBar,
+      ready: gameUpdate.ready,
+    };
+    socket.emit('update-game', playerGameUpdate);
+  }, []);
+
   return (
     <SocketContext.Provider
       value={{
         createGame,
-        updateGame,
+        updateGame: optimisticUpdate,
         joinGame,
         games,
         game,

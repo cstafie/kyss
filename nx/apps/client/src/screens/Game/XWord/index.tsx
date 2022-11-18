@@ -1,27 +1,18 @@
 import { useState, useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import {
-  Direction,
-  ServerGameUpdate,
-  PlayerGameUpdate,
-  Tile as TileType,
-  XWord as XWordType,
-} from '@nx/api-interfaces';
+import { Direction } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
-import { useAuthContext } from 'apps/client/src/contexts/auth';
 import { Game } from 'apps/client/src/contexts/socket';
 
 interface Props {
   game: Game;
-  updateGame: (game: PlayerGameUpdate) => void;
+  updateGame: (game: Game) => void;
 }
 
 const XWord = ({ game, updateGame }: Props) => {
-  const { xWord, players } = game;
-
-  const { user } = useAuthContext();
+  const { xWord } = game;
 
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
 
@@ -79,8 +70,7 @@ const XWord = ({ game, updateGame }: Props) => {
   return (
     <section className="flex flex-row justify-center items-center">
       <Puzzle
-        xWord={xWord}
-        tileBar={players.get(user.id)?.tileBar || []}
+        game={game}
         updatePuzzle={updateGame}
         currentEntry={currentEntry}
         // currentCell={current}

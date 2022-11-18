@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useSocketContext } from '../../contexts/socket';
@@ -9,9 +10,11 @@ const GamesList = () => {
   const { games, game, createGame } = useSocketContext();
   const navigate = useNavigate();
 
-  if (game !== null) {
-    navigate('/xword');
-  }
+  useEffect(() => {
+    if (game !== null) {
+      navigate('/xword');
+    }
+  }, [game, navigate]);
 
   return (
     <section className="flex flex-col items-center">
