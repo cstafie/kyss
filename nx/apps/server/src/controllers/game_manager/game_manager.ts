@@ -121,9 +121,6 @@ export class GameManager {
 
   updateGame(player: Player, game: Game, gameUpdate: PlayerGameUpdate) {
     const { ready, xWord, tileBar } = gameUpdate;
-
-    console.log(ready);
-
     const playerInfo = game.players.get(player.id);
 
     if (!playerInfo) {
@@ -132,13 +129,14 @@ export class GameManager {
 
     if (!sameXWord(xWord5x5, xWord)) {
       // TODO: maybe only need to update the player that made the update
-
       player.socket.emit(
         'game-update',
         this.makeServerGameUpdate(playerInfo, game)
       );
       return;
     }
+
+    game.fillTileBar(tileBar);
 
     game.players.set(player.id, {
       ...playerInfo,
@@ -163,52 +161,8 @@ export class GameManager {
     this.players.delete(player.id);
   }
 
-  // subscribeSocket(socket: Socket, playerId: string) {
-  //   socket.on(
-  //     'update',
-  //     ({ user, gameUpdate }: { user: User; gameUpdate: GameUpdate }) => {
-  //       const { tileBar, xWord } = gameUpdate;
-
-  //       console.log(user);
-
-  //       if (!sameXWord(xWord5x5, xWord)) {
-  //         return socket.emit('update', {
-  //           xWord: this.game.xWord,
-  //           tileBar: this.game.players.get(playerId).tileBar,
-  //         });
-  //       }
-
-  //       this.game.xWord = xWord;
-
-  //       this.game.fillTileBar(tileBar);
-
-  //       this.game.players.get(playerId).tileBar = tileBar;
-  //       this.updatePlayers();
-  //     }
-  //   );
-  // }
-
   updateServerMembers() {
     const gameValues = Array.from(this.games.values());
-
-    // gameValues.forEach((game) => {
-    //   Array.from(game.players.entries()).forEach(
-    //     ([playerId, { tileBar, score, ready }]) => {
-    //       const gameUpdate: ServerGameUpdate = {
-    //         xWord: game.xWord,
-    //         gameState: game.gameState,
-    //         serializedPlayersMap: JSON.stringify(
-    //           Array.from(game.players.entries())
-    //         ),
-    //         ready,
-    //         score,
-    //         tileBar,
-    //       };
-
-    //       this.players.get(playerId).socket.emit('game-update', gameUpdate);
-    //     }
-    //   );
-    // });
 
     const games: Array<GameMetaData> = gameValues.map((game) => ({
       id: game.id,

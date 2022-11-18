@@ -5,6 +5,7 @@ import { Direction } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 import { Game } from 'apps/client/src/contexts/socket';
+import Players from './players';
 
 interface Props {
   game: Game;
@@ -68,7 +69,12 @@ const XWord = ({ game, updateGame }: Props) => {
   );
 
   return (
-    <section className="flex flex-row justify-center items-center">
+    <section className="flex flex-row justify-center mt-12">
+      <section className="m-2">
+        <h2 className="font-bold text-lg">PLAYERS</h2>
+        <Players players={Array.from(game.players.values())} />
+      </section>
+
       <Puzzle
         game={game}
         updatePuzzle={updateGame}

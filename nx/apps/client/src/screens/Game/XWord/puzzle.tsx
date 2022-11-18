@@ -142,7 +142,7 @@ Props) => {
   );
 
   return (
-    <section className="flex items-center flex-col m-12">
+    <section className="flex items-center flex-col mx-12 select-none">
       <DragDropContext
         onBeforeCapture={onBeforeCapture}
         onBeforeDragStart={onBeforeDragStart}

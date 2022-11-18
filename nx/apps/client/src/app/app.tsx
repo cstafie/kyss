@@ -6,7 +6,7 @@ import UserName from '../screens/user_name';
 export const App = () => {
   return (
     <>
-      <nav className="flex justify-between p-2 mb-4">
+      <nav className="flex justify-between p-2 mb-4 bg-neutral-800">
         <ul>
           <li>
             <UserName />
