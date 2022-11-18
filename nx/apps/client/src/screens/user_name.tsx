@@ -29,12 +29,12 @@ const UserName = () => {
       e.preventDefault();
 
       // TODO: better validation
-      if (value) {
+      if (value && value.toLocaleLowerCase() !== 'you') {
         setName(value);
         setEditing(false);
       }
     },
-    [value]
+    [value, setName]
   );
 
   const handleFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
