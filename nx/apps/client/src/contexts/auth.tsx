@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface Auth {
   signedIn: boolean;
   user: User;
+  setName: (name: string) => void;
 }
 
 const AuthContext = createContext<Auth>({
@@ -14,6 +15,8 @@ const AuthContext = createContext<Auth>({
     name: '',
     id: '',
   },
+  setName: (name: string) =>
+    console.error('No matching provider for AuthContext'),
 });
 
 const PLAYER_NAME_LENGTH = 6;
@@ -54,6 +57,7 @@ export const AuthContextProvider = ({ children }: any) => {
           id,
           name,
         },
+        setName: setName as (name: string) => void,
       }}
     >
       {children}
