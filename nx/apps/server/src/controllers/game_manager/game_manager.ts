@@ -1,4 +1,5 @@
 import {
+  countEmpty,
   GameMetaData,
   PlayerGameUpdate,
   PlayerInfo,
@@ -127,13 +128,21 @@ export class GameManager {
       return;
     }
 
+    const oldEmptyCount = countEmpty(game.xWord);
+    const newEmptyCount = countEmpty(xWord);
+
+    console.log(oldEmptyCount, newEmptyCount);
+
     if (!sameXWord(xWord5x5, xWord)) {
-      // TODO: maybe only need to update the player that made the update
-      player.socket.emit(
-        'game-update',
-        this.makeServerGameUpdate(playerInfo, game)
-      );
+      playerInfo.score -= oldEmptyCount;
+      this.updateGamePlayers(game);
       return;
+    }
+
+    // TODO: check if game is over
+
+    if (oldEmptyCount > newEmptyCount) {
+      playerInfo.score += oldEmptyCount;
     }
 
     game.fillTileBar(tileBar);

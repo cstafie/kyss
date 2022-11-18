@@ -22,7 +22,7 @@ const Lobby = ({ game, updateGame, startGame }: Props) => {
       <section className="mb-16">
         {Array.from(game.players.entries()).map(([id, info]) => (
           <div key={id}>
-            {info.name} {info.ready ? '🟢' : '🔴'}
+            {info.ready ? '🟢' : '🔴'} {info.name}
           </div>
         ))}
       </section>

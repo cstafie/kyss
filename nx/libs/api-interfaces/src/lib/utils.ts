@@ -27,6 +27,31 @@ export const sameXWord = (filled: XWord, partial: XWord): boolean => {
   return true;
 };
 
+export const countEmpty = (xWord: XWord) => {
+  return xWord.grid.flat().reduce((acc, tile) => {
+    if (tile.char === ' ') {
+      acc++;
+    }
+
+    return acc;
+  }, 0);
+};
+
+// export const hasMoreLetters = (old: XWord, updated: XWord): boolean => {
+//   const countReducer = (acc, tile) => {
+//     if (tile.char !== ' ' && tile.char !== '#') {
+//       acc++;
+//     }
+
+//     return acc;
+//   };
+
+//   const oldCount = old.grid.flat().reduce(countReducer, 0);
+//   const updatedCount = updated.grid.flat().reduce(countReducer, 0);
+
+//   return updatedCount > oldCount;
+// };
+
 export function shuffleArray<T>(array: Array<T>) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
