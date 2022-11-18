@@ -4,9 +4,10 @@ import { Game } from '../../contexts/socket';
 interface Props {
   game: Game;
   updateGame: (gameUpdate: Game) => void;
+  startGame: () => void;
 }
 
-const Lobby = ({ game, updateGame }: Props) => {
+const Lobby = ({ game, updateGame, startGame }: Props) => {
   const allPlayersReady = useMemo(() => {
     return Array.from(game.players.values()).every((player) => player.ready);
   }, [game.players]);
@@ -50,6 +51,7 @@ const Lobby = ({ game, updateGame }: Props) => {
       </div>
 
       <button
+        onClick={startGame}
         className={`btn btn-blue ${allPlayersReady ? '' : 'btn-disabled'}`}
       >
         START

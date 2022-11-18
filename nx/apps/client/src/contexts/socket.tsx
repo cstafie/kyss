@@ -31,6 +31,7 @@ interface Socket {
   createGame: (gameName: string) => void;
   updateGame: (game: Game) => void;
   joinGame: (gameId: string) => void;
+  startGame: () => void;
   games: Array<GameMetaData>;
   game: Game | null;
 }
@@ -42,6 +43,7 @@ const SocketContext = createContext<Socket>({
     console.error('No matching provider for SocketContext'),
   joinGame: (gameId: string) =>
     console.error('No matching provider for SocketContext'),
+  startGame: () => console.error('No matching provider for SocketContext'),
   games: [],
   game: null,
 });
@@ -53,6 +55,7 @@ const socket = io();
 
 const createGame = (gameName: string) => socket.emit('create-game', gameName);
 const joinGame = (gameId: string) => socket.emit('join-game', gameId);
+const startGame = () => socket.emit('start-game');
 
 interface Props {
   children: ReactNode;
@@ -120,6 +123,7 @@ export const SocketContextProvider = ({ children }: Props) => {
         createGame,
         updateGame: optimisticUpdate,
         joinGame,
+        startGame,
         games,
         game,
       }}

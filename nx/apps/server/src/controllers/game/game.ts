@@ -38,6 +38,16 @@ export class Game extends Entity {
     this.tiles = new Set(tiles);
   }
 
+  start() {
+    const players = Array.from(this.players.values());
+
+    const allPlayersReady = players.every((player) => player.ready);
+
+    if (allPlayersReady) {
+      this.gameState = GameState.inProgress;
+    }
+  }
+
   initTileBar() {
     const tileBar = [];
 

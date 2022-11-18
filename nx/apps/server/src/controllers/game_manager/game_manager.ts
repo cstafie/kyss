@@ -53,6 +53,8 @@ export class GameManager {
       this.updateGame(player, game, gameUpdate);
     });
 
+    player.socket.on('start-game', () => this.startGame(game));
+
     this.updateGamePlayers(game);
   }
 
@@ -145,6 +147,11 @@ export class GameManager {
     });
     game.xWord = xWord;
 
+    this.updateGamePlayers(game);
+  }
+
+  startGame(game: Game) {
+    game.start();
     this.updateGamePlayers(game);
   }
 
