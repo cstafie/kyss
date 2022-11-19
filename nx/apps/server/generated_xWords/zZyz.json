@@ -1,0 +1,93 @@
+{
+  "grid": [
+    ["H", "U", "A", "N", "G"],
+    ["O", "P", "R", "A", "H"],
+    ["B", "O", "N", "N", "E"],
+    ["O", "N", "I", "O", "N"],
+    ["S", "E", "E", "S", "T"]
+  ],
+  "width": 5,
+  "height": 5,
+  "entries": [
+    {
+      "row": 0,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 1,
+      "clue": "Celebrity chef Eddie"
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "direction": "Down",
+      "length": 5,
+      "number": 1,
+      "clue": "Down-on-their-luck sorts"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "direction": "Down",
+      "length": 5,
+      "number": 2,
+      "clue": "Barely leading"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "direction": "Down",
+      "length": 5,
+      "number": 3,
+      "clue": "Links legend Palmer, familiarly"
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "direction": "Down",
+      "length": 5,
+      "number": 4,
+      "clue": "Small iPods"
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "direction": "Down",
+      "length": 5,
+      "number": 5,
+      "clue": "War of 1812 treaty site"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 6,
+      "clue": "The “O” of OWN"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 7,
+      "clue": "“___ chance!”"
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 8,
+      "clue": "Satirical news site, with “The”"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 9,
+      "clue": "“This is dear mercy, and thou ___ it not”: “Romeo and Juliet”"
+    }
+  ]
+}

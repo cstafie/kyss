@@ -1,0 +1,93 @@
+{
+  "grid": [
+    ["I", "L", "L", "B", "E"],
+    ["N", "Y", "A", "L", "A"],
+    ["N", "O", "M", "A", "S"],
+    ["I", "N", "E", "R", "T"],
+    ["E", "S", "S", "E", "S"]
+  ],
+  "width": 5,
+  "height": 5,
+  "entries": [
+    {
+      "row": 0,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 1,
+      "clue": "“Wouldja look at that!”"
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "direction": "Down",
+      "length": 5,
+      "number": 1,
+      "clue": "Certain navel"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "direction": "Down",
+      "length": 5,
+      "number": 2,
+      "clue": "Longtime film/theater critic Jeffrey"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "direction": "Down",
+      "length": 5,
+      "number": 3,
+      "clue": "Shiny fabrics"
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "direction": "Down",
+      "length": 5,
+      "number": 4,
+      "clue": "Sound loudly, as a trumpet"
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "direction": "Down",
+      "length": 5,
+      "number": 5,
+      "clue": "Bridge positions"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 6,
+      "clue": "Spiral-horned African antelope"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 7,
+      "clue": "Spanish equivalent of “Basta!”"
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 8,
+      "clue": "Unreactive"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "direction": "Across",
+      "length": 5,
+      "number": 9,
+      "clue": "Trouble for Sylvester the Cat"
+    }
+  ]
+}
