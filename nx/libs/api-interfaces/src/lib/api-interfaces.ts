@@ -25,6 +25,7 @@ export interface XWordEntry {
 }
 
 export interface PlayerInfo {
+  id: string;
   tileBar: Array<Tile>;
   score: number;
   ready: boolean;

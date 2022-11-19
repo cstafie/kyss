@@ -87,6 +87,7 @@ export class Game extends Entity {
 
   addPlayer(player: Player) {
     this.players.set(player.id, {
+      id: player.id,
       tileBar: this.initTileBar(),
       score: 0,
       ready: false,

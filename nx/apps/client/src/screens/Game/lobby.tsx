@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useAuthContext } from '../../contexts/auth';
 import { Game } from '../../contexts/socket';
 
 interface Props {
@@ -8,11 +9,11 @@ interface Props {
 }
 
 const Lobby = ({ game, updateGame, startGame }: Props) => {
+  const { user } = useAuthContext();
+
   const allPlayersReady = useMemo(() => {
     return Array.from(game.players.values()).every((player) => player.ready);
   }, [game.players]);
-
-  console.log(game.players.values());
 
   const { ready } = game;
 
@@ -20,9 +21,12 @@ const Lobby = ({ game, updateGame, startGame }: Props) => {
     <>
       <h2 className="mb-8"> GAME LOBBY </h2>
       <section className="mb-16">
-        {Array.from(game.players.entries()).map(([id, info]) => (
-          <div key={id}>
-            {info.ready ? '🟢' : '🔴'} {info.name}
+        {Array.from(game.players.values()).map(({ id, name, ready }) => (
+          <div
+            key={id}
+            className={`${id === user.id ? 'text-purple-400' : ''}`}
+          >
+            {ready ? '🟢' : '🔴'} {name}
           </div>
         ))}
       </section>

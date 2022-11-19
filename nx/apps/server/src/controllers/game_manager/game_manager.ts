@@ -131,8 +131,6 @@ export class GameManager {
     const oldEmptyCount = countEmpty(game.xWord);
     const newEmptyCount = countEmpty(xWord);
 
-    console.log(oldEmptyCount, newEmptyCount);
-
     if (!sameXWord(xWord5x5, xWord)) {
       playerInfo.score -= oldEmptyCount;
       this.updateGamePlayers(game);
