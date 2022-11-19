@@ -1,8 +1,11 @@
 use rand::distributions::{Alphanumeric, DistString};
 use serde::{Deserialize, Serialize};
+// use serde_json::Result;
 use std::{
     cmp,
     collections::{HashMap, HashSet},
+    error::Error,
+    fs,
     fs::File,
     io::prelude::*,
     str,
@@ -31,6 +34,12 @@ struct XWordEntry {
     length: usize,
     number: i32,
     clue: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct ClueAnswer {
+    clue: String,
+    answer: String,
 }
 
 impl XWordEntry {
@@ -140,44 +149,60 @@ impl XWord {
 fn get_words_clues_map(
     min_word_len: usize,
     max_word_len: usize,
-) -> HashMap<String, HashSet<String>> {
-    let file_path = "../xWords_data/1976_to_2018.csv";
-    let mut results = csv::Reader::from_path(file_path).unwrap();
+    // ) -> HashMap<String, HashSet<String>> {
+) -> Result<(), Box<dyn Error>> {
+    let folder_path = "../js_scripts/scraped_xwords/2018/01/01.json";
 
-    let mut words_clues: HashMap<String, HashSet<String>> = HashMap::new();
+    let data = fs::read_to_string(folder_path)?;
 
-    for result in results.records() {
-        let record = result.expect("a CSV record");
+    let clueAnswers: Vec<ClueAnswer> = serde_json::from_str(&data)?;
 
-        let word = match record.get(1) {
-            None => continue,
-            Some(word) => word.to_string(),
-        };
+    println!("{:?}", clueAnswers);
 
-        let clue = match record.get(2) {
-            None => continue,
-            Some(clue) => clue.to_string(),
-        };
-
-        // let word = record[2].to_string();
-        // let clue = record[3].to_string();
-
-        // TODO: is clue good?
-        let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
-        let is_ascii_alphabetic = word.chars().all(|c| c.is_ascii_alphabetic());
-
-        if is_good_len && is_ascii_alphabetic {
-            words_clues
-                .entry(word.to_ascii_uppercase())
-                .and_modify(|clues| {
-                    clues.insert(clue.clone());
-                })
-                .or_insert(HashSet::from([clue]));
-        }
-    }
-
-    words_clues
+    Ok(())
 }
+
+// fn get_words_clues_map(
+//     min_word_len: usize,
+//     max_word_len: usize,
+// ) -> HashMap<String, HashSet<String>> {
+//     let file_path = "../xWords_data/1976_to_2018.csv";
+//     let mut results = csv::Reader::from_path(file_path).unwrap();
+
+//     let mut words_clues: HashMap<String, HashSet<String>> = HashMap::new();
+
+//     for result in results.records() {
+//         let record = result.expect("a CSV record");
+
+//         let word = match record.get(1) {
+//             None => continue,
+//             Some(word) => word.to_string(),
+//         };
+
+//         let clue = match record.get(2) {
+//             None => continue,
+//             Some(clue) => clue.to_string(),
+//         };
+
+//         // let word = record[2].to_string();
+//         // let clue = record[3].to_string();
+
+//         // TODO: is clue good?
+//         let is_good_len = min_word_len <= word.len() && word.len() <= max_word_len;
+//         let is_ascii_alphabetic = word.chars().all(|c| c.is_ascii_alphabetic());
+
+//         if is_good_len && is_ascii_alphabetic {
+//             words_clues
+//                 .entry(word.to_ascii_uppercase())
+//                 .and_modify(|clues| {
+//                     clues.insert(clue.clone());
+//                 })
+//                 .or_insert(HashSet::from([clue]));
+//         }
+//     }
+
+//     words_clues
+// }
 
 fn get_word_data(
     words_clues: &HashMap<String, HashSet<String>>,
@@ -573,58 +598,58 @@ fn number_entries(entries: &mut Vec<XWordEntry>) {
 fn main() -> std::io::Result<()> {
     // right now the longest word is 21 letters, we probably won't need words that long
     let words_clues_map = get_words_clues_map(3, 30);
-    let words_map = get_word_data(&words_clues_map);
+    // let words_map = get_word_data(&words_clues_map);
 
-    // println!("{:?}", words_clues_map);
+    // // println!("{:?}", words_clues_map);
 
-    let mut xWord = XWord::new(
-        5,
-        5,
-        vec![
-            // (0, 3),
-            // (1, 3),
-            // (3, 0),
-            // (3, 1),
-            // (3, 5),
-            // (3, 6),
-            // (5, 3),
-            // (6, 3),
-        ],
-    );
+    // let mut xWord = XWord::new(
+    //     5,
+    //     5,
+    //     vec![
+    //         // (0, 3),
+    //         // (1, 3),
+    //         // (3, 0),
+    //         // (3, 1),
+    //         // (3, 5),
+    //         // (3, 6),
+    //         // (5, 3),
+    //         // (6, 3),
+    //     ],
+    // );
 
-    let mut entries = get_xWord_entries(&xWord);
+    // let mut entries = get_xWord_entries(&xWord);
 
-    println!("entries length: {:?}", entries.len());
-    println!("entries: {:?}", entries);
+    // println!("entries length: {:?}", entries.len());
+    // println!("entries: {:?}", entries);
 
-    let mut iterations = 0;
+    // let mut iterations = 0;
 
-    if generate_xWord(
-        &mut xWord,
-        &entries,
-        &words_map,
-        &mut HashSet::new(),
-        &0,
-        &mut iterations,
-    ) {
-        println!("found after {:?} iterations", iterations);
-        println!("xWord {:?}", xWord);
+    // if generate_xWord(
+    //     &mut xWord,
+    //     &entries,
+    //     &words_map,
+    //     &mut HashSet::new(),
+    //     &0,
+    //     &mut iterations,
+    // ) {
+    //     println!("found after {:?} iterations", iterations);
+    //     println!("xWord {:?}", xWord);
 
-        populate_entries(&mut entries, &xWord, &words_clues_map);
-        number_entries(&mut entries);
+    //     populate_entries(&mut entries, &xWord, &words_clues_map);
+    //     number_entries(&mut entries);
 
-        xWord.entries = entries;
+    //     xWord.entries = entries;
 
-        let xWord_json = serde_json::to_string(&xWord).unwrap();
+    //     let xWord_json = serde_json::to_string(&xWord).unwrap();
 
-        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
-        let file_name: String = format!("generated_xWords/{}.json", random_string);
+    //     let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
+    //     let file_name: String = format!("generated_xWords/{}.json", random_string);
 
-        let mut file = File::create(&file_name[..])?;
-        file.write_all(xWord_json.as_bytes())?;
-    }
+    //     let mut file = File::create(&file_name[..])?;
+    //     file.write_all(xWord_json.as_bytes())?;
+    // }
 
-    println!("xWord {:?}", xWord);
+    // println!("xWord {:?}", xWord);
 
     Ok(())
 }
