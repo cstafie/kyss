@@ -6,8 +6,9 @@ import {
   sameXWord,
   ServerGameUpdate,
 } from '@nx/api-interfaces';
+import e = require('express');
+import { getRandomXWord } from '../../utils';
 import { Game } from '../game/game';
-import { xWord5x5 } from '../game/mock_xWord';
 import Player from '../player/player';
 
 /*
@@ -38,7 +39,9 @@ export class GameManager {
   }
 
   newGame(gameName: string, player: Player) {
-    const game = new Game(gameName, player);
+    const randomXWord = getRandomXWord();
+    console.log(randomXWord);
+    const game = new Game(gameName, player, randomXWord);
     this.games.set(game.id, game);
 
     // add the creator of the game to their own game
@@ -131,7 +134,12 @@ export class GameManager {
     const oldEmptyCount = countEmpty(game.xWord);
     const newEmptyCount = countEmpty(xWord);
 
-    if (!sameXWord(xWord5x5, xWord)) {
+    console.log(game.solvedXWord);
+    console.log(xWord);
+
+    if (!sameXWord(game.solvedXWord, xWord)) {
+      console.log('xwords not the same');
+
       playerInfo.score -= oldEmptyCount;
       this.updateGamePlayers(game);
       return;

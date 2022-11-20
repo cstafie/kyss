@@ -5,6 +5,7 @@ import {
   GameState,
   PlayerInfo,
   emptyGrid,
+  mapGrid,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import Player from '../player/player';
@@ -25,11 +26,11 @@ export class Game extends Entity {
   constructor(name, player, xWord) {
     super();
     this.name = name;
-    this.solvedXWord = {
+    this.solvedXWord = xWord;
+    this.xWord = {
       ...xWord,
-      grid: emptyGrid(xWord.grid),
+      grid: mapGrid(emptyGrid(xWord.grid)),
     };
-    this.xWord = xWord;
     this.players = new Map();
     this.log = [];
     this.creatorId = player.id;
