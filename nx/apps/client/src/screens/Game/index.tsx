@@ -15,19 +15,13 @@ const Game = () => {
 
   useEffect(() => {
     setNavLeft(
-      <Link
-        to="/"
-        onClick={leaveGame}
-        className="hover:scale-105 active:scale:95"
-      >
-        <span
-          role="img"
-          aria-label="back-arrow"
-          className="hover:scale-105 active:scale:95"
-        >
-          {LEFT_ARROW_EMOJI}
-        </span>
-      </Link>
+      <button className="hover:scale-105 active:scale-95">
+        <Link to="/" onClick={leaveGame}>
+          <span role="img" aria-label="back-arrow">
+            {LEFT_ARROW_EMOJI}
+          </span>
+        </Link>
+      </button>
     );
   }, []);
 

@@ -1,8 +1,9 @@
-import {
+import React, {
   ChangeEvent,
   FormEvent,
   SyntheticEvent,
   useCallback,
+  useRef,
   useState,
 } from 'react';
 import { useAuthContext } from '../contexts/auth';
@@ -21,40 +22,38 @@ interface FocusEvent<T = Element> extends SyntheticEvent<T> {
 const UserName = () => {
   const { user, setName } = useAuthContext();
 
-  const [value, setValue] = useState(user.name);
+  const userName = useRef<HTMLInputElement>(null);
+
   const [editing, setEditing] = useState(false);
 
-  const handleSubmit = useCallback(
-    (e: FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = useCallback((e: FormEvent) => {
+    e.preventDefault();
 
-      // TODO: better validation
-      if (value && value.toLocaleLowerCase() !== 'you') {
-        setName(value);
-        setEditing(false);
-      }
-    },
-    [value, setName]
-  );
+    const value = userName?.current?.value;
+
+    // TODO: better validation
+    if (value && value.toLocaleLowerCase() !== 'you') {
+      setName(value);
+      setEditing(false);
+
+      // TODO: this is a bit faux pas
+      window.location.reload();
+    }
+  }, []);
 
   const handleFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
     e.target?.select();
   }, []);
 
-  const handleOnChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  }, []);
-
   return (
-    <div onClick={() => setEditing(true)} className="flex">
+    <button onClick={() => setEditing(true)} className="flex">
       {editing ? (
         <form onSubmit={handleSubmit}>
           <input
+            ref={userName}
             className="text-black"
             autoFocus
             onFocus={handleFocus}
-            onChange={handleOnChange}
-            value={value}
             maxLength={MAX_PLAYER_NAME_LENGTH}
           />
           <button type="submit" className="btn btn-blue">
@@ -67,7 +66,7 @@ const UserName = () => {
           {pencilEmoji}
         </>
       )}
-    </div>
+    </button>
   );
 };
 

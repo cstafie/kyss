@@ -6,7 +6,6 @@ import {
   sameXWord,
   ServerGameUpdate,
 } from '@nx/api-interfaces';
-import e = require('express');
 import { getRandomXWord } from '../../utils';
 import { Game } from '../game/game';
 import Player from '../player/player';
@@ -75,7 +74,7 @@ export class GameManager {
 
     // TODO: check if they were disconnected
     // - remove them from disconnect map
-    // - if they have an ongoing game then reconnect them to th at game
+    // - if they have an ongoing game then reconnect them to that game
 
     this.updateServerMembers();
 
