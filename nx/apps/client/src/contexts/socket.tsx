@@ -32,18 +32,18 @@ interface Socket {
   updateGame: (game: Game) => void;
   joinGame: (gameId: string) => void;
   startGame: () => void;
+  leaveGame: () => void;
   games: Array<GameMetaData>;
   game: Game | null;
 }
 
+const warning = () => console.error('No matching provider for SocketContext');
 const SocketContext = createContext<Socket>({
-  createGame: (gameName: string) =>
-    console.error('No matching provider for SocketContext'),
-  updateGame: (game: Game) =>
-    console.error('No matching provider for SocketContext'),
-  joinGame: (gameId: string) =>
-    console.error('No matching provider for SocketContext'),
-  startGame: () => console.error('No matching provider for SocketContext'),
+  createGame: (gameName: string) => warning(),
+  updateGame: (game: Game) => warning(),
+  joinGame: (gameId: string) => warning(),
+  startGame: () => warning(),
+  leaveGame: () => warning(),
   games: [],
   game: null,
 });
@@ -69,8 +69,6 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   const [games, setGames] = useState<Array<GameMetaData>>([]);
   const [game, setGame] = useState<Game | null>(null);
-
-  console.log(game);
 
   useEffect(() => {
     // todo make these paths constants
@@ -117,6 +115,11 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.emit('update-game', playerGameUpdate);
   }, []);
 
+  const leaveGame = useCallback(() => {
+    socket.emit('leave-game');
+    setGame(null);
+  }, []);
+
   return (
     <SocketContext.Provider
       value={{
@@ -124,6 +127,7 @@ export const SocketContextProvider = ({ children }: Props) => {
         updateGame: optimisticUpdate,
         joinGame,
         startGame,
+        leaveGame,
         games,
         game,
       }}

@@ -1,10 +1,35 @@
 import { GameState } from '@nx/api-interfaces';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavContext } from '../../contexts/nav';
 import { useSocketContext } from '../../contexts/socket';
 import Lobby from './lobby';
 import XWord from './XWord';
 
+const LEFT_ARROW_EMOJI = '⬅️';
+
 const Game = () => {
-  const { game, updateGame, startGame } = useSocketContext();
+  const { game, updateGame, startGame, leaveGame } = useSocketContext();
+
+  const { setNavLeft } = useNavContext();
+
+  useEffect(() => {
+    setNavLeft(
+      <Link
+        to="/"
+        onClick={leaveGame}
+        className="hover:scale-105 active:scale:95"
+      >
+        <span
+          role="img"
+          aria-label="back-arrow"
+          className="hover:scale-105 active:scale:95"
+        >
+          {LEFT_ARROW_EMOJI}
+        </span>
+      </Link>
+    );
+  }, []);
 
   if (game === null) {
     return <>...</>;

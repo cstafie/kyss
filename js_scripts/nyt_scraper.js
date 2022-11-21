@@ -15,9 +15,6 @@ async function scrapeCrosswordClues(url, filePath) {
   const root = htmlParser.parse(htmlString);
   root.removeWhitespace();
 
-  //   const nywrap = root.querySelector(".nywrap");
-  //   console.log(nywrap);
-
   const data = [];
 
   try {

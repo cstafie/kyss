@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavContext } from '../../contexts/nav';
 import { useSocketContext } from '../../contexts/socket';
 import GamesTable from './games_table';
 
@@ -9,12 +10,18 @@ const GAME_NAME_LENGTH = 6;
 const GamesList = () => {
   const { games, game, createGame } = useSocketContext();
   const navigate = useNavigate();
+  const { setNavLeft } = useNavContext();
 
   useEffect(() => {
+    // TODO: navigate should not be used in this way
     if (game !== null) {
       navigate('/xword');
     }
   }, [game, navigate]);
+
+  useEffect(() => {
+    setNavLeft(null);
+  }, []);
 
   return (
     <section className="flex flex-col items-center">
