@@ -8,9 +8,6 @@
 
 - address todos in code
 - design and implement a routing strategy
--
-
-- points system
 
 - deploy to gcp (or anywhere else if that doesn't work)
 - env variables

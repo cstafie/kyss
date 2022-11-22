@@ -34,7 +34,7 @@ io.on('connection', (socket: Socket) => {
     gameManager.playerJoin(player);
 
     socket.on('disconnect', () => {
-      gameManager.playerLeave(player);
+      gameManager.playerLeave(player.id);
     });
   });
 });

@@ -51,6 +51,11 @@ export class GameManager {
   playerJoinGame(game: Game, player: Player) {
     game.addPlayer(player);
 
+    this.players.set(player.id, {
+      ...player,
+      currentGameId: game.id,
+    });
+
     player.socket.on('update-game', (gameUpdate: PlayerGameUpdate) => {
       this.updateGame(player, game, gameUpdate);
     });
@@ -60,21 +65,35 @@ export class GameManager {
     this.updateGamePlayers(game);
   }
 
+  // TODO: cleanup this large function
   // TODO: ensure this is idempotent
   playerJoin(player: Player) {
     const playerAlreadyJoined = this.players.has(player.id);
 
     this.players.set(player.id, player);
 
-    if (this.disconnectedPlayers.has(player.id)) {
-      console.log(`${player.name} rejoined the server`);
+    const disconnectInfo = this.disconnectedPlayers.get(player.id);
+
+    if (disconnectInfo) {
+      this.disconnectedPlayers.delete(player.id);
+
+      this.players.set(player.id, {
+        ...player,
+        currentGameId: disconnectInfo.currentGameId,
+      });
+
+      const game = this.games.get(disconnectInfo.currentGameId);
+      console.log(`${player.name} was reconnected to the server`);
+
+      // if that game still exists, let's join them to it
+      if (game) {
+        this.playerJoinGame(game, player);
+        this.updateGamePlayers(game);
+        console.log(`${player.name} rejoined their game`);
+      }
     } else {
       console.log(`${player.name} joined the server`);
     }
-
-    // TODO: check if they were disconnected
-    // - remove them from disconnect map
-    // - if they have an ongoing game then reconnect them to that game
 
     this.updateServerMembers();
 
@@ -162,11 +181,16 @@ export class GameManager {
   }
 
   // TODO: ensure this is idempotent
-  playerLeave(player: Player) {
-    console.log(`${player.name} left the server`);
+  playerLeave(playerId: string) {
+    const playerInfo = this.players.get(playerId);
+    if (!playerInfo) {
+      return;
+    }
 
-    this.disconnectedPlayers.set(player.id, player);
-    this.players.delete(player.id);
+    this.disconnectedPlayers.set(playerId, playerInfo);
+    this.players.delete(playerId);
+
+    console.log(`${playerInfo.name} left the server`);
   }
 
   updateServerMembers() {

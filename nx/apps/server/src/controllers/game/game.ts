@@ -92,13 +92,17 @@ export class Game extends Entity {
   }
 
   addPlayer(player: Player) {
-    this.players.set(player.id, {
-      id: player.id,
-      tileBar: this.initTileBar(),
-      score: 0,
-      ready: false,
-      name: player.name,
-    });
+    const existingPlayer = this.players.get(player.id);
+
+    if (!existingPlayer) {
+      this.players.set(player.id, {
+        id: player.id,
+        tileBar: this.initTileBar(),
+        score: 0,
+        ready: false,
+        name: player.name,
+      });
+    }
   }
 
   removePlayer(playerId: string) {
