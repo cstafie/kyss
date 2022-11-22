@@ -157,8 +157,6 @@ export class GameManager {
       return;
     }
 
-    // TODO: check if game is over
-
     if (oldEmptyCount > newEmptyCount) {
       playerInfo.score += oldEmptyCount;
     }
@@ -173,6 +171,12 @@ export class GameManager {
     game.xWord = xWord;
 
     this.updateGamePlayers(game);
+
+    // check if game is over
+    if (newEmptyCount === 0) {
+      this.games.delete(game.id);
+      this.updateServerMembers();
+    }
   }
 
   startGame(game: Game) {
