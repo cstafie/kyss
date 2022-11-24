@@ -131,12 +131,16 @@ export class GameManager {
 
   updateGamePlayers(game: Game) {
     Array.from(game.players.entries()).forEach(([playerId, playerInfo]) => {
-      this.players
-        .get(playerId)
-        .socket.emit(
-          'game-update',
-          this.makeServerGameUpdate(playerInfo, game)
-        );
+      const player = this.players.get(playerId);
+
+      if (!player) {
+        return;
+      }
+
+      player.socket.emit(
+        'game-update',
+        this.makeServerGameUpdate(playerInfo, game)
+      );
     });
   }
 
