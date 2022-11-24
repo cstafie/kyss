@@ -11,6 +11,11 @@ COPY . .
 # CMD ls
 CMD ["npx", "nx", "run-many", "--target=serve", "--projects=server,client", "--configuration=production"]
 
-# run from /nx
-# docker build . -t xword
-# docker run -p 4200:4200 xword
+
+#### run these instructions from /nx 
+# nx run-many --target=build --projects=server,client
+# docker build . -t us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword
+# docker push us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword
+
+#### run this on the machine running the docker container
+# docker run -dp 80:4200 us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword

@@ -16,6 +16,10 @@ app.use(cookieParser());
 
 const gameManager = new GameManager();
 
+// https://github.com/nodejs/help/issues/705#issuecomment-757578500
+httpServer.on('clientError', console.error);
+httpServer.on('error', console.error);
+
 app.get('/api/login', (req, res) => {
   console.log('api');
 
@@ -43,4 +47,6 @@ const port = process.env.port || 3333;
 const server = app.listen(port, () => {
   console.log('Listening at http://localhost:' + port + '/api');
 });
+
 server.on('error', console.error);
+server.on('clientError', console.error);
