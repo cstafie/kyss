@@ -25,11 +25,18 @@ export class Game extends Entity {
 
   constructor(name, player, xWord) {
     super();
+
+    console.log(xWord.grid);
+
+    const theEmptyGrid = emptyGrid(xWord.grid);
+
+    console.log(theEmptyGrid);
+
     this.name = name;
     this.solvedXWord = xWord;
     this.xWord = {
       ...xWord,
-      grid: mapGrid(emptyGrid(xWord.grid)),
+      grid: emptyGrid(xWord.grid),
     };
     this.players = new Map();
     this.log = [];

@@ -14,8 +14,10 @@ export const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {
   return grid.map((row) => row.map((s) => charToTile(s)));
 };
 
-export const emptyGrid = (grid: Array<Array<string>>): Array<Array<string>> => {
-  return grid.map((row) => row.map((s) => (s === '#' ? s : ' ')));
+export const emptyGrid = (grid: Array<Array<Tile>>): Array<Array<Tile>> => {
+  return grid.map((row) =>
+    row.map((s) => (s.char === '#' ? s : charToTile(' ')))
+  );
 };
 
 export const sameXWord = (filled: XWord, partial: XWord): boolean => {
