@@ -1,6 +1,7 @@
 import {
   countEmpty,
   GameMetaData,
+  GameState,
   PlayerGameUpdate,
   PlayerInfo,
   sameXWord,
@@ -9,22 +10,6 @@ import {
 import { getRandomXWord } from '../../utils';
 import { Game } from '../game/game';
 import Player from '../player/player';
-
-/*
-player actions
-- join-server (happens implicitly)
-- leave server (due to disconnect or any other reason)
-- create-game 
-- join-game
-- update-game
-- leave game 
-*/
-
-/* 
-server events
-- game-update
-- server-update
-*/
 
 export class GameManager {
   games: Map<string, Game>;
@@ -45,6 +30,8 @@ export class GameManager {
     // add the creator of the game to their own game
     this.playerJoinGame(game, player);
 
+    console.log(`${player.name} created a new game`);
+
     this.updateServerMembers();
   }
 
@@ -61,6 +48,10 @@ export class GameManager {
     });
 
     player.socket.on('start-game', () => this.startGame(game));
+
+    player.socket.on('leave-game', () =>
+      this.playerLeaveGame(game.id, player.id)
+    );
 
     this.updateGamePlayers(game);
   }
@@ -189,7 +180,7 @@ export class GameManager {
   }
 
   // TODO: ensure this is idempotent
-  playerLeave(playerId: string) {
+  playerDisconnect(playerId: string) {
     const playerInfo = this.players.get(playerId);
     if (!playerInfo) {
       return;
@@ -198,7 +189,26 @@ export class GameManager {
     this.disconnectedPlayers.set(playerId, playerInfo);
     this.players.delete(playerId);
 
-    console.log(`${playerInfo.name} left the server`);
+    console.log(`${playerInfo.name} disconnected from the server`);
+  }
+
+  playerLeaveGame(gameId: string, playerId: string) {
+    const game = this.games.get(gameId);
+    const player = this.players.get(playerId);
+
+    if (player) {
+      this.players.set(playerId, {
+        ...player,
+        currentGameId: '',
+      });
+    }
+
+    if (game) {
+      game.removePlayer(player.id);
+      this.updateGamePlayers(game);
+    }
+
+    this.updateServerMembers();
   }
 
   updateServerMembers() {
@@ -219,7 +229,10 @@ export class GameManager {
     });
 
     for (const player of this.players.values()) {
-      player.socket.emit('server-update', games);
+      player.socket.emit(
+        'server-update',
+        games.filter((game) => game.gameState === GameState.waitingToStart)
+      );
     }
   }
 }

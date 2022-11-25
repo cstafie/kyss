@@ -5,7 +5,6 @@ import {
   GameState,
   PlayerInfo,
   emptyGrid,
-  mapGrid,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import Player from '../player/player';
@@ -25,12 +24,6 @@ export class Game extends Entity {
 
   constructor(name, player, xWord) {
     super();
-
-    console.log(xWord.grid);
-
-    const theEmptyGrid = emptyGrid(xWord.grid);
-
-    console.log(theEmptyGrid);
 
     this.name = name;
     this.solvedXWord = xWord;
@@ -81,6 +74,12 @@ export class Game extends Entity {
     return tileBar;
   }
 
+  emptyTileBar(tileBar: Array<Tile>) {
+    while (tileBar.length) {
+      this.tiles.add(tileBar.pop());
+    }
+  }
+
   fillTileBar(tileBar) {
     if (tileBar.length >= TILE_BAR_SIZE) {
       return;
@@ -113,6 +112,21 @@ export class Game extends Entity {
   }
 
   removePlayer(playerId: string) {
+    const playerInfo = this.players.get(playerId);
+
+    if (!playerInfo) {
+      return;
+    }
+
+    this.emptyTileBar(playerInfo.tileBar);
     this.players.delete(playerId);
+
+    const otherPlayers = Array.from(this.players.values());
+
+    otherPlayers.sort(
+      (playerA, playerB) => playerA.tileBar.length - playerB.tileBar.length
+    );
+
+    otherPlayers.forEach((player) => this.fillTileBar(player.tileBar));
   }
 }
