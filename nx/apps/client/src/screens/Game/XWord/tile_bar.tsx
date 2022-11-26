@@ -17,7 +17,13 @@ const TileBar = ({ tiles }: Props) => {
           {...provided.droppableProps}
         >
           {tiles.map((tile, i) => (
-            <Tile key={tile.id} tile={tile} index={i} isDragDisabled={false} />
+            <Tile
+              key={tile.id}
+              tile={tile}
+              index={i}
+              isDragDisabled={false}
+              isHighlighted={false}
+            />
           ))}
           {provided.placeholder}
         </section>

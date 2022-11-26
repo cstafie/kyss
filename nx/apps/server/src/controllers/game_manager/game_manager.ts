@@ -108,6 +108,7 @@ export class GameManager {
 
   makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
     const { tileBar, score, ready } = playerInfo;
+
     const gameUpdate: ServerGameUpdate = {
       xWord: game.xWord,
       gameState: game.gameState,
@@ -152,9 +153,16 @@ export class GameManager {
       return;
     }
 
-    if (oldEmptyCount > newEmptyCount) {
-      playerInfo.score += oldEmptyCount;
+    const tileCountDiff = oldEmptyCount - newEmptyCount;
+
+    // we can only have no change, or at most 1
+    if (!(tileCountDiff === 0 || tileCountDiff === 1)) {
+      return;
     }
+
+    // TODO: a little hacky
+    // we should separate ready events from update game events
+    playerInfo.score += tileCountDiff * oldEmptyCount;
 
     game.fillTileBar(tileBar);
 
@@ -205,7 +213,12 @@ export class GameManager {
 
     if (game) {
       game.removePlayer(player.id);
-      this.updateGamePlayers(game);
+
+      if (game.players.size === 0) {
+        this.games.delete(game.id);
+      } else {
+        this.updateGamePlayers(game);
+      }
     }
 
     this.updateServerMembers();

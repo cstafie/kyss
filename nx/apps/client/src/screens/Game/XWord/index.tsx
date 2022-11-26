@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Direction } from '@nx/api-interfaces';
@@ -22,17 +22,31 @@ const XWord = ({ game, updateGame }: Props) => {
     [xWord.entries, currentEntryIndex]
   );
 
-  // const [currentCell, setCurrentCell] = useState<[number, number]>([
-  //   currentEntry.row,
-  //   currentEntry.col,
-  // ]);
+  const acrossEntries = useMemo(
+    () => xWord.entries.filter((entry) => entry.direction === Direction.ACROSS),
+    [xWord.entries]
+  );
 
-  useHotkeys('shift+tab', (e) => {
-    e.preventDefault();
-    setCurrentEntryIndex(
-      (prev) => (prev - 1 + xWord.entries.length) % xWord.entries.length
-    );
-  });
+  const downEntries = useMemo(
+    () => xWord.entries.filter((entry) => entry.direction === Direction.DOWN),
+    [xWord.entries]
+  );
+
+  // const goToNextEntry = useCallback(() => {
+  //   setCurrentEntryIndex()
+  // }, [xWord])
+
+  useHotkeys(
+    'shift+tab',
+    (e) => {
+      e.preventDefault();
+      console.log(xWord.grid);
+      setCurrentEntryIndex(
+        (prev) => (prev - 1 + xWord.entries.length) % xWord.entries.length
+      );
+    },
+    [xWord]
+  );
   useHotkeys('tab', (e) => {
     e.preventDefault();
     setCurrentEntryIndex((prev) => (prev + 1) % xWord.entries.length);
@@ -57,16 +71,6 @@ const XWord = ({ game, updateGame }: Props) => {
       return 0;
     });
   });
-
-  const acrossEntries = useMemo(
-    () => xWord.entries.filter((entry) => entry.direction === Direction.ACROSS),
-    [xWord.entries]
-  );
-
-  const downEntries = useMemo(
-    () => xWord.entries.filter((entry) => entry.direction === Direction.DOWN),
-    [xWord.entries]
-  );
 
   return (
     <section className="flex flex-row justify-center mt-12">
