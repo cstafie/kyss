@@ -648,7 +648,7 @@ fn main() -> std::io::Result<()> {
 
     // println!("{:?}", words_clues_map);
 
-    for i in 0..1 {
+    for i in 0..999 {
         let mut xword = XWord::new(
             7,
             7,
