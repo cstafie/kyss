@@ -18,4 +18,4 @@ CMD ["npx", "nx", "run-many", "--target=serve", "--projects=server,client", "--c
 # docker push us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword
 
 #### run this on the machine running the docker container
-# docker run -dp 80:4200 us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword
+# docker run -dp 80:4200 -p 4200:4200 us-west1-docker.pkg.dev/elite-dreamer-369602/artifact-reg-repo/test-xword

@@ -1,1 +1,100 @@
-[{"clue":"“First, do no ___” (physician’s maxim)","answer":"HARM"},{"clue":"Claim on some food packaging","answer":"NOMSG"},{"clue":"Simplicity","answer":"EASE"},{"clue":"Cookie often dipped in milk","answer":"OREO"},{"clue":"Barclays Center in Brooklyn, for one","answer":"ARENA"},{"clue":"Ending with Insta-","answer":"GRAM"},{"clue":"Telepathic sort","answer":"MINDREADER"},{"clue":"Halliwell of the Spice Girls","answer":"GERI"},{"clue":"Makeup mogul Lauder","answer":"ESTEE"},{"clue":"Determines the money needed to get out of jail","answer":"SETSBAIL"},{"clue":"Affirmative response to “Shall we dance?”","answer":"YESLETS"},{"clue":"Greek letter that one might expect to come last","answer":"ZETA"},{"clue":"Embedded spy awaiting a mission","answer":"SLEEPERAGENT"},{"clue":"Minor-league level","answer":"AAA"},{"clue":"With 59-Across, “Madam Secretary” star","answer":"TEA"},{"clue":"Curbside coin collector","answer":"METER"},{"clue":"Scattered here, there and everywhere","answer":"ALLOVERTHEPLACE"},{"clue":"Animal that dances ballet in “Fantasia”","answer":"HIPPO"},{"clue":"Apple mobile devices run on it","answer":"IOS"},{"clue":"Locale for clouds","answer":"SKY"},{"clue":"“Quit arguing, kids!”","answer":"STOPITYOUTWO"},{"clue":"Cuatro + cuatro","answer":"OCHO"},{"clue":"1988 Best Picture winner starring Dustin Hoffman","answer":"RAINMAN"},{"clue":"People who “sow” evil","answer":"BADSEEDS"},{"clue":"See 35-Across","answer":"LEONI"},{"clue":"Antioxidant-rich berry","answer":"ACAI"},{"clue":"Intuition without logical explanation, or a hint to this puzzle’s circled letters","answer":"GUTFEELING"},{"clue":"Dryer fuzz","answer":"LINT"},{"clue":"“Ciao” in Chihuahua","answer":"ADIOS"},{"clue":"Singer India.___","answer":"ARIE"},{"clue":"Border","answer":"EDGE"},{"clue":"H. Ross ___, candidate of 1992 and 1996","answer":"PEROT"},{"clue":"Banana skin","answer":"PEEL"},{"clue":"Invitingly warm and cozy","answer":"HOMEY"},{"clue":"Come up, as issues","answer":"ARISE"},{"clue":"Amounts on Monopoly cards","answer":"RENTS"},{"clue":"X and Y, for Tesla","answer":"MODELS"},{"clue":"Scottish refusal","answer":"NAE"},{"clue":"Pop star Rita","answer":"ORA"},{"clue":"Doc’s prescriptions","answer":"MEDS"},{"clue":"“Gesundheit!” elicitor","answer":"SNEEZE"},{"clue":"Hose holder, or a kind of snake","answer":"GARTER"},{"clue":"Breakfast roll with another breakfast staple added in","answer":"EGGBAGEL"},{"clue":"Locale","answer":"AREA"},{"clue":"Dress in India","answer":"SARI"},{"clue":"Jannings who won the first Best Actor Oscar","answer":"EMIL"},{"clue":"Highlight ___ (sports compilation)","answer":"REEL"},{"clue":"“Forever” purchase","answer":"STAMP"},{"clue":"Head: Fr.","answer":"TETE"},{"clue":"Clairvoyant sort","answer":"SEER"},{"clue":"Outdoor furniture setting","answer":"PATIO"},{"clue":"Sched. listings at JFK or LAX","answer":"ETAS"},{"clue":"Long part of a giraffe","answer":"NECK"},{"clue":"Card above deuce","answer":"TREY"},{"clue":"Oohs and ___","answer":"AAHS"},{"clue":"Landed, as on a wire","answer":"ALIT"},{"clue":"Fido fare, maybe","answer":"ALPO"},{"clue":"Night, to day","answer":"OPPOSITE"},{"clue":"Soprano or alto","answer":"VOICE"},{"clue":"60 minutes","answer":"HOUR"},{"clue":"This: Sp.","answer":"ESTA"},{"clue":"Something to “mind” at a British train station","answer":"THEGAP"},{"clue":"“What’s up, my man?!”","answer":"YODUDE"},{"clue":"___ E. Coyote","answer":"WILE"},{"clue":"Up and back, in a pool","answer":"ONELAP"},{"clue":"Wavy-patterned fabric","answer":"MOIRE"},{"clue":"Photographer Leibovitz","answer":"ANNIE"},{"clue":"___ Barker, fashion photographer and reality TV judge","answer":"NIGEL"},{"clue":"Bundle of hay","answer":"BALE"},{"clue":"You’ll trip on it if you drop it","answer":"ACID"},{"clue":"“Shoot!”","answer":"DANG"},{"clue":"Commotion","answer":"STIR"},{"clue":"Rock’s ___ Fighters","answer":"FOO"},{"clue":"Ballpark guess: Abbr.","answer":"EST"}]
+[
+  { "clue": "“First, do no ___” (physician’s maxim)", "answer": "HARM" },
+  { "clue": "Claim on some food packaging", "answer": "NOMSG" },
+  { "clue": "Simplicity", "answer": "EASE" },
+  { "clue": "Cookie often dipped in milk", "answer": "OREO" },
+  { "clue": "Barclays Center in Brooklyn, for one", "answer": "ARENA" },
+  { "clue": "Ending with Insta-", "answer": "GRAM" },
+  { "clue": "Telepathic sort", "answer": "MINDREADER" },
+  { "clue": "Halliwell of the Spice Girls", "answer": "GERI" },
+  { "clue": "Makeup mogul Lauder", "answer": "ESTEE" },
+  {
+    "clue": "Determines the money needed to get out of jail",
+    "answer": "SETSBAIL"
+  },
+  { "clue": "Affirmative response to “Shall we dance?”", "answer": "YESLETS" },
+  {
+    "clue": "Greek letter that one might expect to come last",
+    "answer": "ZETA"
+  },
+  { "clue": "Embedded spy awaiting a mission", "answer": "SLEEPERAGENT" },
+  { "clue": "Minor-league level", "answer": "AAA" },
+  { "clue": "With 59-Across, “Madam Secretary” star", "answer": "TEA" },
+  { "clue": "Curbside coin collector", "answer": "METER" },
+  {
+    "clue": "Scattered here, there and everywhere",
+    "answer": "ALLOVERTHEPLACE"
+  },
+  { "clue": "Animal that dances ballet in “Fantasia”", "answer": "HIPPO" },
+  { "clue": "Apple mobile devices run on it", "answer": "IOS" },
+  { "clue": "Locale for clouds", "answer": "SKY" },
+  { "clue": "“Quit arguing, kids!”", "answer": "STOPITYOUTWO" },
+  { "clue": "Cuatro + cuatro", "answer": "OCHO" },
+  {
+    "clue": "1988 Best Picture winner starring Dustin Hoffman",
+    "answer": "RAINMAN"
+  },
+  { "clue": "People who “sow” evil", "answer": "BADSEEDS" },
+  { "clue": "See 35-Across", "answer": "LEONI" },
+  { "clue": "Antioxidant-rich berry", "answer": "ACAI" },
+  {
+    "clue": "Intuition without logical explanation, or a hint to this puzzle’s circled letters",
+    "answer": "GUTFEELING"
+  },
+  { "clue": "Dryer fuzz", "answer": "LINT" },
+  { "clue": "“Ciao” in Chihuahua", "answer": "ADIOS" },
+  { "clue": "Singer India.___", "answer": "ARIE" },
+  { "clue": "Border", "answer": "EDGE" },
+  { "clue": "H. Ross ___, candidate of 1992 and 1996", "answer": "PEROT" },
+  { "clue": "Banana skin", "answer": "PEEL" },
+  { "clue": "Invitingly warm and cozy", "answer": "HOMEY" },
+  { "clue": "Come up, as issues", "answer": "ARISE" },
+  { "clue": "Amounts on Monopoly cards", "answer": "RENTS" },
+  { "clue": "X and Y, for Tesla", "answer": "MODELS" },
+  { "clue": "Scottish refusal", "answer": "NAE" },
+  { "clue": "Pop star Rita", "answer": "ORA" },
+  { "clue": "Doc’s prescriptions", "answer": "MEDS" },
+  { "clue": "“Gesundheit!” elicitor", "answer": "SNEEZE" },
+  { "clue": "Hose holder, or a kind of snake", "answer": "GARTER" },
+  {
+    "clue": "Breakfast roll with another breakfast staple added in",
+    "answer": "EGGBAGEL"
+  },
+  { "clue": "Locale", "answer": "AREA" },
+  { "clue": "Dress in India", "answer": "SARI" },
+  { "clue": "Jannings who won the first Best Actor Oscar", "answer": "EMIL" },
+  { "clue": "Highlight ___ (sports compilation)", "answer": "REEL" },
+  { "clue": "“Forever” purchase", "answer": "STAMP" },
+  { "clue": "Head: Fr.", "answer": "TETE" },
+  { "clue": "Clairvoyant sort", "answer": "SEER" },
+  { "clue": "Outdoor furniture setting", "answer": "PATIO" },
+  { "clue": "Sched. listings at JFK or LAX", "answer": "ETAS" },
+  { "clue": "Long part of a giraffe", "answer": "NECK" },
+  { "clue": "Card above deuce", "answer": "TREY" },
+  { "clue": "Oohs and ___", "answer": "AAHS" },
+  { "clue": "Landed, as on a wire", "answer": "ALIT" },
+  { "clue": "Fido fare, maybe", "answer": "ALPO" },
+  { "clue": "Night, to day", "answer": "OPPOSITE" },
+  { "clue": "Soprano or alto", "answer": "VOICE" },
+  { "clue": "60 minutes", "answer": "HOUR" },
+  { "clue": "This: Sp.", "answer": "ESTA" },
+  {
+    "clue": "Something to “mind” at a British train station",
+    "answer": "THEGAP"
+  },
+  { "clue": "“What’s up, my man?!”", "answer": "YODUDE" },
+  { "clue": "___ E. Coyote", "answer": "WILE" },
+  { "clue": "Up and back, in a pool", "answer": "ONELAP" },
+  { "clue": "Wavy-patterned fabric", "answer": "MOIRE" },
+  { "clue": "Photographer Leibovitz", "answer": "ANNIE" },
+  {
+    "clue": "___ Barker, fashion photographer and reality TV judge",
+    "answer": "NIGEL"
+  },
+  { "clue": "Bundle of hay", "answer": "BALE" },
+  { "clue": "You’ll trip on it if you drop it", "answer": "ACID" },
+  { "clue": "“Shoot!”", "answer": "DANG" },
+  { "clue": "Commotion", "answer": "STIR" },
+  { "clue": "Rock’s ___ Fighters", "answer": "FOO" },
+  { "clue": "Ballpark guess: Abbr.", "answer": "EST" }
+]

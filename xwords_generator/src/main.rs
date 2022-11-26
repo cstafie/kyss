@@ -1,6 +1,9 @@
 use rand::distributions::{Alphanumeric, DistString};
+use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 // use serde_json::Result;
+use chrono::prelude::*;
+use regex::Regex;
 use std::{
     cmp,
     collections::{HashMap, HashSet},
@@ -158,6 +161,28 @@ fn get_clue_answers(path: &str) -> Result<Vec<ClueAnswer>, Box<dyn Error>> {
     return Ok(clue_answers);
 }
 
+fn is_clue_good(clue: &str) -> bool {
+    let bad_clues = [
+        r"(?i)\[see note\]",
+        r"(?i)-across",
+        "(?i)-down",
+        r"$\*",
+        r"$-^",
+    ];
+
+    for bad_clue in bad_clues {
+        // TODO: building the same regex over and over again is inefficient
+        // but it doesn't really matter since this code rarely runs
+        let re = Regex::new(bad_clue).unwrap();
+
+        if re.is_match(clue) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 fn get_answers_clues_map(
     min_word_len: usize,
     max_word_len: usize,
@@ -167,6 +192,19 @@ fn get_answers_clues_map(
     for year in 2017..=2022 {
         for month in 1..=12 {
             for day in 1..31 {
+                // let's skip THU and SUN to lower the chance of bad/weird words/clues
+                let dt_option = NaiveDate::from_ymd_opt(year, month, day);
+
+                match dt_option {
+                    Some(dt) => {
+                        let weekday = dt.weekday();
+                        if weekday.eq(&Weekday::Thu) || weekday.eq(&Weekday::Sun) {
+                            continue;
+                        }
+                    }
+                    None => continue,
+                }
+
                 let path = format!(
                     "../js_scripts/scraped_xwords/{}/{:0>2}/{:0>2}.json",
                     year, month, day
@@ -180,26 +218,34 @@ fn get_answers_clues_map(
         }
     }
 
-    println!("{:?}", clue_answers.len());
+    println!("raw clue/answer count: {:?}", clue_answers.len());
 
     let mut answers_clues: HashMap<String, HashSet<String>> = HashMap::new();
 
     for clue_answer in clue_answers {
         let ClueAnswer { clue, answer } = clue_answer;
 
+        if !is_clue_good(&clue) {
+            continue;
+        }
+
         // TODO: is clue good?
         let is_good_len = min_word_len <= answer.len() && answer.len() <= max_word_len;
         let is_ascii_alphabetic = answer.chars().all(|c| c.is_ascii_alphabetic());
 
-        if is_good_len && is_ascii_alphabetic {
-            answers_clues
-                .entry(answer.to_ascii_uppercase())
-                .and_modify(|clues| {
-                    clues.insert(clue.clone());
-                })
-                .or_insert(HashSet::from([clue]));
+        if !(is_good_len && is_ascii_alphabetic) {
+            continue;
         }
+
+        answers_clues
+            .entry(answer.to_ascii_uppercase())
+            .and_modify(|clues| {
+                clues.insert(clue.clone());
+            })
+            .or_insert(HashSet::from([clue]));
     }
+
+    println!("cleaned up count: {:?}", answers_clues.keys().len());
 
     answers_clues
 }
@@ -254,16 +300,16 @@ fn get_word_data(
     words_map
 }
 
-fn get_xWord_entries_across(xWord: &XWord, entries: &mut Vec<XWordEntry>, row: usize) {
+fn get_xword_entries_across(xword: &XWord, entries: &mut Vec<XWordEntry>, row: usize) {
     // last row is xWord.height - 1
-    if row >= xWord.height {
+    if row >= xword.height {
         return;
     }
 
     let mut starting_col = 0;
 
-    for col in 0..xWord.width {
-        if xWord.grid[row][col] == '#' {
+    for col in 0..xword.width {
+        if xword.grid[row][col] == '#' {
             if starting_col < col {
                 entries.push(XWordEntry {
                     row,
@@ -279,28 +325,28 @@ fn get_xWord_entries_across(xWord: &XWord, entries: &mut Vec<XWordEntry>, row: u
         }
     }
 
-    if starting_col < xWord.width {
+    if starting_col < xword.width {
         entries.push(XWordEntry {
             row,
             col: starting_col,
             direction: Direction::Across,
-            length: xWord.width - starting_col,
+            length: xword.width - starting_col,
             number: 0,
             clue: "".to_string(),
         });
     }
 }
 
-fn get_xWord_entries_down(xWord: &XWord, entries: &mut Vec<XWordEntry>, col: usize) {
+fn get_xword_entries_down(xword: &XWord, entries: &mut Vec<XWordEntry>, col: usize) {
     // last col is xWord.width - 1
-    if col >= xWord.width {
+    if col >= xword.width {
         return;
     }
 
     let mut starting_row = 0;
 
-    for row in 0..xWord.height {
-        if xWord.grid[row][col] == '#' {
+    for row in 0..xword.height {
+        if xword.grid[row][col] == '#' {
             if starting_row < row {
                 entries.push(XWordEntry {
                     row: starting_row,
@@ -316,24 +362,24 @@ fn get_xWord_entries_down(xWord: &XWord, entries: &mut Vec<XWordEntry>, col: usi
         }
     }
 
-    if starting_row < xWord.height {
+    if starting_row < xword.height {
         entries.push(XWordEntry {
             row: starting_row,
             col,
             direction: Direction::Down,
-            length: xWord.height - starting_row,
+            length: xword.height - starting_row,
             number: 0,
             clue: "".to_string(),
         });
     }
 }
 
-fn get_xWord_entries(xWord: &XWord) -> Vec<XWordEntry> {
+fn get_xword_entries(xword: &XWord) -> Vec<XWordEntry> {
     let mut entries = vec![];
 
-    for i in 0..cmp::max(xWord.width, xWord.height) {
-        get_xWord_entries_across(xWord, &mut entries, i);
-        get_xWord_entries_down(xWord, &mut entries, i);
+    for i in 0..cmp::max(xword.width, xword.height) {
+        get_xword_entries_across(xword, &mut entries, i);
+        get_xword_entries_down(xword, &mut entries, i);
     }
 
     entries
@@ -400,7 +446,7 @@ fn get_matching_words<'a>(
 }
 
 fn score(
-    xWord: &mut XWord,
+    xword: &mut XWord,
     word: &String,
     entry: &XWordEntry,
     old_entry_string: &String,
@@ -408,13 +454,13 @@ fn score(
     words_map: &HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>>,
 ) -> i32 {
     // place the word so get_entry works
-    xWord.set_entry(entry, word);
+    xword.set_entry(entry, word);
 
     let mut total: i32 = 0;
 
     for intersection_entry in intersections {
         // let intersection_entry = intersections.get(i).unwrap();
-        let test_string = xWord.get_entry(intersection_entry);
+        let test_string = xword.get_entry(intersection_entry);
         let words_vec = words_map.get(&intersection_entry.length).unwrap();
         let matches = get_matching_words(words_vec, &test_string);
 
@@ -427,15 +473,13 @@ fn score(
     }
 
     // put back the old word
-    xWord.set_entry(entry, old_entry_string);
-
-    // println!("{:?}", total);
+    xword.set_entry(entry, old_entry_string);
 
     return total;
 }
 
-fn generate_xWord(
-    xWord: &mut XWord,
+fn generate_xword(
+    xword: &mut XWord,
     entries: &Vec<XWordEntry>,
     words_map: &HashMap<usize, HashMap<usize, HashMap<char, HashSet<String>>>>,
     used_words: &mut HashSet<String>,
@@ -447,7 +491,7 @@ fn generate_xWord(
     }
     *iterations += 1;
 
-    if xWord.is_filled() {
+    if xword.is_filled() {
         // we found a solution!
         return true;
     }
@@ -457,7 +501,7 @@ fn generate_xWord(
     let mut optional_entry = None;
 
     for entry in entries {
-        let entry_string = xWord.get_entry(&entry);
+        let entry_string = xword.get_entry(&entry);
 
         // if entry is filled (has no spaces) continue
         if entry_string.chars().all(|c| c != ' ') {
@@ -477,7 +521,7 @@ fn generate_xWord(
     let entry = optional_entry.unwrap();
 
     // we will try all the words at the entry with the fewest possibilities
-    let old_entry_string = xWord.get_entry(&entry);
+    let old_entry_string = xword.get_entry(&entry);
 
     // get all the entries that intersect with the current entry
     let intersections: Vec<&XWordEntry> = entries.iter().filter(|e| entry.intersects(e)).collect();
@@ -490,7 +534,7 @@ fn generate_xWord(
             (
                 word.clone(),
                 score(
-                    xWord,
+                    xword,
                     &word,
                     &entry,
                     &old_entry_string,
@@ -508,15 +552,15 @@ fn generate_xWord(
     // println!("{:?}", matching_words);
 
     for (i, (word, _)) in scored_matching_words.iter().enumerate() {
-        if *depth < 4 {
-            println!(
-                "{} {}% {} {}",
-                "\t".repeat(*depth),
-                i * 100 / scored_matching_words.len(),
-                word,
-                *iterations
-            );
-        }
+        // if *depth < 4 {
+        //     println!(
+        //         "{} {}% {} {}",
+        //         "\t".repeat(*depth),
+        //         i * 100 / scored_matching_words.len(),
+        //         word,
+        //         *iterations
+        //     );
+        // }
 
         if used_words.contains(word) {
             continue;
@@ -525,10 +569,10 @@ fn generate_xWord(
         let used_word = word.clone();
 
         used_words.insert(used_word);
-        xWord.set_entry(&entry, &word);
+        xword.set_entry(&entry, &word);
 
-        if generate_xWord(
-            xWord,
+        if generate_xword(
+            xword,
             entries,
             words_map,
             used_words,
@@ -538,7 +582,7 @@ fn generate_xWord(
             return true;
         }
 
-        xWord.set_entry(&entry, &old_entry_string);
+        xword.set_entry(&entry, &old_entry_string);
         used_words.remove(word);
     }
 
@@ -549,19 +593,19 @@ fn generate_xWord(
 
 fn populate_entries(
     entries: &mut Vec<XWordEntry>,
-    xWord: &XWord,
+    xword: &XWord,
     words_clues_map: &HashMap<String, HashSet<String>>,
 ) {
     for entry in entries {
-        let entry_word = xWord.get_entry(entry);
+        let entry_word = xword.get_entry(entry);
 
-        // TODO: maybe get random clue here
+        let mut rng = rand::thread_rng();
 
         entry.clue = words_clues_map
             .get(&entry_word)
             .unwrap()
             .iter()
-            .next()
+            .choose(&mut rng)
             .unwrap()
             .clone();
     }
@@ -604,54 +648,61 @@ fn main() -> std::io::Result<()> {
 
     // println!("{:?}", words_clues_map);
 
-    let mut xWord = XWord::new(
-        7,
-        7,
-        vec![
-            (0, 3),
-            (1, 3),
-            (3, 0),
-            (3, 1),
-            (3, 5),
-            (3, 6),
-            (5, 3),
-            (6, 3),
-        ],
-    );
+    for i in 0..1 {
+        let mut xword = XWord::new(
+            7,
+            7,
+            vec![
+                (0, 0),
+                (0, 1),
+                (0, 5),
+                (0, 6),
+                (1, 0),
+                (1, 6),
+                (3, 3),
+                (5, 0),
+                (5, 6),
+                (6, 0),
+                (6, 1),
+                (6, 5),
+                (6, 6),
+            ],
+        );
 
-    let mut entries = get_xWord_entries(&xWord);
+        let mut entries = get_xword_entries(&xword);
 
-    println!("entries length: {:?}", entries.len());
-    println!("entries: {:?}", entries);
+        // println!("entries length: {:?}", entries.len());
+        // println!("entries: {:?}", entries);
 
-    let mut iterations = 0;
+        let mut iterations = 0;
 
-    if generate_xWord(
-        &mut xWord,
-        &entries,
-        &words_map,
-        &mut HashSet::new(),
-        &0,
-        &mut iterations,
-    ) {
-        println!("found after {:?} iterations", iterations);
-        println!("xWord {:?}", xWord);
+        if generate_xword(
+            &mut xword,
+            &entries,
+            &words_map,
+            &mut HashSet::new(),
+            &0,
+            &mut iterations,
+        ) {
+            println!("{}\t found after {:?} iterations", i, iterations);
+            // println!("xWord {:?}", xword);
 
-        populate_entries(&mut entries, &xWord, &answers_clues_map);
-        number_entries(&mut entries);
+            populate_entries(&mut entries, &xword, &answers_clues_map);
+            number_entries(&mut entries);
 
-        xWord.entries = entries;
+            xword.entries = entries;
 
-        let xWord_json = serde_json::to_string(&xWord).unwrap();
+            let xword_json = serde_json::to_string(&xword).unwrap();
 
-        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
-        let file_name: String = format!("generated_xWords/{}.json", random_string);
+            let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
+            let file_name: String = format!("generated_xWords/{}.json", random_string);
 
-        let mut file = File::create(&file_name[..])?;
-        file.write_all(xWord_json.as_bytes())?;
+            let mut file = File::create(&file_name[..])?;
+            file.write_all(xword_json.as_bytes())?;
+        }
+
+        // println!("xWord {:?}", xword);
     }
-
-    println!("xWord {:?}", xWord);
 
     Ok(())
 }
@@ -726,9 +777,9 @@ mod tests {
 
         let width = 3;
         let height = 4;
-        let mut xWord = XWord::new(width, height, vec![]);
+        let mut xword = XWord::new(width, height, vec![]);
 
-        let xWord_entry = XWordEntry {
+        let xword_entry = XWordEntry {
             row: 0,
             col: 0,
             length: height,
@@ -737,18 +788,18 @@ mod tests {
             clue: "".to_string(),
         };
 
-        assert_eq!(xWord.get_entry(&xWord_entry), "    ");
-        xWord.set_entry(&xWord_entry, "1234");
+        assert_eq!(xword.get_entry(&xword_entry), "    ");
+        xword.set_entry(&xword_entry, "1234");
 
         // get twice to make sure get is non destructive
-        assert_eq!(xWord.get_entry(&xWord_entry), "1234");
-        assert_eq!(xWord.get_entry(&xWord_entry), "1234");
+        assert_eq!(xword.get_entry(&xword_entry), "1234");
+        assert_eq!(xword.get_entry(&xword_entry), "1234");
 
-        xWord.set_entry(&xWord_entry, "");
-        assert_eq!(xWord.get_entry(&xWord_entry), "    ");
+        xword.set_entry(&xword_entry, "");
+        assert_eq!(xword.get_entry(&xword_entry), "    ");
 
-        xWord.set_entry(&xWord_entry, "12");
-        assert_eq!(xWord.get_entry(&xWord_entry), "12  ");
+        xword.set_entry(&xword_entry, "12");
+        assert_eq!(xword.get_entry(&xword_entry), "12  ");
     }
 
     // #[test]
@@ -775,18 +826,18 @@ mod tests {
     // }
 
     #[test]
-    fn it_should_create_a_xWord() {
+    fn it_should_create_a_xword() {
         let width = 3;
         let height = 4;
-        let xWord = XWord::new(width, height, vec![]);
+        let xword = XWord::new(width, height, vec![]);
 
-        assert_eq!(xWord.grid.len(), height);
+        assert_eq!(xword.grid.len(), height);
 
-        for row in xWord.grid {
+        for row in xword.grid {
             assert_eq!(row.len(), width);
         }
 
-        assert_eq!(xWord.height, height);
-        assert_eq!(xWord.width, width);
+        assert_eq!(xword.height, height);
+        assert_eq!(xword.width, width);
     }
 }

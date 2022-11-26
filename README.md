@@ -4,12 +4,15 @@
 
 ### overall
 
+- fix drag and drop
+- fix user connected to multiple games issue
+-
+
 - think about whole system holistically and rename / redesign parts for it to be more maintainable
 
 - address todos in code
 - design and implement a routing strategy
 
-- deploy to gcp (or anywhere else if that doesn't work)
 - env variables
 - auto deploy?
 

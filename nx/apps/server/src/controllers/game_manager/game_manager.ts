@@ -79,7 +79,6 @@ export class GameManager {
       // if that game still exists, let's join them to it
       if (game) {
         this.playerJoinGame(game, player);
-        this.updateGamePlayers(game);
         console.log(`${player.name} rejoined their game`);
       }
     } else {
@@ -97,7 +96,6 @@ export class GameManager {
 
       if (game) {
         this.playerJoinGame(game, player);
-        this.updateServerMembers();
       }
     });
 
@@ -157,6 +155,7 @@ export class GameManager {
 
     // we can only have no change, or at most 1
     if (!(tileCountDiff === 0 || tileCountDiff === 1)) {
+      this.updateGamePlayers(game);
       return;
     }
 
