@@ -11,6 +11,9 @@ import { getRandomXWord } from '../../utils';
 import { Game } from '../game/game';
 import Player from '../player/player';
 
+const SCORE_INCREASE = 10;
+const SCORE_DECREASE = -5;
+
 export class GameManager {
   games: Map<string, Game>;
   players: Map<string, Player>;
@@ -146,7 +149,7 @@ export class GameManager {
     const newEmptyCount = countEmpty(xWord);
 
     if (!sameXWord(game.solvedXWord, xWord)) {
-      playerInfo.score -= oldEmptyCount;
+      playerInfo.score += SCORE_DECREASE;
       this.updateGamePlayers(game);
       return;
     }
@@ -159,9 +162,10 @@ export class GameManager {
       return;
     }
 
-    // TODO: a little hacky
-    // we should separate ready events from update game events
-    playerInfo.score += tileCountDiff * oldEmptyCount;
+    // if they played a letter
+    if (tileCountDiff === 1) {
+      playerInfo.score += SCORE_INCREASE;
+    }
 
     game.fillTileBar(tileBar);
 

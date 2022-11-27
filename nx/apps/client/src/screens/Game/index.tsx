@@ -20,7 +20,7 @@ const Game = () => {
           <span role="img" aria-label="back-arrow">
             {LEFT_ARROW_EMOJI}
           </span>
-          hard pass
+          LEAVE
         </Link>
       </button>
     );

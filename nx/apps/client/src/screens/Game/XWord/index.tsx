@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Direction } from '@nx/api-interfaces';
@@ -6,6 +6,11 @@ import Clues from './clues';
 import Puzzle from './puzzle';
 import { Game } from 'apps/client/src/contexts/socket';
 import Players from './players';
+import {
+  computeNextEntryIndex,
+  computerPreviousEntryIndex,
+  filterEntriesByDirection,
+} from 'apps/client/src/utils';
 
 interface Props {
   game: Game;
@@ -23,12 +28,12 @@ const XWord = ({ game, updateGame }: Props) => {
   );
 
   const acrossEntries = useMemo(
-    () => xWord.entries.filter((entry) => entry.direction === Direction.ACROSS),
+    () => filterEntriesByDirection(xWord.entries, Direction.ACROSS),
     [xWord.entries]
   );
 
   const downEntries = useMemo(
-    () => xWord.entries.filter((entry) => entry.direction === Direction.DOWN),
+    () => filterEntriesByDirection(xWord.entries, Direction.DOWN),
     [xWord.entries]
   );
 
@@ -40,17 +45,18 @@ const XWord = ({ game, updateGame }: Props) => {
     'shift+tab',
     (e) => {
       e.preventDefault();
-      console.log(xWord.grid);
-      setCurrentEntryIndex(
-        (prev) => (prev - 1 + xWord.entries.length) % xWord.entries.length
-      );
+      setCurrentEntryIndex((prev) => computerPreviousEntryIndex(prev, xWord));
     },
-    [xWord]
+    [currentEntryIndex, xWord]
   );
-  useHotkeys('tab', (e) => {
-    e.preventDefault();
-    setCurrentEntryIndex((prev) => (prev + 1) % xWord.entries.length);
-  });
+  useHotkeys(
+    'tab',
+    (e) => {
+      e.preventDefault();
+      setCurrentEntryIndex((prev) => computeNextEntryIndex(prev, xWord));
+    },
+    [currentEntryIndex, xWord]
+  );
 
   useHotkeys('space', (e) => {
     e.preventDefault();

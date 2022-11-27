@@ -32,12 +32,6 @@ export interface PlayerInfo {
   name: string;
 }
 
-export interface GameUpdate {
-  xWord: XWord;
-  tileBar: Array<Tile>;
-  score: number;
-}
-
 export interface User {
   id: string;
   name: string;
