@@ -1,14 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Direction, Tile, XWord, XWordEntry } from './api-interfaces';
+import { Tile, XWord } from '../api-interfaces';
 
 export const charToTile = (char: string) => ({ id: uuidv4(), char });
-
-export const mapEntries = (entries: any[]): Array<XWordEntry> => {
-  return entries.map((entry) => ({
-    ...entry,
-    direction: entry.direction === 'Across' ? Direction.ACROSS : Direction.DOWN,
-  }));
-};
 
 export const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {
   return grid.map((row) => row.map((s) => charToTile(s)));

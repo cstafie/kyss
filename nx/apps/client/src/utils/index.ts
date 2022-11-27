@@ -1,4 +1,4 @@
-import { Direction, XWord, XWordEntry } from '@nx/api-interfaces';
+import { XWord, Direction, XWordEntry } from '@nx/api-interfaces';
 
 export const filterEntriesByDirection = (
   entries: Array<XWordEntry>,
@@ -13,45 +13,6 @@ const flipDirection = (direction: Direction) => {
   }
 
   return Direction.ACROSS;
-};
-
-const isEntryComplete = (xWord: XWord, entry: XWordEntry) => {
-  const entryString = getEntry(xWord, entry);
-  return !entryString.includes(' ');
-};
-
-const getAcrossEntry = (xWord: XWord, acrossEntry: XWordEntry) => {
-  const row = acrossEntry.row;
-  const chars: Array<string> = [];
-
-  for (
-    let col = acrossEntry.col;
-    col < acrossEntry.col + acrossEntry.length;
-    col++
-  ) {
-    chars.push(xWord.grid[row][col].char);
-  }
-
-  return chars.join('');
-};
-
-const getDownEntry = (xWord: XWord, downEntry: XWordEntry) => {
-  const col = downEntry.col;
-  const chars: Array<string> = [];
-
-  for (let row = downEntry.row; row < downEntry.row + downEntry.length; row++) {
-    chars.push(xWord.grid[row][col].char);
-  }
-
-  return chars.join('');
-};
-
-const getEntry = (xWord: XWord, entry: XWordEntry) => {
-  if (entry.direction === Direction.DOWN) {
-    return getDownEntry(xWord, entry);
-  }
-
-  return getAcrossEntry(xWord, entry);
 };
 
 export const computeNextEntryIndex = (
@@ -81,10 +42,7 @@ export const computeNextEntryIndex = (
     const entry = xWord.entries[nextEntryIndex];
 
     // if the entry matches direction and is not complete we found it!
-    if (
-      entry.direction === desiredDirection &&
-      !isEntryComplete(xWord, entry)
-    ) {
+    if (entry.direction === desiredDirection && !entry.isComplete) {
       break;
     }
   }
@@ -119,10 +77,7 @@ export const computerPreviousEntryIndex = (
     const entry = xWord.entries[nextEntryIndex];
 
     // if the entry matches direction and is not complete we found it!
-    if (
-      entry.direction === desiredDirection &&
-      !isEntryComplete(xWord, entry)
-    ) {
+    if (entry.direction === desiredDirection && !entry.isComplete) {
       break;
     }
   }

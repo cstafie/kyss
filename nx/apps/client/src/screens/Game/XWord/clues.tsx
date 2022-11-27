@@ -17,7 +17,7 @@ const Clues = ({ entries, currentEntry }: Props) => (
             key={i}
             className={`flex flex-row items-center p-2 ${
               isHighlighted ? 'bg-blue-500' : ''
-            }`}
+            } ${entry.isComplete ? 'text-gray-500' : ''}`}
           >
             <div className="font-bold mr-2">{entry.number}.</div>
             <div>{entry.clue} </div>

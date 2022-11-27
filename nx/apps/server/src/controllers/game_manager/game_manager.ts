@@ -2,6 +2,7 @@ import {
   countEmpty,
   GameMetaData,
   GameState,
+  isEntryComplete,
   PlayerGameUpdate,
   PlayerInfo,
   sameXWord,
@@ -165,16 +166,22 @@ export class GameManager {
     // if they played a letter
     if (tileCountDiff === 1) {
       playerInfo.score += SCORE_INCREASE;
-    }
 
-    game.fillTileBar(tileBar);
+      game.xWord = xWord;
+      game.fillTileBar(tileBar);
+
+      game.xWord.entries.forEach((entry) => {
+        if (!entry.isComplete) {
+          entry.isComplete = isEntryComplete(game.xWord, entry);
+        }
+      });
+    }
 
     game.players.set(player.id, {
       ...playerInfo,
       ready,
       tileBar,
     });
-    game.xWord = xWord;
 
     this.updateGamePlayers(game);
 

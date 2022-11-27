@@ -2,11 +2,18 @@
 
 ## todo
 
+- click to play
+- click for clues
+- fade completed clues
+- hover state
+- current selected square
+- space
+- arrow keys
+
 ### overall
 
 - fix drag and drop
 - fix user connected to multiple games issue
--
 
 - think about whole system holistically and rename / redesign parts for it to be more maintainable
 

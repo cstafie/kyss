@@ -22,6 +22,7 @@ export interface XWordEntry {
   length: number;
   number: number;
   clue: string;
+  isComplete: boolean;
 }
 
 export interface PlayerInfo {
