@@ -14,10 +14,12 @@ const Cell = ({ id, tile, number, isHighlighted }: Props) => {
 
   return (
     <Droppable droppableId={id} isDropDisabled={!isEmpty}>
-      {(provided) => (
+      {(provided, { isDraggingOver }) => (
         <div
           ref={provided.innerRef}
-          className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'}`}
+          className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'} ${
+            isDraggingOver ? 'bg-purple-300' : ''
+          }`}
           {...provided.droppableProps}
         >
           <div className="absolute text-xs pl-1 text-black">{number}</div>

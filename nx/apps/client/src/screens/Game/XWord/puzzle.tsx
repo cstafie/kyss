@@ -1,5 +1,9 @@
 import { useCallback } from 'react';
-import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
+import {
+  DragDropContext,
+  OnDragEndResponder,
+  OnDragUpdateResponder,
+} from '@hello-pangea/dnd';
 import produce from 'immer';
 import { XWordEntry } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
@@ -31,7 +35,7 @@ Props) => {
   const onDragStart = useCallback(() => {
     /*...*/
   }, []);
-  const onDragUpdate = useCallback(() => {
+  const onDragUpdate: OnDragUpdateResponder = useCallback((update) => {
     /*...*/
   }, []);
   const onDragEnd: OnDragEndResponder = useCallback(

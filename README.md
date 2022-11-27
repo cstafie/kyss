@@ -4,7 +4,6 @@
 
 - click to play
 - click for clues
-- fade completed clues
 - hover state
 - current selected square
 - space
