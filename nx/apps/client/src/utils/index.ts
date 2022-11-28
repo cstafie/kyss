@@ -1,4 +1,10 @@
-import { XWord, Direction, XWordEntry } from '@nx/api-interfaces';
+import {
+  XWord,
+  Direction,
+  XWordEntry,
+  isEntryComplete,
+} from '@nx/api-interfaces';
+import { EntryType } from 'perf_hooks';
 
 export const filterEntriesByDirection = (
   entries: Array<XWordEntry>,
@@ -15,72 +21,61 @@ const flipDirection = (direction: Direction) => {
   return Direction.ACROSS;
 };
 
+const computeEntryIndex = (
+  entries: Array<XWordEntry>,
+  currentEntryIndex: number,
+  next: (current: number) => number,
+  flipPoint: number
+) => {
+  let nextEntryIndex = next(currentEntryIndex);
+  let requireIncomplete = true;
+
+  if (entries.every((entry) => entry.isComplete)) {
+    requireIncomplete = false;
+  }
+
+  let desiredDirection = entries[currentEntryIndex].direction;
+
+  for (;;) {
+    const entry = entries[nextEntryIndex];
+
+    if (nextEntryIndex === flipPoint) {
+      desiredDirection = flipDirection(desiredDirection);
+    }
+
+    // TODO: this is gross and hard to read
+    if (requireIncomplete) {
+      if (entry.direction === desiredDirection && !entry.isComplete) {
+        return nextEntryIndex;
+      }
+    } else if (entry.direction === desiredDirection) {
+      return nextEntryIndex;
+    }
+
+    nextEntryIndex = next(nextEntryIndex);
+  }
+};
+
 export const computeNextEntryIndex = (
   currentEntryIndex: number,
   xWord: XWord
 ) => {
-  const currentEntry = xWord.entries[currentEntryIndex];
-  const entriesLen = xWord.entries.length;
-  let desiredDirection = currentEntry.direction;
-
-  let nextEntryIndex = currentEntryIndex;
-
-  // gross, would prefer while(true)
-  for (;;) {
-    nextEntryIndex = (nextEntryIndex + 1) % entriesLen;
-
-    // did a full loop (xword should be solved rn)
-    if (nextEntryIndex === currentEntryIndex) {
-      break;
-    }
-
-    // if we go past the end we should check the other direction
-    if (nextEntryIndex === 0) {
-      desiredDirection = flipDirection(desiredDirection);
-    }
-
-    const entry = xWord.entries[nextEntryIndex];
-
-    // if the entry matches direction and is not complete we found it!
-    if (entry.direction === desiredDirection && !entry.isComplete) {
-      break;
-    }
-  }
-
-  return nextEntryIndex;
+  return computeEntryIndex(
+    xWord.entries,
+    currentEntryIndex,
+    (index) => (index + 1) % xWord.entries.length,
+    0
+  );
 };
 
-export const computerPreviousEntryIndex = (
+export const computePreviousEntryIndex = (
   currentEntryIndex: number,
   xWord: XWord
 ) => {
-  const currentEntry = xWord.entries[currentEntryIndex];
-  const entriesLen = xWord.entries.length;
-  let desiredDirection = currentEntry.direction;
-
-  let nextEntryIndex = currentEntryIndex;
-
-  // gross, would prefer while(true)
-  for (;;) {
-    nextEntryIndex = (nextEntryIndex - 1 + entriesLen) % entriesLen;
-
-    // did a full loop (xword should be solved rn)
-    if (nextEntryIndex === currentEntryIndex) {
-      break;
-    }
-
-    // if we go past the end we should check the other direction
-    if (nextEntryIndex === entriesLen - 1) {
-      desiredDirection = flipDirection(desiredDirection);
-    }
-
-    const entry = xWord.entries[nextEntryIndex];
-
-    // if the entry matches direction and is not complete we found it!
-    if (entry.direction === desiredDirection && !entry.isComplete) {
-      break;
-    }
-  }
-
-  return nextEntryIndex;
+  return computeEntryIndex(
+    xWord.entries,
+    currentEntryIndex,
+    (index) => (index - 1 + xWord.entries.length) % xWord.entries.length,
+    0
+  );
 };

@@ -3,8 +3,9 @@
 ## todo
 
 - click to play
-- click for clues
-- hover state
+- click to select entry
+- click clue to select entry
+
 - current selected square
 - space
 - arrow keys

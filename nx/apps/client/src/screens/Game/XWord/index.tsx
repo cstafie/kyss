@@ -8,7 +8,7 @@ import { Game } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import {
   computeNextEntryIndex,
-  computerPreviousEntryIndex,
+  computePreviousEntryIndex,
   filterEntriesByDirection,
 } from 'apps/client/src/utils';
 
@@ -45,7 +45,7 @@ const XWord = ({ game, updateGame }: Props) => {
     'shift+tab',
     (e) => {
       e.preventDefault();
-      setCurrentEntryIndex((prev) => computerPreviousEntryIndex(prev, xWord));
+      setCurrentEntryIndex((prev) => computePreviousEntryIndex(prev, xWord));
     },
     [currentEntryIndex, xWord]
   );
