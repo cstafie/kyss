@@ -72,10 +72,12 @@ export const computePreviousEntryIndex = (
   currentEntryIndex: number,
   xWord: XWord
 ) => {
+  const entriesLen = xWord.entries.length;
+
   return computeEntryIndex(
     xWord.entries,
     currentEntryIndex,
-    (index) => (index - 1 + xWord.entries.length) % xWord.entries.length,
-    0
+    (index) => (index - 1 + entriesLen) % entriesLen,
+    entriesLen - 1
   );
 };
