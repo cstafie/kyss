@@ -4,10 +4,8 @@
 
 - click to play
 - click to select entry
-- click clue to select entry
 
 - current selected square
-- space
 - arrow keys
 
 ### overall

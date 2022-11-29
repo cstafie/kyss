@@ -24,9 +24,10 @@ interface Props {
   xWord: XWord;
   currentEntry: XWordEntry;
   gameState: GameState;
+  currentCell: [number, number];
 }
 
-const Grid = ({ xWord, currentEntry, gameState }: Props) => {
+const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
   const numberLookUp = useMemo(() => {
     const numberMap = new Map();
     for (const entry of xWord.entries) {
@@ -68,6 +69,7 @@ const Grid = ({ xWord, currentEntry, gameState }: Props) => {
         const col = i % xWord.width;
         const cellId = `cell-${row}-${col}`;
         const isHighlighted = isCellInCurrentEntry(row, col);
+        const isCurrentCell = row === currentCell[0] && col === currentCell[1];
 
         switch (tile.char) {
           case '#':
@@ -85,6 +87,7 @@ const Grid = ({ xWord, currentEntry, gameState }: Props) => {
                 tile={tile}
                 number={numberLookUp.get(`${row}-${col}`)}
                 isHighlighted={isHighlighted}
+                isCurrentCell={isCurrentCell}
               />
             );
         }

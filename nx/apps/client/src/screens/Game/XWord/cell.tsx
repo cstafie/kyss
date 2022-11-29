@@ -7,9 +7,10 @@ interface Props {
   tile: TileType;
   number: number;
   isHighlighted: boolean;
+  isCurrentCell: boolean;
 }
 
-const Cell = ({ id, tile, number, isHighlighted }: Props) => {
+const Cell = ({ id, tile, number, isHighlighted, isCurrentCell }: Props) => {
   const isEmpty = tile.char === ' ';
 
   return (
@@ -19,7 +20,7 @@ const Cell = ({ id, tile, number, isHighlighted }: Props) => {
           ref={provided.innerRef}
           className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'} ${
             isDraggingOver ? 'bg-purple-300' : ''
-          }`}
+          } ${isCurrentCell ? 'bg-yellow-300' : ''}`}
           {...provided.droppableProps}
         >
           <div className="absolute text-xs pl-1 text-black">{number}</div>
@@ -30,6 +31,7 @@ const Cell = ({ id, tile, number, isHighlighted }: Props) => {
               index={0}
               isDragDisabled={true}
               isHighlighted={isHighlighted}
+              isCurrentCell={isCurrentCell}
             />
           )}
           {provided.placeholder}

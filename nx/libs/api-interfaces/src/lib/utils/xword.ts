@@ -31,7 +31,7 @@ const getDownEntry = (xWord: XWord, downEntry: XWordEntry) => {
   return chars.join('');
 };
 
-const getEntry = (xWord: XWord, entry: XWordEntry) => {
+export const getEntry = (xWord: XWord, entry: XWordEntry) => {
   if (entry.direction === Direction.DOWN) {
     return getDownEntry(xWord, entry);
   }

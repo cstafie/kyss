@@ -23,6 +23,7 @@ const TileBar = ({ tiles }: Props) => {
               index={i}
               isDragDisabled={false}
               isHighlighted={false}
+              isCurrentCell={false}
             />
           ))}
           {provided.placeholder}

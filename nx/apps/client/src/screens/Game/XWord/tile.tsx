@@ -6,9 +6,16 @@ interface Props {
   index: number;
   isDragDisabled: boolean;
   isHighlighted: boolean;
+  isCurrentCell: boolean;
 }
 
-const Tile = ({ tile, index, isDragDisabled, isHighlighted }: Props) => {
+const Tile = ({
+  tile,
+  index,
+  isDragDisabled,
+  isHighlighted,
+  isCurrentCell,
+}: Props) => {
   return (
     <Draggable
       draggableId={tile.id}
@@ -25,7 +32,13 @@ const Tile = ({ tile, index, isDragDisabled, isHighlighted }: Props) => {
             isHighlighted
               ? 'bg-blue-400 hover:bg-blue-500  active:bg-blue-500'
               : 'bg-purple-400 hover:bg-purple-500  active:bg-purple-500'
-          } active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg`}
+          } 
+          ${
+            isCurrentCell
+              ? 'bg-yellow-400 hover:bg-yellows-500  active:bg-yellows-500'
+              : ''
+          }
+          active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg`}
         >
           {tile.char}
         </div>
