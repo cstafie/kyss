@@ -110,8 +110,8 @@ export const SocketContextProvider = ({ children }: Props) => {
 
     const playerGameUpdate: PlayerGameUpdate = {
       xWord: gameUpdate.xWord,
-      tileBar: gameUpdate.tileBar,
       ready: gameUpdate.ready,
+      tileBar: gameUpdate.tileBar,
     };
     socket.emit('update-game', playerGameUpdate);
   }, []);

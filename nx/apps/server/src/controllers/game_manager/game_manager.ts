@@ -138,6 +138,7 @@ export class GameManager {
     });
   }
 
+  // TODO: split this into playTile and setReady
   updateGame(player: Player, game: Game, gameUpdate: PlayerGameUpdate) {
     const { ready, xWord, tileBar } = gameUpdate;
     const playerInfo = game.players.get(player.id);
@@ -168,8 +169,12 @@ export class GameManager {
       playerInfo.score += SCORE_INCREASE;
 
       game.xWord = xWord;
-      game.fillTileBar(tileBar);
 
+      // tilebar should only get filled if we played a letter
+      playerInfo.tileBar = tileBar;
+      game.fillTileBar(playerInfo.tileBar);
+
+      // mark entries as complete
       game.xWord.entries.forEach((entry) => {
         if (!entry.isComplete) {
           entry.isComplete = isEntryComplete(game.xWord, entry);
@@ -180,7 +185,6 @@ export class GameManager {
     game.players.set(player.id, {
       ...playerInfo,
       ready,
-      tileBar,
     });
 
     this.updateGamePlayers(game);
