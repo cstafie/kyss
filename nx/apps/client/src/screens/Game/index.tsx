@@ -9,7 +9,8 @@ import XWord from './XWord';
 const LEFT_ARROW_EMOJI = '⬅️';
 
 const Game = () => {
-  const { game, updateGame, startGame, leaveGame } = useSocketContext();
+  const { game, updateGame, startGame, leaveGame, updateTileBar } =
+    useSocketContext();
 
   const { setNavLeft } = useNavContext();
 
@@ -37,10 +38,16 @@ const Game = () => {
         return (
           <Lobby game={game} updateGame={updateGame} startGame={startGame} />
         );
+
       case GameState.inProgress:
-        return <XWord game={game} updateGame={updateGame} />;
       case GameState.complete:
-        return <div> game done </div>;
+        return (
+          <XWord
+            game={game}
+            updateGame={updateGame}
+            updateTileBar={updateTileBar}
+          />
+        );
     }
   })();
 

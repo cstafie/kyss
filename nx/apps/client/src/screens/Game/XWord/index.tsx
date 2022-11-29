@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { Direction, XWordEntry } from '@nx/api-interfaces';
+import { Direction, Tile, XWordEntry } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 import { Game } from 'apps/client/src/contexts/socket';
@@ -15,9 +15,10 @@ import {
 interface Props {
   game: Game;
   updateGame: (game: Game) => void;
+  updateTileBar: (tileBar: Array<Tile>) => void;
 }
 
-const XWord = ({ game, updateGame }: Props) => {
+const XWord = ({ game, updateGame, updateTileBar }: Props) => {
   const { xWord } = game;
 
   const [currentEntryIndex, setCurrentEntryIndex] = useState(
@@ -95,6 +96,7 @@ const XWord = ({ game, updateGame }: Props) => {
         game={game}
         updatePuzzle={updateGame}
         currentEntry={currentEntry}
+        updateTileBar={updateTileBar}
         // currentCell={current}
       />
       <section className="m-2">

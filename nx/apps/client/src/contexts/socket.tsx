@@ -30,6 +30,7 @@ export interface Game {
 interface Socket {
   createGame: (gameName: string) => void;
   updateGame: (game: Game) => void;
+  updateTileBar: (tileBar: Array<Tile>) => void;
   joinGame: (gameId: string) => void;
   startGame: () => void;
   leaveGame: () => void;
@@ -42,6 +43,7 @@ const SocketContext = createContext<Socket>({
   createGame: (gameName: string) => warning(),
   updateGame: (game: Game) => warning(),
   joinGame: (gameId: string) => warning(),
+  updateTileBar: (tileBar: Array<Tile>) => warning(),
   startGame: () => warning(),
   leaveGame: () => warning(),
   games: [],
@@ -105,7 +107,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     );
   }, []);
 
-  const optimisticUpdate = useCallback((gameUpdate: Game) => {
+  const optimisticGameUpdate = useCallback((gameUpdate: Game) => {
     setGame(gameUpdate);
 
     const playerGameUpdate: PlayerGameUpdate = {
@@ -121,11 +123,23 @@ export const SocketContextProvider = ({ children }: Props) => {
     setGame(null);
   }, []);
 
+  const updateTileBar = useCallback((tileBar: Array<Tile>) => {
+    setGame((prevGame) =>
+      prevGame
+        ? {
+            ...prevGame,
+            tileBar,
+          }
+        : prevGame
+    );
+  }, []);
+
   return (
     <SocketContext.Provider
       value={{
         createGame,
-        updateGame: optimisticUpdate,
+        updateGame: optimisticGameUpdate,
+        updateTileBar,
         joinGame,
         startGame,
         leaveGame,

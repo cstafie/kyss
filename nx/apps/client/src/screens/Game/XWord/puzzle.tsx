@@ -5,7 +5,7 @@ import {
   OnDragUpdateResponder,
 } from '@hello-pangea/dnd';
 import produce from 'immer';
-import { XWordEntry } from '@nx/api-interfaces';
+import { Tile, XWordEntry } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
 
 import Grid from './grid';
@@ -17,12 +17,14 @@ interface Props {
   // currentCell: [number, number];
   currentEntry: XWordEntry;
   updatePuzzle: (game: Game) => void;
+  updateTileBar: (tileBar: Array<Tile>) => void;
 }
 
 const Puzzle = ({
   game,
   currentEntry,
   updatePuzzle,
+  updateTileBar,
 }: // currentCell,
 Props) => {
   // using useCallback is optional
@@ -68,11 +70,7 @@ Props) => {
         newTileBar.splice(si, 1);
         newTileBar.splice(di, 0, tileBar[si]);
 
-        updatePuzzle({
-          ...game,
-          xWord,
-          tileBar: newTileBar,
-        });
+        updateTileBar(newTileBar);
         return;
       }
 
