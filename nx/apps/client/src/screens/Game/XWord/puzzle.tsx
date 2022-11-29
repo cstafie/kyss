@@ -155,7 +155,11 @@ Props) => {
         onDragEnd={onDragEnd}
       >
         {/* TODO: these should be composed so no prop drilling*/}
-        <Grid xWord={game.xWord} currentEntry={currentEntry} />
+        <Grid
+          xWord={game.xWord}
+          currentEntry={currentEntry}
+          gameState={game.gameState}
+        />
         <TileBar tiles={game.tileBar} />
       </DragDropContext>
     </section>

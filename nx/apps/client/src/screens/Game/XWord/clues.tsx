@@ -3,9 +3,10 @@ import { XWordEntry } from '@nx/api-interfaces';
 interface Props {
   entries: Array<XWordEntry>;
   currentEntry: XWordEntry;
+  handleSelect: (entry: XWordEntry) => void;
 }
 
-const Clues = ({ entries, currentEntry }: Props) => (
+const Clues = ({ entries, currentEntry, handleSelect }: Props) => (
   <ol>
     <li>
       {entries.map((entry, i) => {
@@ -15,7 +16,8 @@ const Clues = ({ entries, currentEntry }: Props) => (
           <div
             // ok to use the index as key here since this list will (should?) never change size
             key={i}
-            className={`flex flex-row items-center p-2 ${
+            onClick={() => handleSelect(entry)}
+            className={`flex flex-row items-center p-2 cursor-pointer hover:scale-105 active:scale-95 ${
               isHighlighted ? 'bg-blue-500' : ''
             } ${entry.isComplete && !isHighlighted ? 'text-gray-500' : ''}`}
           >

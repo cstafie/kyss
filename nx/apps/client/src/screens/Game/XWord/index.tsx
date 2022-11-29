@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { Direction } from '@nx/api-interfaces';
+import { Direction, XWordEntry } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
 import { Game } from 'apps/client/src/contexts/socket';
@@ -20,7 +20,10 @@ interface Props {
 const XWord = ({ game, updateGame }: Props) => {
   const { xWord } = game;
 
-  const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
+  const [currentEntryIndex, setCurrentEntryIndex] = useState(
+    xWord.entries[0].isComplete ? computeNextEntryIndex(0, xWord) : 0
+  );
+  // const [currentSquare];
 
   const currentEntry = useMemo(
     () => xWord.entries[currentEntryIndex],
@@ -36,10 +39,6 @@ const XWord = ({ game, updateGame }: Props) => {
     () => filterEntriesByDirection(xWord.entries, Direction.DOWN),
     [xWord.entries]
   );
-
-  // const goToNextEntry = useCallback(() => {
-  //   setCurrentEntryIndex()
-  // }, [xWord])
 
   useHotkeys(
     'shift+tab',
@@ -78,6 +77,13 @@ const XWord = ({ game, updateGame }: Props) => {
     });
   });
 
+  const setCurrentEntryIndexFromEntry = useCallback(
+    (entry: XWordEntry) => {
+      setCurrentEntryIndex(xWord.entries.indexOf(entry));
+    },
+    [xWord.entries]
+  );
+
   return (
     <section className="flex flex-row justify-center mt-12">
       <section className="m-2">
@@ -93,11 +99,19 @@ const XWord = ({ game, updateGame }: Props) => {
       />
       <section className="m-2">
         <h2 className="font-bold text-lg">ACROSS</h2>
-        <Clues entries={acrossEntries} currentEntry={currentEntry} />
+        <Clues
+          entries={acrossEntries}
+          currentEntry={currentEntry}
+          handleSelect={setCurrentEntryIndexFromEntry}
+        />
       </section>
       <section className="m-2">
         <h2 className="font-bold text-lg">DOWN</h2>
-        <Clues entries={downEntries} currentEntry={currentEntry} />
+        <Clues
+          entries={downEntries}
+          currentEntry={currentEntry}
+          handleSelect={setCurrentEntryIndexFromEntry}
+        />
       </section>
     </section>
   );

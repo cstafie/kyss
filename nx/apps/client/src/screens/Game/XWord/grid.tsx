@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Direction, XWord, XWordEntry } from '@nx/api-interfaces';
+import { Direction, GameState, XWord, XWordEntry } from '@nx/api-interfaces';
 import Block from './block';
 import Cell from './cell';
 
@@ -23,9 +23,10 @@ const GridContainer = styled.section`
 interface Props {
   xWord: XWord;
   currentEntry: XWordEntry;
+  gameState: GameState;
 }
 
-const Grid = ({ xWord, currentEntry }: Props) => {
+const Grid = ({ xWord, currentEntry, gameState }: Props) => {
   const numberLookUp = useMemo(() => {
     const numberMap = new Map();
     for (const entry of xWord.entries) {
@@ -70,7 +71,12 @@ const Grid = ({ xWord, currentEntry }: Props) => {
 
         switch (tile.char) {
           case '#':
-            return <Block key={cellId} />;
+            return (
+              <Block
+                key={cellId}
+                isGameDone={gameState === GameState.complete}
+              />
+            );
           default:
             return (
               <Cell

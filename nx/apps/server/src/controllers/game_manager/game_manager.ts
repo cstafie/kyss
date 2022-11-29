@@ -39,7 +39,14 @@ export class GameManager {
     this.updateServerMembers();
   }
 
-  playerJoinGame(game: Game, player: Player) {
+  playerJoinGame(game: Game, player: Player, wasDisconnected = false) {
+    const canJoin =
+      wasDisconnected || game.gameState === GameState.waitingToStart;
+
+    if (!canJoin) {
+      return;
+    }
+
     game.addPlayer(player);
 
     this.players.set(player.id, {
@@ -82,7 +89,7 @@ export class GameManager {
 
       // if that game still exists, let's join them to it
       if (game) {
-        this.playerJoinGame(game, player);
+        this.playerJoinGame(game, player, true);
         console.log(`${player.name} rejoined their game`);
       }
     } else {
@@ -187,10 +194,17 @@ export class GameManager {
       ready,
     });
 
+    const isGameOver = newEmptyCount === 0;
+
+    if (isGameOver) {
+      game.gameState = GameState.complete;
+    }
+
     this.updateGamePlayers(game);
 
-    // check if game is over
-    if (newEmptyCount === 0) {
+    // delete the game if it's over
+    if (isGameOver) {
+      // TODO: any other cleanup?
       this.games.delete(game.id);
       this.updateServerMembers();
     }
@@ -198,6 +212,7 @@ export class GameManager {
 
   startGame(game: Game) {
     game.start();
+    this.updateServerMembers();
     this.updateGamePlayers(game);
   }
 
