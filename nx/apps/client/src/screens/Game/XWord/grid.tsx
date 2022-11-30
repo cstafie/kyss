@@ -1,6 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Direction, GameState, XWord, XWordEntry } from '@nx/api-interfaces';
+import {
+  Direction,
+  GameState,
+  Cell as CellType,
+  XWord,
+  XWordEntry,
+} from '@nx/api-interfaces';
 import Block from './block';
 import Cell from './cell';
 
@@ -24,7 +30,7 @@ interface Props {
   xWord: XWord;
   currentEntry: XWordEntry;
   gameState: GameState;
-  currentCell: [number, number];
+  currentCell: CellType;
 }
 
 const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
@@ -32,7 +38,7 @@ const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
     const numberMap = new Map();
     for (const entry of xWord.entries) {
       for (let i = 0; i < entry.length; i++) {
-        numberMap.set(`${entry.row}-${entry.col}`, entry.number);
+        numberMap.set(`${entry.cell.row}-${entry.cell.col}`, entry.number);
       }
     }
     return numberMap;
@@ -43,15 +49,15 @@ const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
       switch (currentEntry.direction) {
         case Direction.ACROSS:
           return (
-            row === currentEntry.row &&
-            col >= currentEntry.col &&
-            col < currentEntry.col + currentEntry.length
+            row === currentEntry.cell.row &&
+            col >= currentEntry.cell.col &&
+            col < currentEntry.cell.col + currentEntry.length
           );
         case Direction.DOWN:
           return (
-            col === currentEntry.col &&
-            row >= currentEntry.row &&
-            row < currentEntry.row + currentEntry.length
+            col === currentEntry.cell.col &&
+            row >= currentEntry.cell.row &&
+            row < currentEntry.cell.row + currentEntry.length
           );
       }
     },
@@ -69,7 +75,8 @@ const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
         const col = i % xWord.width;
         const cellId = `cell-${row}-${col}`;
         const isHighlighted = isCellInCurrentEntry(row, col);
-        const isCurrentCell = row === currentCell[0] && col === currentCell[1];
+        const isCurrentCell =
+          row === currentCell.row && col === currentCell.col;
 
         switch (tile.char) {
           case '#':

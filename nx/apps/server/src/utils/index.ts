@@ -10,6 +10,10 @@ import * as fs from 'fs';
 const mapEntries = (entries: any[]): Array<XWordEntry> => {
   return entries.map((entry) => ({
     ...entry,
+    cell: {
+      row: entry.row,
+      col: entry.col,
+    },
     isComplete: false,
     direction: entry.direction === 'Across' ? Direction.ACROSS : Direction.DOWN,
   }));

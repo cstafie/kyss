@@ -15,9 +15,13 @@ export enum Direction {
   DOWN = 'down',
 }
 
-export interface XWordEntry {
+export interface Cell {
   row: number;
   col: number;
+}
+
+export interface XWordEntry {
+  cell: Cell;
   direction: Direction;
   length: number;
   number: number;

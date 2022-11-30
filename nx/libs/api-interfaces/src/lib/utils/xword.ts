@@ -1,4 +1,4 @@
-import { XWordEntry, Direction, XWord } from '../api-interfaces';
+import { XWordEntry, Direction, XWord, Tile } from '../api-interfaces';
 
 export const isEntryComplete = (xWord: XWord, entry: XWordEntry) => {
   const entryString = getEntry(xWord, entry);
@@ -6,12 +6,12 @@ export const isEntryComplete = (xWord: XWord, entry: XWordEntry) => {
 };
 
 const getAcrossEntry = (xWord: XWord, acrossEntry: XWordEntry) => {
-  const row = acrossEntry.row;
+  const row = acrossEntry.cell.row;
   const chars: Array<string> = [];
 
   for (
-    let col = acrossEntry.col;
-    col < acrossEntry.col + acrossEntry.length;
+    let col = acrossEntry.cell.col;
+    col < acrossEntry.cell.col + acrossEntry.length;
     col++
   ) {
     chars.push(xWord.grid[row][col].char);
@@ -21,10 +21,14 @@ const getAcrossEntry = (xWord: XWord, acrossEntry: XWordEntry) => {
 };
 
 const getDownEntry = (xWord: XWord, downEntry: XWordEntry) => {
-  const col = downEntry.col;
+  const col = downEntry.cell.col;
   const chars: Array<string> = [];
 
-  for (let row = downEntry.row; row < downEntry.row + downEntry.length; row++) {
+  for (
+    let row = downEntry.cell.row;
+    row < downEntry.cell.row + downEntry.length;
+    row++
+  ) {
     chars.push(xWord.grid[row][col].char);
   }
 
@@ -37,4 +41,18 @@ export const getEntry = (xWord: XWord, entry: XWordEntry) => {
   }
 
   return getAcrossEntry(xWord, entry);
+};
+
+export const getRow = (xWord: XWord, row: number): Array<Tile> => {
+  return xWord.grid[row].slice();
+};
+
+export const getCol = (xWord: XWord, col: number): Array<Tile> => {
+  const result = [];
+
+  for (let row = 0; row < xWord.height; row++) {
+    result.push(xWord.grid[row][col]);
+  }
+
+  return result;
 };

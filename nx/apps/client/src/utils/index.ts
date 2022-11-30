@@ -1,17 +1,20 @@
-import { XWord, Direction, XWordEntry, getEntry } from '@nx/api-interfaces';
+import {
+  XWord,
+  Direction,
+  XWordEntry,
+  getEntry,
+  Cell,
+} from '@nx/api-interfaces';
 
-export const entryContainsCell = (
-  entry: XWordEntry,
-  cell: [number, number]
-): boolean => {
-  const [row, col] = cell;
+export const entryContainsCell = (entry: XWordEntry, cell: Cell): boolean => {
+  const { row, col } = cell;
 
-  if (row === entry.row && entry.direction === Direction.ACROSS) {
-    return entry.col <= col && col < entry.col + entry.length;
+  if (row === entry.cell.row && entry.direction === Direction.ACROSS) {
+    return entry.cell.col <= col && col < entry.cell.col + entry.length;
   }
 
-  if (col === entry.col && entry.direction === Direction.DOWN) {
-    return entry.row <= row && row < entry.row + entry.length;
+  if (col === entry.cell.col && entry.direction === Direction.DOWN) {
+    return entry.cell.row <= row && row < entry.cell.row + entry.length;
   }
 
   return false;
@@ -19,7 +22,7 @@ export const entryContainsCell = (
 
 export const getCrossingEntryIndex = (
   currentEntry: XWordEntry,
-  currentCell: [number, number],
+  currentCell: Cell,
   entries: Array<XWordEntry>
 ): number => {
   const desiredDirection = flipDirection(currentEntry.direction);
@@ -31,23 +34,29 @@ export const getCrossingEntryIndex = (
   );
 };
 
-export const getFirstEmptyCell = (
-  xWord: XWord,
-  entry: XWordEntry
-): [number, number] => {
+export const getFirstEmptyCell = (xWord: XWord, entry: XWordEntry): Cell => {
   const entryString = getEntry(xWord, entry);
 
   const spaceIndex = entryString.indexOf(' ');
 
   if (spaceIndex === -1) {
-    return [entry.row, entry.col];
+    return {
+      row: entry.cell.row,
+      col: entry.cell.col,
+    };
   }
 
   if (entry.direction === Direction.DOWN) {
-    return [entry.row + spaceIndex, entry.col];
+    return {
+      row: entry.cell.row + spaceIndex,
+      col: entry.cell.col,
+    };
   }
 
-  return [entry.row, entry.col + spaceIndex];
+  return {
+    row: entry.cell.row,
+    col: entry.cell.col + spaceIndex,
+  };
 };
 
 export const filterEntriesByDirection = (
