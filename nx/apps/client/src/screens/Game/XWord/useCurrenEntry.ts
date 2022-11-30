@@ -2,6 +2,7 @@ import { Cell, getCol, XWord, XWordEntry } from '@nx/api-interfaces';
 import {
   computeNextEntryIndex,
   computePreviousEntryIndex,
+  entryContainsCell,
   getCrossingEntryIndex,
   getFirstEmptyCell,
 } from 'apps/client/src/utils';
@@ -36,11 +37,27 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [xWord]
   );
 
-  const updateCurrentCell = useCallback((newCurrentCell: Cell) => {
-    console.log('todo');
+  const updateCurrentCell = useCallback(
+    (newCurrentCell: Cell) => {
+      setCurrentCell(newCurrentCell);
 
-    setCurrentCell(newCurrentCell);
-  }, []);
+      console.log(currentEntry);
+
+      if (!entryContainsCell(currentEntry, newCurrentCell)) {
+        for (let i = 0; i < xWord.entries.length; i++) {
+          const entry = xWord.entries[i];
+
+          if (
+            entry.direction === currentEntry.direction &&
+            entryContainsCell(entry, newCurrentCell)
+          ) {
+            setCurrentEntryIndex(i);
+          }
+        }
+      }
+    },
+    [currentEntry, xWord]
+  );
 
   const handleSelectEntry = useCallback(
     (entry: XWordEntry) => {
@@ -90,61 +107,33 @@ const useCurrentEntry = (xWord: XWord): Result => {
     'Up',
     (e: KeyboardEvent) => {
       e.preventDefault();
-
-      const { row, col } = currentCell;
-      const newRow = Math.max(0, row - 1);
-
-      updateCurrentCell({
-        row: newRow,
-        col,
-      });
+      updateCurrentCell(getNextCellUp(xWord, currentCell));
     },
-    [currentCell]
+    [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
     'Down',
     (e: KeyboardEvent) => {
       e.preventDefault();
-
-      const { row, col } = currentCell;
-      const newRow = Math.min(xWord.height - 1, row + 1);
-
-      updateCurrentCell({
-        row: newRow,
-        col,
-      });
+      updateCurrentCell(getNextCellDown(xWord, currentCell));
     },
-    [currentCell]
+    [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
     'Left',
     (e: KeyboardEvent) => {
       e.preventDefault();
-
-      const { row, col } = currentCell;
-      const newCol = Math.max(0, col - 1);
-
-      updateCurrentCell({
-        row,
-        col: newCol,
-      });
+      updateCurrentCell(getNextCellLeft(xWord, currentCell));
     },
-    [currentCell]
+    [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
     'Right',
     (e: KeyboardEvent) => {
       e.preventDefault();
-
-      const { row, col } = currentCell;
-      const newCol = Math.min(xWord.width - 1, col + 1);
-
-      updateCurrentCell({
-        row,
-        col: newCol,
-      });
+      updateCurrentCell(getNextCellRight(xWord, currentCell));
     },
-    [currentCell]
+    [updateCurrentCell, currentCell, xWord]
   );
 
   return {
@@ -157,8 +146,56 @@ const useCurrentEntry = (xWord: XWord): Result => {
 
 export default useCurrentEntry;
 
-const getNextCellUp = (xWord: XWord, currentCell: [number, number]) => {
-  const column = getCol(xWord, currentCell[1]);
+const getNextCellUp = (xWord: XWord, currentCell: Cell): Cell => {
+  for (let row = currentCell.row - 1; row >= 0; row--) {
+    if (xWord.grid[row][currentCell.col].char !== '#') {
+      return {
+        row,
+        col: currentCell.col,
+      };
+    }
+  }
+
+  return currentCell;
+};
+
+const getNextCellDown = (xWord: XWord, currentCell: Cell): Cell => {
+  for (let row = currentCell.row + 1; row < xWord.height; row++) {
+    if (xWord.grid[row][currentCell.col].char !== '#') {
+      return {
+        row,
+        col: currentCell.col,
+      };
+    }
+  }
+
+  return currentCell;
+};
+
+const getNextCellLeft = (xWord: XWord, currentCell: Cell): Cell => {
+  for (let col = currentCell.col - 1; col >= 0; col--) {
+    if (xWord.grid[currentCell.row][col].char !== '#') {
+      return {
+        row: currentCell.row,
+        col,
+      };
+    }
+  }
+
+  return currentCell;
+};
+
+const getNextCellRight = (xWord: XWord, currentCell: Cell): Cell => {
+  for (let col = currentCell.col + 1; col < xWord.width; col++) {
+    if (xWord.grid[currentCell.row][col].char !== '#') {
+      return {
+        row: currentCell.row,
+        col,
+      };
+    }
+  }
+
+  return currentCell;
 };
 
 // useEffect(() => {
