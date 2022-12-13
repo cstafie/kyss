@@ -1,15 +1,16 @@
 # syntax=docker/dockerfile:1
-FROM node:16-alpine
+FROM nginx:latest
 # RUN apk add --no-cache python2 g++ make
-ENV CLIENT_PORT=4200
-# ENV SERVER_PORT=3333
-# ENV SOCKET_PORT=4444
-EXPOSE ${CLIENT_PORT} 
+# ENV CLIENT_PORT=80
+# # ENV SERVER_PORT=3333
+# # ENV SOCKET_PORT=4444
+# EXPOSE ${CLIENT_PORT} 
 # EXPOSE ${CLIENT_PORT} ${SERVER_PORT} ${SOCKET_PORT}
-WORKDIR /home/cristian/repos/kyss/nx
-COPY . .
+
+COPY ./dist/apps/client/ /usr/share/nginx/html/
 # CMD ls
-CMD ["npx", "nx", "run-many", "--target=serve", "--projects=server,client", "--configuration=production"]
+# CMD ls
+# CMD ["npx", "nx", "run-many", "--target=serve", "--projects=server,client", "--configuration=production"]
 
 
 #### run these instructions from /nx 

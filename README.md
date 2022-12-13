@@ -2,15 +2,20 @@
 
 ## todo
 
-- click to play
-- click to select entry
+### infra
 
-- current selected square
-- arrow keys
+- nginx deployment
+- domain
+- setup ssl and whatnot
+
+### game
+
+- don't give players duplicate tiles
+- remove duplicate words
+- don't let players run out of tiles at the end
 
 ### overall
 
-- fix drag and drop
 - fix user connected to multiple games issue
 
 - think about whole system holistically and rename / redesign parts for it to be more maintainable
@@ -25,8 +30,6 @@
 
 ### front-end
 
-- fix clue switching using tab and space keys
-- add handle click
 - add mobile view
 
 ### back-end
