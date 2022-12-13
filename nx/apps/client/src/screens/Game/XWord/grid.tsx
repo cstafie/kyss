@@ -31,9 +31,16 @@ interface Props {
   currentEntry: XWordEntry;
   gameState: GameState;
   currentCell: CellType;
+  handleSelectCell: (cell: CellType) => void;
 }
 
-const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
+const Grid = ({
+  xWord,
+  currentEntry,
+  gameState,
+  currentCell,
+  handleSelectCell,
+}: Props) => {
   const numberLookUp = useMemo(() => {
     const numberMap = new Map();
     for (const entry of xWord.entries) {
@@ -95,6 +102,7 @@ const Grid = ({ xWord, currentEntry, gameState, currentCell }: Props) => {
                 number={numberLookUp.get(`${row}-${col}`)}
                 isHighlighted={isHighlighted}
                 isCurrentCell={isCurrentCell}
+                onClick={() => handleSelectCell({ row, col })}
               />
             );
         }

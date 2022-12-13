@@ -18,6 +18,7 @@ interface Props {
   updatePuzzle: (game: Game) => void;
   updateTileBar: (tileBar: Array<Tile>) => void;
   currentCell: Cell;
+  handleSelectCell: (cell: Cell) => void;
 }
 
 const Puzzle = ({
@@ -26,6 +27,7 @@ const Puzzle = ({
   updatePuzzle,
   updateTileBar,
   currentCell,
+  handleSelectCell,
 }: Props) => {
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
@@ -158,6 +160,7 @@ const Puzzle = ({
           currentEntry={currentEntry}
           gameState={game.gameState}
           currentCell={currentCell}
+          handleSelectCell={handleSelectCell}
         />
         <TileBar tiles={game.tileBar} />
       </DragDropContext>

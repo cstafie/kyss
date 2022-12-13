@@ -8,9 +8,17 @@ interface Props {
   number: number;
   isHighlighted: boolean;
   isCurrentCell: boolean;
+  onClick: (e: any) => void;
 }
 
-const Cell = ({ id, tile, number, isHighlighted, isCurrentCell }: Props) => {
+const Cell = ({
+  id,
+  tile,
+  number,
+  isHighlighted,
+  isCurrentCell,
+  onClick,
+}: Props) => {
   const isEmpty = tile.char === ' ';
 
   return (
@@ -22,6 +30,7 @@ const Cell = ({ id, tile, number, isHighlighted, isCurrentCell }: Props) => {
             isDraggingOver ? 'bg-purple-300' : ''
           } ${isCurrentCell ? 'bg-yellow-300' : ''}`}
           {...provided.droppableProps}
+          onClick={onClick}
         >
           <div className="absolute text-xs pl-1 text-black">{number}</div>
           {/* only one tile per cell allowed so it will always be index 0 */}

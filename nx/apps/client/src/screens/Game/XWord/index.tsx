@@ -24,7 +24,7 @@ const ALPHABET = Array(26)
 const XWord = ({ game, updateGame, updateTileBar }: Props) => {
   const { xWord } = game;
 
-  const { currentCell, currentEntry, handleSelectEntry } =
+  const { currentCell, currentEntry, handleSelectEntry, handleSelectCell } =
     useCurrentEntry(xWord);
 
   const acrossEntries = useMemo(
@@ -88,6 +88,7 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
         currentEntry={currentEntry}
         updateTileBar={updateTileBar}
         currentCell={currentCell}
+        handleSelectCell={handleSelectCell}
       />
       <section className="m-2">
         <h2 className="font-bold text-lg">ACROSS</h2>

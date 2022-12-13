@@ -1,4 +1,4 @@
-import { Cell, getCol, XWord, XWordEntry } from '@nx/api-interfaces';
+import { Cell, XWord, XWordEntry } from '@nx/api-interfaces';
 import {
   computeNextEntryIndex,
   computePreviousEntryIndex,
@@ -13,6 +13,7 @@ interface Result {
   currentEntry: XWordEntry;
   currentCell: Cell;
   handleSelectEntry: (entry: XWordEntry) => void;
+  handleSelectCell: (cell: Cell) => void;
 }
 
 const useCurrentEntry = (xWord: XWord): Result => {
@@ -37,8 +38,28 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [xWord]
   );
 
+  const switchDirection = useCallback(() => {
+    const crossingEntryIndex = getCrossingEntryIndex(
+      currentEntry,
+      currentCell,
+      xWord.entries
+    );
+
+    crossingEntryIndex === -1
+      ? setCurrentEntryIndex(0)
+      : setCurrentEntryIndex(crossingEntryIndex);
+  }, [currentEntry, currentCell, xWord.entries]);
+
   const updateCurrentCell = useCallback(
     (newCurrentCell: Cell) => {
+      if (
+        currentCell.row === newCurrentCell.row &&
+        currentCell.col === newCurrentCell.col
+      ) {
+        switchDirection();
+        return;
+      }
+
       setCurrentCell(newCurrentCell);
 
       console.log(currentEntry);
@@ -56,14 +77,16 @@ const useCurrentEntry = (xWord: XWord): Result => {
         }
       }
     },
-    [currentEntry, xWord]
+    [currentEntry, xWord, switchDirection, currentCell]
   );
 
   const handleSelectEntry = useCallback(
     (entry: XWordEntry) => {
-      setCurrentEntryIndex(xWord.entries.indexOf(entry));
+      const newIndex = xWord.entries.indexOf(entry);
+      setCurrentEntryIndex(newIndex);
+      setCurrentCell(getFirstEmptyCell(xWord, xWord.entries[newIndex]));
     },
-    [xWord.entries]
+    [xWord]
   );
 
   useHotkeys(
@@ -89,18 +112,9 @@ const useCurrentEntry = (xWord: XWord): Result => {
     'space',
     (e) => {
       e.preventDefault();
-
-      const crossingEntryIndex = getCrossingEntryIndex(
-        currentEntry,
-        currentCell,
-        xWord.entries
-      );
-
-      crossingEntryIndex === -1
-        ? setCurrentEntryIndex(0)
-        : setCurrentEntryIndex(crossingEntryIndex);
+      switchDirection();
     },
-    [currentEntry, currentCell, xWord.entries]
+    [switchDirection]
   );
 
   useHotkeys(
@@ -140,7 +154,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     currentEntry,
     currentCell,
     handleSelectEntry,
-    // handleSelectCell,
+    handleSelectCell: updateCurrentCell,
   };
 };
 
