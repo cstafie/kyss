@@ -1,0 +1,19 @@
+version: "2.12.2"
+services: 
+  client: 
+    image: xword-client
+    build:
+      context: ./
+      dockerfile: ./docker/apps/client/Dockerfile
+    ports:
+      - "8080:80"
+  server: 
+    image: xword-server
+    build:
+      context: ./
+      dockerfile: ./docker/apps/server/Dockerfile
+    ports:
+      - "8080:4444"
+      - "8080:3333"
+    
+  

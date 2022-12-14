@@ -551,7 +551,7 @@ fn generate_xword(
     // scored_matching_words.sort_by(|(_, score_a), (_, score_b)| score_b.cmp(score_a));
     // println!("{:?}", matching_words);
 
-    for (i, (word, _)) in scored_matching_words.iter().enumerate() {
+    for (_, (word, _)) in scored_matching_words.iter().enumerate() {
         // if *depth < 4 {
         //     println!(
         //         "{} {}% {} {}",
