@@ -1,19 +1,41 @@
 version: "2.12.2"
 services: 
   client: 
+    # depends_on:
+    #   - reverse-proxy
+    container_name: client
     image: xword-client
     build:
       context: ./
       dockerfile: ./docker/apps/client/Dockerfile
     ports:
       - "8080:80"
+    # expose:
+    #   - "80"
+    restart: always
   server: 
+    # depends_on:
+    #   - reverse-proxy
+    container_name: server
     image: xword-server
     build:
       context: ./
       dockerfile: ./docker/apps/server/Dockerfile
-    ports:
-      - "8080:4444"
-      - "8080:3333"
+    # ports:
+    #   - "4444:4444"
+    expose:
+      - "4444"
+      - "3333"
+    restart: always
+  # reverse-proxy:
+  #   image: reverse-proxy
+  #   build:
+  #     context: ./
+  #     dockerfile: ./docker/reverse-proxy/Dockerfile
+  #   ports: 
+  #     - "8080:8080"
+  #     - "4444:4444"
+  #     # - "3333:3333"
+  #   restart: always
     
   

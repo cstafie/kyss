@@ -53,6 +53,7 @@ const SocketContext = createContext<Socket>({
 export const useSocketContext = () => useContext(SocketContext);
 
 // TODO: socket server url as env variable
+// const socketUrl = 'http://localhost:4444';
 const socket = io();
 
 const createGame = (gameName: string) => socket.emit('create-game', gameName);

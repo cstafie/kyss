@@ -7,10 +7,10 @@ FROM nginx:latest
 # EXPOSE ${CLIENT_PORT} 
 # EXPOSE ${CLIENT_PORT} ${SERVER_PORT} ${SOCKET_PORT}
 
-# RUN rm /etc/nginx/nginx.conf 
+RUN rm /etc/nginx/nginx.conf 
 
-COPY ./docker/apps/client/default.conf /etc/nginx/conf.d/default.conf
-COPY ./dist/apps/client/ /usr/share/nginx/html/
+COPY ./docker/reverse-proxy/nginx.conf /etc/nginx/nginx.conf
+# COPY ./dist/apps/client/ /usr/share/nginx/html/
 # CMD ls
 # CMD ls
 # CMD ["npx", "nx", "run-many", "--target=serve", "--projects=server,client", "--configuration=production"]
