@@ -31,27 +31,22 @@ const Game = () => {
     return <>...</>;
   }
 
-  // TODO: find some nicer syntax
-  const Component = (() => {
-    switch (game.gameState) {
-      case GameState.waitingToStart:
-        return (
-          <Lobby game={game} updateGame={updateGame} startGame={startGame} />
-        );
+  switch (game.gameState) {
+    case GameState.waitingToStart:
+      return (
+        <Lobby game={game} updateGame={updateGame} startGame={startGame} />
+      );
 
-      case GameState.inProgress:
-      case GameState.complete:
-        return (
-          <XWord
-            game={game}
-            updateGame={updateGame}
-            updateTileBar={updateTileBar}
-          />
-        );
-    }
-  })();
-
-  return <section className="flex flex-col items-center">{Component}</section>;
+    case GameState.inProgress:
+    case GameState.complete:
+      return (
+        <XWord
+          game={game}
+          updateGame={updateGame}
+          updateTileBar={updateTileBar}
+        />
+      );
+  }
 };
 
 export default Game;

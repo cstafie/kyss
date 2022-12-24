@@ -75,7 +75,7 @@ const Grid = ({
     <GridContainer
       numCols={xWord.width}
       numRows={xWord.height}
-      className="bg-black  m-6"
+      className="bg-black"
     >
       {xWord.grid.flat().map((tile, i) => {
         const row = Math.floor(i / xWord.width);

@@ -9,6 +9,7 @@ import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
 import produce from 'immer';
 import useCurrentEntry from './useCurrenEntry';
+import Clue from './clue';
 
 interface Props {
   game: Game;
@@ -75,11 +76,22 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
     [game, currentCell]
   );
 
+  const cluesClass = 'm-2 hidden sm:block';
+
   return (
-    <section className="flex flex-row justify-center mt-12">
+    <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 h-full gap-4">
       <section className="m-2">
         <h2 className="font-bold text-lg">PLAYERS</h2>
         <Players players={Array.from(game.players.values())} />
+      </section>
+
+      {/* small screen clue */}
+      <section className="block sm:hidden">
+        <Clue
+          isHighlighted={false}
+          entry={currentEntry}
+          handleSelect={() => null}
+        />
       </section>
 
       <Puzzle
@@ -90,7 +102,9 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
         currentCell={currentCell}
         handleSelectCell={handleSelectCell}
       />
-      <section className="m-2">
+
+      {/* large screen clues */}
+      <section className={cluesClass}>
         <h2 className="font-bold text-lg">ACROSS</h2>
         <Clues
           entries={acrossEntries}
@@ -98,7 +112,7 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
           handleSelect={handleSelectEntry}
         />
       </section>
-      <section className="m-2">
+      <section className={cluesClass}>
         <h2 className="font-bold text-lg">DOWN</h2>
         <Clues
           entries={downEntries}
