@@ -10,7 +10,7 @@ const GAME_NAME_LENGTH = 6;
 const GamesList = () => {
   const { games, game, createGame } = useSocketContext();
   const navigate = useNavigate();
-  const { setNavLeft } = useNavContext();
+  const { resetNavLeft } = useNavContext();
 
   useEffect(() => {
     // TODO: navigate should not be used in this way
@@ -19,9 +19,7 @@ const GamesList = () => {
     }
   }, [game, navigate]);
 
-  useEffect(() => {
-    setNavLeft(null);
-  }, []);
+  useEffect(resetNavLeft, []);
 
   return (
     <section className="flex flex-col items-center p-2">

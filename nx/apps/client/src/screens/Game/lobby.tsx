@@ -20,7 +20,7 @@ const Lobby = ({ game, updateGame, startGame }: Props) => {
   return (
     <section className="flex flex-col items-center">
       <h2 className="mb-8"> GAME LOBBY </h2>
-      <section className="mb-16">
+      <section className="mb-16 text-xl">
         {Array.from(game.players.values()).map(({ id, name, ready }) => (
           <div
             key={id}
@@ -32,7 +32,7 @@ const Lobby = ({ game, updateGame, startGame }: Props) => {
       </section>
 
       <div
-        className="flex items-center mb-8"
+        className="flex items-center mb-8 text-xl"
         onClick={(e) => {
           e.preventDefault();
           updateGame({

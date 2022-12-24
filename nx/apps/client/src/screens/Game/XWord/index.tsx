@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import produce from 'immer';
 
 import { Direction, Tile } from '@nx/api-interfaces';
 import Clues from './clues';
@@ -7,7 +8,6 @@ import Puzzle from './puzzle';
 import { Game } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
-import produce from 'immer';
 import useCurrentEntry from './useCurrenEntry';
 import Clue from './clue';
 

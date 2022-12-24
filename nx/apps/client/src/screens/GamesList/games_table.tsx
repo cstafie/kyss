@@ -39,7 +39,7 @@ const GamesTable = ({ games }: Props) => {
             <tr
               key={id}
               onClick={() => joinGame(id)}
-              className="hover:bg-slate-700 cursor-pointer"
+              className="hover:bg-purple-900 cursor-pointer active:bg-purple-700"
             >
               {/* <td className="text-left table-cell">
                 <button
