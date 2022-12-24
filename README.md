@@ -11,9 +11,7 @@
 
 ### game
 
-- don't give players duplicate tiles
 - remove duplicate words
-- don't let players run out of tiles at the end
 
 ### overall
 

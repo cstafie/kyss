@@ -26,47 +26,49 @@ const UserName = () => {
 
   const [editing, setEditing] = useState(false);
 
-  const handleSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
 
-    const value = userName?.current?.value;
+      const value = userName?.current?.value;
 
-    // TODO: better validation
-    if (value && value.toLocaleLowerCase() !== 'you') {
-      setName(value);
-      setEditing(false);
+      // TODO: better validation
+      if (value && value.toLocaleLowerCase() !== 'you') {
+        setName(value);
+        setEditing(false);
 
-      // TODO: this is a bit faux pas
-      window.location.reload();
-    }
-  }, []);
+        // TODO: this is a bit faux pas
+        window.location.reload();
+      }
+    },
+    [setName]
+  );
 
   const handleFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
     e.target?.select();
   }, []);
 
-  return (
-    <button onClick={() => setEditing(true)} className="flex">
-      {editing ? (
-        <form onSubmit={handleSubmit}>
-          <input
-            ref={userName}
-            className="text-black"
-            autoFocus
-            onFocus={handleFocus}
-            maxLength={MAX_PLAYER_NAME_LENGTH}
-          />
-          <button type="submit" className="btn btn-blue">
-            OK
-          </button>
-        </form>
-      ) : (
-        <>
-          {user.name}
-          {pencilEmoji}
-        </>
-      )}
-    </button>
+  const className = 'flex justify-end items-center gap-2 w-full';
+
+  return editing ? (
+    <form onSubmit={handleSubmit} className={className}>
+      <input
+        ref={userName}
+        className="text-black p-1 h-6 w-36 rounded-md text-sm"
+        autoFocus
+        placeholder="Enter username..."
+        onFocus={handleFocus}
+        maxLength={MAX_PLAYER_NAME_LENGTH}
+      />
+      <button type="submit" className="btn btn-transparent btn-sm">
+        OK
+      </button>
+    </form>
+  ) : (
+    <section onClick={() => setEditing(true)} className={className}>
+      <div>{user.name}</div>
+      <div>{pencilEmoji}</div>
+    </section>
   );
 };
 

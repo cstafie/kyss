@@ -21,10 +21,10 @@ export const NavContextProvider = ({ children }: any) => {
         setNavLeft,
       }}
     >
-      <nav className="p-2 mb-4 bg-neutral-800">
-        <ul className="flex justify-between gap-4">
-          <li>{navLeft}</li>
-          <li>
+      <nav className="p-2 mb-4 bg-neutral-800 max-h-12 h-12">
+        <ul className="flex justify-between items-center gap-4 h-full">
+          <li className="w-full">{navLeft}</li>
+          <li className="w-full">
             <UserName />
           </li>
         </ul>

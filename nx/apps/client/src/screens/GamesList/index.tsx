@@ -24,20 +24,20 @@ const GamesList = () => {
   }, []);
 
   return (
-    <section className="flex flex-col items-center">
-      <nav className="flex flex-row justify-between w-1/2 m-4">
-        <h2> Games </h2>
+    <section className="flex flex-col items-center p-2">
+      <div className="flex flex-row justify-between items-center w-full sm:w-1/2 m-4 mb-12">
+        <h2> GAMES </h2>
         <button
           className="btn btn-blue"
           onClick={() =>
             createGame(`game-${uuidv4().substring(0, GAME_NAME_LENGTH)}`)
           }
         >
-          CREATE GAME
+          NEW GAME
         </button>
-      </nav>
+      </div>
       {games.length === 0 ? (
-        <div> Click "Create Game" to start a new game </div>
+        <div> Click "New Game" to create a new game </div>
       ) : (
         <GamesTable games={games} />
       )}

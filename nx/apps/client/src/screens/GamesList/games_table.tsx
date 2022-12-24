@@ -16,14 +16,14 @@ const GamesTable = ({ games }: Props) => {
   const { joinGame } = useSocketContext();
 
   return (
-    <table className="table-auto border-separate border border-spacing-4 w-full lg:w-1/2 rounded border-neutral-700">
+    <table className="table-auto border-collapse w-full lg:w-1/2 rounded text-sm sm:text-lg">
       <thead className="">
         <tr className="">
-          <th></th>
-          <th className="text-left">Name</th>
-          <th className="text-center"># of Players</th>
-          <th className="text-center">Created By</th>
-          <th className="text-right">Created</th>
+          {/* <th></th> */}
+          <th className="text-left pb-4">Name</th>
+          <th className="text-center pb-4"># of Players</th>
+          <th className="text-center pb-4">Created By</th>
+          <th className="text-right pb-4">Created</th>
         </tr>
       </thead>
       <tbody className="">
@@ -36,16 +36,20 @@ const GamesTable = ({ games }: Props) => {
             creatorId,
             creatorName,
           }) => (
-            <tr key={id}>
-              <td className="text-left table-cell">
+            <tr
+              key={id}
+              onClick={() => joinGame(id)}
+              className="hover:bg-slate-700 cursor-pointer"
+            >
+              {/* <td className="text-left table-cell">
                 <button
                   onClick={() => joinGame(id)}
                   className="btn btn-transparent"
                 >
                   JOIN GAME
                 </button>
-              </td>
-              <td className="text-left font-mono">{name}</td>
+              </td> */}
+              <td className="text-left font-mono py-2">{name}</td>
               <td className="text-center">{numberOfPlayers}</td>
               <td className="text-center font-mono">
                 {creatorId === user.id ? 'YOU' : creatorName}

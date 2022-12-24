@@ -30,6 +30,10 @@ h2 {
   @apply bg-blue-500 hover:bg-blue-700;
 }
 
+.btn-sm {
+  @apply text-sm py-1 px-2;
+}
+
 /* transparent button */
 .btn-transparent {
   @apply bg-transparent border border-blue-500  text-blue-500 hover:text-white hover:bg-blue-500 hover:border-transparent;

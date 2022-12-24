@@ -250,7 +250,7 @@ export class GameManager {
       game.removePlayer(player.id);
 
       if (game.players.size === 0) {
-        this.games.delete(game.id);
+        // this.games.delete(game.id);
       } else {
         this.updateGamePlayers(game);
       }
