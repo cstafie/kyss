@@ -1,15 +1,15 @@
 import {
   XWord,
   Tile,
-  shuffleArray,
   GameState,
   PlayerInfo,
   emptyGrid,
+  get1Random,
+  TILE_BAR_SIZE,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import Player from '../player/player';
-
-const TILE_BAR_SIZE = 5;
+import { TileManager } from './tile_manager';
 
 export class Game extends Entity {
   name: string;
@@ -18,7 +18,7 @@ export class Game extends Entity {
   solvedXWord: XWord;
   xWord: XWord;
   players: Map<string, PlayerInfo>;
-  tiles: Set<Tile>;
+  tileManager: TileManager;
   log: Array<string>;
   gameState: GameState;
 
@@ -35,13 +35,10 @@ export class Game extends Entity {
     this.log = [];
     this.creatorId = player.id;
     this.creatorName = player.name;
-    this.initTiles(xWord.grid.flat().filter((tile) => tile.char !== '#'));
+    this.tileManager = new TileManager(
+      xWord.grid.flat().filter((tile) => tile.char !== '#')
+    );
     this.gameState = GameState.waitingToStart;
-  }
-
-  initTiles(tiles: Array<Tile>) {
-    shuffleArray<Tile>(tiles);
-    this.tiles = new Set(tiles);
   }
 
   start() {
@@ -54,47 +51,38 @@ export class Game extends Entity {
     }
   }
 
-  initTileBar() {
-    const tileBar = [];
+  fillPlayerTileBar(playerId: string) {
+    const player = this.players.get(playerId);
 
-    const tileIterator = this.tiles.values();
+    if (this.tileManager.fillTileBar(player.tileBar)) {
+      return;
+    }
 
-    for (let i = 0; i < TILE_BAR_SIZE; i++) {
-      const tileIteratorResult = tileIterator.next();
+    // tile manager ran out of tiles
+    // let's take a random tile we don't have from one of the other players
 
-      if (tileIteratorResult.done) {
-        break;
+    const otherPlayersTiles = [];
+
+    this.players.forEach((info, id) => {
+      if (id === playerId) {
+        return;
       }
 
-      const tile = tileIteratorResult.value;
-      tileBar.push(tile);
-      this.tiles.delete(tile);
-    }
+      otherPlayersTiles.push(...info.tileBar);
+    });
 
-    return tileBar;
-  }
+    const playeTrileIds = new Set(player.tileBar.map((tile) => tile.id));
 
-  emptyTileBar(tileBar: Array<Tile>) {
-    while (tileBar.length) {
-      this.tiles.add(tileBar.pop());
-    }
-  }
+    const filteredTiles = otherPlayersTiles.filter(
+      (tile) => !playeTrileIds.has(tile.id)
+    );
 
-  fillTileBar(tileBar) {
-    if (tileBar.length >= TILE_BAR_SIZE) {
+    if (filteredTiles.length === 0 || player.tileBar.length === TILE_BAR_SIZE) {
       return;
     }
 
-    const tileIterator = this.tiles.values();
-    const tileIteratorResult = tileIterator.next();
-
-    if (tileIteratorResult.done) {
-      return;
-    }
-
-    const tile = tileIteratorResult.value;
-    tileBar.push(tile);
-    this.tiles.delete(tile);
+    const randomTile = get1Random(filteredTiles);
+    player.tileBar.push(randomTile);
   }
 
   addPlayer(player: Player) {
@@ -103,11 +91,12 @@ export class Game extends Entity {
     if (!existingPlayer) {
       this.players.set(player.id, {
         id: player.id,
-        tileBar: this.initTileBar(),
+        tileBar: [],
         score: 0,
         ready: false,
         name: player.name,
       });
+      this.fillPlayerTileBar(player.id);
     }
   }
 
@@ -118,7 +107,7 @@ export class Game extends Entity {
       return;
     }
 
-    this.emptyTileBar(playerInfo.tileBar);
+    this.tileManager.emptyTileBar(playerInfo.tileBar);
     this.players.delete(playerId);
 
     const otherPlayers = Array.from(this.players.values());
@@ -127,6 +116,6 @@ export class Game extends Entity {
       (playerA, playerB) => playerA.tileBar.length - playerB.tileBar.length
     );
 
-    otherPlayers.forEach((player) => this.fillTileBar(player.tileBar));
+    otherPlayers.forEach((player) => this.fillPlayerTileBar(player.id));
   }
 }

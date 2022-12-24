@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   countEmpty,
   GameMetaData,
@@ -179,7 +181,7 @@ export class GameManager {
 
       // tilebar should only get filled if we played a letter
       playerInfo.tileBar = tileBar;
-      game.fillTileBar(playerInfo.tileBar);
+      game.fillPlayerTileBar(playerInfo.id);
 
       // mark entries as complete
       game.xWord.entries.forEach((entry) => {
@@ -187,6 +189,10 @@ export class GameManager {
           entry.isComplete = isEntryComplete(game.xWord, entry);
         }
       });
+
+      // TODO: fix this ugly hack
+      // we give each tile a new id, so that duplicate ids don't mess up drag and drop
+      game.xWord.grid.flat().forEach((tile) => (tile.id = uuidv4()));
     }
 
     game.players.set(player.id, {

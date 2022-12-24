@@ -67,6 +67,10 @@ export function random(n: number) {
   return Math.floor(Math.random() * n);
 }
 
+export function get1Random<T>(a: T[]): T {
+  return getNRandom(a, 1)[0];
+}
+
 export function getNRandom<T>(a: T[], n: number = a.length): Array<T> {
   const aCopy = a.slice();
   const nRandom: Array<T> = [];

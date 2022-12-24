@@ -2,11 +2,12 @@
 
 ## todo
 
-### infra
-
-- nginx deployment
+- cleaner container deployment
+- write docker commands corresponding to the docker compose (may also need to edit image export ports)
 - domain
 - setup ssl and whatnot
+- tests?
+- redo socket comms
 
 ### game
 
