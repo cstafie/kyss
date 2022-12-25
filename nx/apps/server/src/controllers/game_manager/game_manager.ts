@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import {
+  BotDifficulty,
   countEmpty,
   GameMetaData,
   GameState,
@@ -13,6 +14,7 @@ import {
 import { getRandomXWord } from '../../utils';
 import { Game } from '../game/game';
 import Player from '../player/player';
+import Bot from '../bot/bot';
 
 const SCORE_INCREASE = 10;
 const SCORE_DECREASE = -5;
@@ -20,15 +22,17 @@ const SCORE_DECREASE = -5;
 export class GameManager {
   games: Map<string, Game>;
   players: Map<string, Player>;
+  bots: Map<string, Bot>;
   disconnectedPlayers: Map<string, Player>;
 
   constructor() {
     this.games = new Map();
     this.players = new Map();
+    this.bots = new Map();
     this.disconnectedPlayers = new Map();
   }
 
-  newGame(gameName: string, player: Player) {
+  newGame(gameName: string, player: Player, withBot = true) {
     const randomXWord = getRandomXWord();
     const game = new Game(gameName, player, randomXWord);
     this.games.set(game.id, game);
@@ -36,9 +40,21 @@ export class GameManager {
     // add the creator of the game to their own game
     this.playerJoinGame(game, player);
 
+    if (withBot) {
+      const bot = new Bot('x-🤖', BotDifficulty.medium);
+      this.botJoinGame(game, bot);
+    }
+
     console.log(`${player.name} created a new game`);
 
+    this.updateGamePlayers(game);
     this.updateServerMembers();
+  }
+
+  botJoinGame(game: Game, bot: Bot) {
+    game.addPlayer(bot.id, bot.name, true);
+    this.bots.set(bot.id, bot);
+    bot.currentGameId = game.id;
   }
 
   playerJoinGame(game: Game, player: Player, wasDisconnected = false) {
@@ -49,7 +65,7 @@ export class GameManager {
       return;
     }
 
-    game.addPlayer(player);
+    game.addPlayer(player.id, player.name);
 
     this.players.set(player.id, {
       ...player,
@@ -57,7 +73,7 @@ export class GameManager {
     });
 
     player.socket.on('update-game', (gameUpdate: PlayerGameUpdate) => {
-      this.updateGame(player, game, gameUpdate);
+      this.updateGame(player.id, game, gameUpdate);
     });
 
     player.socket.on('start-game', () => this.startGame(game));
@@ -148,9 +164,9 @@ export class GameManager {
   }
 
   // TODO: split this into playTile and setReady
-  updateGame(player: Player, game: Game, gameUpdate: PlayerGameUpdate) {
+  updateGame(playerId: string, game: Game, gameUpdate: PlayerGameUpdate) {
     const { ready, xWord, tileBar } = gameUpdate;
-    const playerInfo = game.players.get(player.id);
+    const playerInfo = game.players.get(playerId);
 
     if (!playerInfo) {
       return;
@@ -182,20 +198,12 @@ export class GameManager {
       // tilebar should only get filled if we played a letter
       playerInfo.tileBar = tileBar;
       game.fillPlayerTileBar(playerInfo.id);
-
-      // mark entries as complete
-      game.xWord.entries.forEach((entry) => {
-        if (!entry.isComplete) {
-          entry.isComplete = isEntryComplete(game.xWord, entry);
-        }
-      });
-
-      // TODO: fix this ugly hack
+      Array;
       // we give each tile a new id, so that duplicate ids don't mess up drag and drop
       game.xWord.grid.flat().forEach((tile) => (tile.id = uuidv4()));
     }
 
-    game.players.set(player.id, {
+    game.players.set(playerId, {
       ...playerInfo,
       ready,
     });
@@ -220,6 +228,14 @@ export class GameManager {
     game.start();
     this.updateServerMembers();
     this.updateGamePlayers(game);
+
+    if (game.gameState === GameState.inProgress) {
+      for (const playerId of game.players.keys()) {
+        const bot = this.bots.get(playerId);
+
+        bot?.start(game, this);
+      }
+    }
   }
 
   // TODO: ensure this is idempotent

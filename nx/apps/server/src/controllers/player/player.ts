@@ -7,7 +7,7 @@ class Player extends Entity {
   socket: Socket;
   currentGameId: string;
 
-  constructor(name: string, socket: Socket, id?: string) {
+  constructor(name: string, socket: Socket, isBot: boolean, id?: string) {
     super(id);
     this.name = name;
     this.socket = socket;

@@ -1,6 +1,5 @@
 import {
   XWord,
-  Tile,
   GameState,
   PlayerInfo,
   emptyGrid,
@@ -8,7 +7,6 @@ import {
   TILE_BAR_SIZE,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
-import Player from '../player/player';
 import { TileManager } from './tile_manager';
 
 export class Game extends Entity {
@@ -19,7 +17,7 @@ export class Game extends Entity {
   xWord: XWord;
   players: Map<string, PlayerInfo>;
   tileManager: TileManager;
-  log: Array<string>;
+  // log: Array<string>;
   gameState: GameState;
 
   constructor(name, player, xWord) {
@@ -32,7 +30,7 @@ export class Game extends Entity {
       grid: emptyGrid(xWord.grid),
     };
     this.players = new Map();
-    this.log = [];
+    // this.log = [];
     this.creatorId = player.id;
     this.creatorName = player.name;
     this.tileManager = new TileManager(
@@ -85,18 +83,18 @@ export class Game extends Entity {
     player.tileBar.push(randomTile);
   }
 
-  addPlayer(player: Player) {
-    const existingPlayer = this.players.get(player.id);
+  addPlayer(id: string, name: string, ready = false) {
+    const existingPlayer = this.players.get(id);
 
     if (!existingPlayer) {
-      this.players.set(player.id, {
-        id: player.id,
+      this.players.set(id, {
+        id,
         tileBar: [],
         score: 0,
-        ready: false,
-        name: player.name,
+        ready,
+        name: name,
       });
-      this.fillPlayerTileBar(player.id);
+      this.fillPlayerTileBar(id);
     }
   }
 

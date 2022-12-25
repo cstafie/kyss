@@ -73,5 +73,11 @@ export const GameState = {
   inProgress: 'in-progress',
   complete: 'complete',
 } as const;
-
 export type GameState = typeof GameState[keyof typeof GameState];
+
+export const BotDifficulty = {
+  easy: 'easy',
+  medium: 'medium',
+  hard: 'hard',
+} as const;
+export type BotDifficulty = typeof BotDifficulty[keyof typeof BotDifficulty];

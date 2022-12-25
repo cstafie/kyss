@@ -1,5 +1,17 @@
 # xword game
 
+## bot
+
+- how strong should the bot be?
+
+  - bot could play every 1-3, 4-6, 10-12 seconds (vary this with difficulty)
+    - maybe this can change based on % of the board filled
+  - bot could play incorrectly %30, %15, %0
+
+    - maybe this can change based on % of the board filled
+
+  - ui
+
 ## todo
 
 - cleaner container deployment
