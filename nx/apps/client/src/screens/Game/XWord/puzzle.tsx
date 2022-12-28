@@ -4,19 +4,16 @@ import {
   OnDragEndResponder,
   OnDragUpdateResponder,
 } from '@hello-pangea/dnd';
-import produce from 'immer';
-import { Cell, Tile, XWordEntry } from '@nx/api-interfaces';
+import { Cell, XWordEntry } from '@nx/api-interfaces';
 import { TILE_BAR_ID } from './constants';
 
 import Grid from './grid';
 import TileBar from './tile_bar';
-import { Game } from 'apps/client/src/contexts/socket';
+import { Game, useSocketContext } from 'apps/client/src/contexts/socket';
 
 interface Props {
   game: Game;
   currentEntry: XWordEntry;
-  updatePuzzle: (game: Game) => void;
-  updateTileBar: (tileBar: Array<Tile>) => void;
   currentCell: Cell;
   handleSelectCell: (cell: Cell) => void;
 }
@@ -24,11 +21,11 @@ interface Props {
 const Puzzle = ({
   game,
   currentEntry,
-  updatePuzzle,
-  updateTileBar,
   currentCell,
   handleSelectCell,
 }: Props) => {
+  const { playTile, updateTileBar } = useSocketContext();
+
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
     /*...*/
@@ -60,7 +57,7 @@ const Puzzle = ({
         return;
       }
 
-      const { tileBar, xWord } = game;
+      const { tileBar } = game;
 
       // tile bar to tile bar
       if (
@@ -81,21 +78,24 @@ const Puzzle = ({
         source.droppableId === TILE_BAR_ID &&
         destination.droppableId !== TILE_BAR_ID
       ) {
-        const newTileBar = [...tileBar];
+        // const newTileBar = [...tileBar];
 
-        // remove value from tile-bar
-        newTileBar.splice(si, 1);
+        // // remove value from tile-bar
+        // newTileBar.splice(si, 1);
 
         const [_, row, col] = destination.droppableId.split('-').map(Number);
-        const newXword = produce(xWord, (draft) => {
-          draft.grid[row][col] = tileBar[si];
-        });
 
-        updatePuzzle({
-          ...game,
-          xWord: newXword,
-          tileBar: newTileBar,
-        });
+        playTile(tileBar[si], [row, col]);
+
+        // const newXword = produce(xWord, (draft) => {
+        //   draft.grid[row][col] = tileBar[si];
+        // });
+
+        // updatePuzzle({
+        //   ...game,
+        //   xWord: newXword,
+        //   tileBar: newTileBar,
+        // });
 
         return;
       }
@@ -142,7 +142,7 @@ const Puzzle = ({
       //   return;
       // }
     },
-    [game, updatePuzzle, updateTileBar]
+    [game, playTile, updateTileBar]
   );
 
   return (

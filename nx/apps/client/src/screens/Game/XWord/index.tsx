@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import produce from 'immer';
 
-import { Direction, Tile } from '@nx/api-interfaces';
+import { Direction } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
-import { Game } from 'apps/client/src/contexts/socket';
+import { Game, useSocketContext } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
 import useCurrentEntry from './useCurrenEntry';
@@ -13,8 +13,6 @@ import Clue from './clue';
 
 interface Props {
   game: Game;
-  updateGame: (game: Game) => void;
-  updateTileBar: (tileBar: Array<Tile>) => void;
 }
 
 const ALPHABET = Array(26)
@@ -22,8 +20,9 @@ const ALPHABET = Array(26)
   .map((_, i) => String.fromCharCode('a'.charCodeAt(0) + i))
   .join(',');
 
-const XWord = ({ game, updateGame, updateTileBar }: Props) => {
+const XWord = ({ game }: Props) => {
   const { xWord } = game;
+  const { playTile } = useSocketContext();
 
   const { currentCell, currentEntry, handleSelectEntry, handleSelectCell } =
     useCurrentEntry(xWord);
@@ -57,21 +56,23 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
         return;
       }
 
-      // TODO: this code is duplicated from drag and drop (want DRY)
-      const newTileBar = [...game.tileBar];
+      playTile(game.tileBar[letterIndex], [row, col]);
 
-      // remove value from tile-bar
-      newTileBar.splice(letterIndex, 1);
+      // // TODO: this code is duplicated from drag and drop (want DRY)
+      // const newTileBar = [...game.tileBar];
 
-      const newXword = produce(xWord, (draft) => {
-        draft.grid[row][col] = game.tileBar[letterIndex];
-      });
+      // // remove value from tile-bar
+      // newTileBar.splice(letterIndex, 1);
 
-      updateGame({
-        ...game,
-        xWord: newXword,
-        tileBar: newTileBar,
-      });
+      // const newXword = produce(xWord, (draft) => {
+      //   draft.grid[row][col] = game.tileBar[letterIndex];
+      // });
+
+      // updateGame({
+      //   ...game,
+      //   xWord: newXword,
+      //   tileBar: newTileBar,
+      // });
     },
     [game, currentCell]
   );
@@ -96,9 +97,7 @@ const XWord = ({ game, updateGame, updateTileBar }: Props) => {
 
       <Puzzle
         game={game}
-        updatePuzzle={updateGame}
         currentEntry={currentEntry}
-        updateTileBar={updateTileBar}
         currentCell={currentCell}
         handleSelectCell={handleSelectCell}
       />

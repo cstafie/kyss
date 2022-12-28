@@ -9,9 +9,7 @@ import XWord from './XWord';
 const LEFT_ARROW_EMOJI = '⬅️';
 
 const Game = () => {
-  const { game, updateGame, startGame, leaveGame, updateTileBar } =
-    useSocketContext();
-
+  const { game, leaveGame } = useSocketContext();
   const { setNavLeft } = useNavContext();
 
   useEffect(() => {
@@ -25,28 +23,24 @@ const Game = () => {
         </Link>
       </button>
     );
-  }, []);
+  }, [leaveGame, setNavLeft]);
 
   if (game === null) {
     return <>...</>;
   }
 
-  switch (game.gameState) {
-    case GameState.waitingToStart:
-      return (
-        <Lobby game={game} updateGame={updateGame} startGame={startGame} />
-      );
+  const Component = (() => {
+    switch (game.gameState) {
+      case GameState.waitingToStart:
+        return <Lobby game={game} />;
 
-    case GameState.inProgress:
-    case GameState.complete:
-      return (
-        <XWord
-          game={game}
-          updateGame={updateGame}
-          updateTileBar={updateTileBar}
-        />
-      );
-  }
+      case GameState.inProgress:
+      case GameState.complete:
+        return <XWord game={game} />;
+    }
+  })();
+
+  return Component;
 };
 
 export default Game;

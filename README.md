@@ -1,16 +1,16 @@
 # xword game
 
-## bot
+## alpha release
 
-- how strong should the bot be?
+1. domain and SSL
+2. refactor server (server / game manager and event driven)
+3. polish bot
+4. add tap to play interface for mobile (will probably work on web too)
+5. instructions on how to play (potentially in a menu)
 
-  - bot could play every 1-3, 4-6, 10-12 seconds (vary this with difficulty)
-    - maybe this can change based on % of the board filled
-  - bot could play incorrectly %30, %15, %0
+---
 
-    - maybe this can change based on % of the board filled
-
-  - ui
+6. modal for game name / settings
 
 ## todo
 

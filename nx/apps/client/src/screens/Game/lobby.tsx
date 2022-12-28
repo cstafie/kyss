@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 import { useAuthContext } from '../../contexts/auth';
-import { Game } from '../../contexts/socket';
+import { Game, useSocketContext } from '../../contexts/socket';
 
 interface Props {
   game: Game;
-  updateGame: (gameUpdate: Game) => void;
-  startGame: () => void;
 }
 
-const Lobby = ({ game, updateGame, startGame }: Props) => {
+const Lobby = ({ game }: Props) => {
   const { user } = useAuthContext();
+  const { startGame, setReady } = useSocketContext();
 
   const allPlayersReady = useMemo(() => {
     return Array.from(game.players.values()).every((player) => player.ready);
@@ -35,10 +34,7 @@ const Lobby = ({ game, updateGame, startGame }: Props) => {
         className="flex items-center mb-8 text-xl"
         onClick={(e) => {
           e.preventDefault();
-          updateGame({
-            ...game,
-            ready: !ready,
-          });
+          setReady(!ready);
         }}
       >
         <input

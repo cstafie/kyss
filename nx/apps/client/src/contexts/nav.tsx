@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserName from '../screens/user_name';
+import UserName from '../components/user_name';
 
 interface Nav {
   setNavLeft: (node: React.ReactNode) => void;

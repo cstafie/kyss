@@ -6,15 +6,16 @@ import {
   ReactNode,
   useCallback,
 } from 'react';
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import {
-  PlayerGameUpdate,
   GameMetaData,
   ServerGameUpdate,
   PlayerInfo,
   XWord,
   GameState,
   Tile,
+  ServerToClientEvents,
+  ClientToServerEvents,
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -27,38 +28,38 @@ export interface Game {
   tileBar: Array<Tile>;
 }
 
-interface Socket {
+interface SocketContextI {
   createGame: (gameName: string) => void;
-  updateGame: (game: Game) => void;
+  playTile: (tile: Tile, pos: [number, number]) => void;
   updateTileBar: (tileBar: Array<Tile>) => void;
   joinGame: (gameId: string) => void;
   startGame: () => void;
   leaveGame: () => void;
+  setReady: (ready: boolean) => void;
   games: Array<GameMetaData>;
   game: Game | null;
 }
 
 const warning = () => console.error('No matching provider for SocketContext');
-const SocketContext = createContext<Socket>({
+const SocketContext = createContext<SocketContextI>({
   createGame: (gameName: string) => warning(),
-  updateGame: (game: Game) => warning(),
+  playTile: (tile: Tile, pos: [number, number]) => warning(),
   joinGame: (gameId: string) => warning(),
   updateTileBar: (tileBar: Array<Tile>) => warning(),
   startGame: () => warning(),
   leaveGame: () => warning(),
+  setReady: (ready: boolean) => warning(),
   games: [],
   game: null,
 });
 
 export const useSocketContext = () => useContext(SocketContext);
 
-// TODO: socket server url as env variable
-// const socketUrl = 'http://localhost:4444';
-const socket = io();
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
-const createGame = (gameName: string) => socket.emit('create-game', gameName);
-const joinGame = (gameId: string) => socket.emit('join-game', gameId);
-const startGame = () => socket.emit('start-game');
+const createGame = (gameName: string) => socket.emit('newGame', gameName);
+const joinGame = (gameId: string) => socket.emit('joinGame', gameId);
+const startGame = () => socket.emit('startGame');
 
 interface Props {
   children: ReactNode;
@@ -85,7 +86,7 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (user.name && user.id) {
-      socket.emit('join-server', {
+      socket.emit('joinServer', {
         id: user.id,
         name: user.name,
       });
@@ -94,11 +95,11 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // subscribe
-    socket.on('server-update', (games) => {
+    socket.on('updateGamesList', (games) => {
       setGames(games);
     });
     socket.on(
-      'game-update',
+      'updateGame',
       ({ serializedPlayersMap, ...rest }: ServerGameUpdate) => {
         setGame({
           players: new Map(JSON.parse(serializedPlayersMap)),
@@ -108,19 +109,19 @@ export const SocketContextProvider = ({ children }: Props) => {
     );
   }, []);
 
-  const optimisticGameUpdate = useCallback((gameUpdate: Game) => {
-    setGame(gameUpdate);
+  const playTile = useCallback((tile: Tile, pos: [number, number]) => {
+    // setGame(gameUpdate);
 
-    const playerGameUpdate: PlayerGameUpdate = {
-      xWord: gameUpdate.xWord,
-      ready: gameUpdate.ready,
-      tileBar: gameUpdate.tileBar,
-    };
-    socket.emit('update-game', playerGameUpdate);
+    // const playerGameUpdate: PlayerGameUpdate = {
+    //   xWord: gameUpdate.xWord,
+    //   ready: gameUpdate.ready,
+    //   tileBar: gameUpdate.tileBar,
+    // };
+    socket.emit('playTile', tile, pos);
   }, []);
 
   const leaveGame = useCallback(() => {
-    socket.emit('leave-game');
+    socket.emit('leaveGame');
     setGame(null);
   }, []);
 
@@ -135,11 +136,17 @@ export const SocketContextProvider = ({ children }: Props) => {
     );
   }, []);
 
+  const setReady = useCallback(
+    (ready: boolean) => socket.emit('setReady', ready),
+    []
+  );
+
   return (
     <SocketContext.Provider
       value={{
+        setReady,
         createGame,
-        updateGame: optimisticGameUpdate,
+        playTile,
         updateTileBar,
         joinGame,
         startGame,
