@@ -56,7 +56,7 @@ const XWord = ({ game }: Props) => {
         return;
       }
 
-      playTile(game.tileBar[letterIndex], [row, col]);
+      playTile(game.tileBar[letterIndex].id, [row, col]);
 
       // // TODO: this code is duplicated from drag and drop (want DRY)
       // const newTileBar = [...game.tileBar];

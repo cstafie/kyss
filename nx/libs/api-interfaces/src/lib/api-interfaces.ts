@@ -67,7 +67,6 @@ export interface GameMetaData {
   creatorId: string;
 }
 
-// TODO: look into this syntax
 export const GameState = {
   waitingToStart: 'waiting-to-start',
   inProgress: 'in-progress',

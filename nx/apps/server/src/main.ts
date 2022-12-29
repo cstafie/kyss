@@ -5,7 +5,7 @@ import * as cookieParser from 'cookie-parser';
 
 import { ClientToServerEvents, ServerToClientEvents } from '@nx/api-interfaces';
 
-import serverManager from './controllers/server_manager';
+import serverManager from './controllers/server_manager/server_manager';
 
 // TODO: should i separate express and socket servers into separate apps?
 const app = express();

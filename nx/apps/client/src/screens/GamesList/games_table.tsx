@@ -21,9 +21,9 @@ const GamesTable = ({ games }: Props) => {
         <tr className="">
           {/* <th></th> */}
           {/* <th className="text-left pb-4">Name</th> */}
+          <th className="text-left pb-4">Created By</th>
           <th className="text-center pb-4"># of Players</th>
-          <th className="text-center pb-4">Created By</th>
-          <th className="text-right pb-4">Created</th>
+          <th className="text-right pb-4"></th>
         </tr>
       </thead>
       <tbody className="">
@@ -50,10 +50,10 @@ const GamesTable = ({ games }: Props) => {
                 </button>
               </td> */}
               {/* <td className="text-left font-mono py-2">{name}</td> */}
-              <td className="text-center">{numberOfPlayers}</td>
-              <td className="text-center font-mono">
+              <td className="text-left font-mono">
                 {creatorId === user.id ? 'YOU' : creatorName}
               </td>
+              <td className="text-center">{numberOfPlayers}</td>
               <td className="text-right">
                 {timeAgo.format(new Date(createdAt))}
               </td>

@@ -85,7 +85,7 @@ const Puzzle = ({
 
         const [_, row, col] = destination.droppableId.split('-').map(Number);
 
-        playTile(tileBar[si], [row, col]);
+        playTile(tileBar[si].id, [row, col]);
 
         // const newXword = produce(xWord, (draft) => {
         //   draft.grid[row][col] = tileBar[si];

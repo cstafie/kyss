@@ -9,6 +9,9 @@ export interface ServerToClientEvents {
   //   withAck: (d: string, callback: (e: number) => void) => void;
 }
 
+// TODO: separate these event types
+// use keyof etc
+
 export interface ClientToServerEvents {
   // server manager
   newGame: (name: string) => void;
@@ -18,7 +21,7 @@ export interface ClientToServerEvents {
 
   // game manager
   startGame: () => void;
-  playTile: (tile: Tile, pos: [number, number]) => void;
-  updateTileBar: (tileBar: Array<Tile>) => void;
+  playTile: (tileId: string, pos: [number, number]) => void;
+  updateTileBar: (tileIds: Array<string>) => void;
   setReady: (ready: boolean) => void;
 }

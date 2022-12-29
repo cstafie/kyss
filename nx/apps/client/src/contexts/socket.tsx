@@ -30,7 +30,7 @@ export interface Game {
 
 interface SocketContextI {
   createGame: (gameName: string) => void;
-  playTile: (tile: Tile, pos: [number, number]) => void;
+  playTile: (tileId: string, pos: [number, number]) => void;
   updateTileBar: (tileBar: Array<Tile>) => void;
   joinGame: (gameId: string) => void;
   startGame: () => void;
@@ -43,7 +43,7 @@ interface SocketContextI {
 const warning = () => console.error('No matching provider for SocketContext');
 const SocketContext = createContext<SocketContextI>({
   createGame: (gameName: string) => warning(),
-  playTile: (tile: Tile, pos: [number, number]) => warning(),
+  playTile: (tileId: string, pos: [number, number]) => warning(),
   joinGame: (gameId: string) => warning(),
   updateTileBar: (tileBar: Array<Tile>) => warning(),
   startGame: () => warning(),
@@ -109,7 +109,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     );
   }, []);
 
-  const playTile = useCallback((tile: Tile, pos: [number, number]) => {
+  const playTile = useCallback((tileId: string, pos: [number, number]) => {
     // setGame(gameUpdate);
 
     // const playerGameUpdate: PlayerGameUpdate = {
@@ -117,7 +117,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     //   ready: gameUpdate.ready,
     //   tileBar: gameUpdate.tileBar,
     // };
-    socket.emit('playTile', tile, pos);
+    socket.emit('playTile', tileId, pos);
   }, []);
 
   const leaveGame = useCallback(() => {
@@ -133,6 +133,10 @@ export const SocketContextProvider = ({ children }: Props) => {
             tileBar,
           }
         : prevGame
+    );
+    socket.emit(
+      'updateTileBar',
+      tileBar.map((tile) => tile.id)
     );
   }, []);
 

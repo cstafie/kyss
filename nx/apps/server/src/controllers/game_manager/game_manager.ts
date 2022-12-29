@@ -59,58 +59,21 @@ export class GameManager extends Entity {
 
     this.game.addPlayer(user.id, user.name);
 
-    user.socket.on('playTile', (tile: Tile, pos: [number, number]) => {
+    user.socket.on('playTile', (tileId: string, pos: [number, number]) => {
+      this.game.playTile(user.id, tileId, pos);
       // this.updateGame(user.id, game, gameUpdate);
     });
-    user.socket.on('updateTileBar', (tileBar: Array<Tile>) => {
-      // todo;
+    user.socket.on('updateTileBar', (tileIds: Array<string>) => {
+      this.game.updateTileBar(user.id, tileIds);
     });
     user.socket.on('setReady', (ready: boolean) => {
-      // todo:
+      this.game.setReady(user.id, ready);
     });
-
     user.socket.on('startGame', () => this.startGame());
-
     user.socket.on('leaveGame', () => this.playerLeaveGame(user.id));
 
     // this.updateGamePlayers(game);
   }
-
-  // TODO: cleanup this large function
-  // TODO: ensure this is idempotent
-  // playerJoin(player: User) {
-  //   const playerAlreadyJoined = this.players.has(player.id);
-
-  //   this.players.set(player.id, player);
-
-  //   const disconnectInfo = this.disconnectedPlayers.get(player.id);
-
-  //   if (disconnectInfo) {
-  //     this.disconnectedPlayers.delete(player.id);
-
-  //     this.players.set(player.id, {
-  //       ...player,
-  //       currentGameId: disconnectInfo.currentGameId,
-  //     });
-
-  //     const game = this.games.get(disconnectInfo.currentGameId);
-  //     console.log(`${player.name} was reconnected to the server`);
-
-  //     // if that game still exists, let's join them to it
-  //     if (game) {
-  //       this.userJoinGame(game, player, true);
-  //       console.log(`${player.name} rejoined their game`);
-  //     }
-  //   } else {
-  //     console.log(`${player.name} joined the server`);
-  //   }
-
-  //   this.updateServerMembers();
-
-  //   if (playerAlreadyJoined) {
-  //     return;
-  //   }
-  // }
 
   // makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
   //   const { tileBar, score, ready } = playerInfo;
@@ -227,6 +190,21 @@ export class GameManager extends Entity {
     }
 
     // this.updateServerMembers();
+  }
+
+  getMetaData() {
+    const { id, name, createdAt, players, creatorId, creatorName, gameState } =
+      this.game;
+
+    return {
+      id: id,
+      name: name,
+      createdAt: createdAt,
+      numberOfPlayers: players.size,
+      creatorId: creatorId,
+      creatorName: creatorName,
+      gameState: gameState,
+    };
   }
 
   // updateServerMembers() {

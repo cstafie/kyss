@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Tile, XWord } from '../api-interfaces';
 
+// TODO: this should be class tile with a constructor
 export const charToTile = (char: string) => ({ id: uuidv4(), char });
 
 export const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {

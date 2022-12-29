@@ -1,4 +1,9 @@
-import { ClientToServerEvents, ServerToClientEvents } from '@nx/api-interfaces';
+import {
+  ClientToServerEvents,
+  GameMetaData,
+  GameState,
+  ServerToClientEvents,
+} from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import GameManager from '../game_manager/game_manager';
 import User from '../user/user';
@@ -55,6 +60,7 @@ class ServerManager {
     user.isConnected = false;
 
     // TODO: handle game disconnect nicely?
+    // should maybe clean up the socket listeners here
     // const game = this.tryGetUserGame(user);
     // game?.playerDisconnect(user.id);
   }
@@ -74,6 +80,29 @@ class ServerManager {
     socket.on('joinGame', (gameId: string) => this.joinGame(gameId, user));
     socket.on('leaveGame', () => this.leaveGame(user));
     socket.on('disconnect', () => this.disconnect(user));
+
+    this.updateUsers();
+  }
+
+  updateUsers() {
+    const gamesList: Array<GameMetaData> = [];
+
+    for (const game of this.games.values()) {
+      const gameMetaData = game.getMetaData();
+
+      if (gameMetaData.gameState === GameState.waitingToStart) {
+        gamesList.push(gameMetaData);
+      }
+    }
+
+    console.log('updateUsers', gamesList);
+
+    // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
+    for (const user of this.users.values()) {
+      if (user.isConnected) {
+        user.socket.emit('updateGamesList', gamesList);
+      }
+    }
   }
 }
 

@@ -5,6 +5,9 @@ import {
   emptyGrid,
   get1Random,
   TILE_BAR_SIZE,
+  SCORE_INCREASE,
+  SCORE_DECREASE,
+  charToTile,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import { TileManager } from './tile_manager';
@@ -80,7 +83,8 @@ export class Game extends Entity {
     }
 
     const randomTile = get1Random(filteredTiles);
-    player.tileBar.push(randomTile);
+    // make a new tile with the same char
+    player.tileBar.push(charToTile(randomTile.char));
   }
 
   addPlayer(id: string, name: string, ready = false) {
@@ -115,5 +119,73 @@ export class Game extends Entity {
     );
 
     otherPlayers.forEach((player) => this.fillPlayerTileBar(player.id));
+  }
+
+  updateTileBar(playerId: string, tileBarIds: Array<string>) {
+    const playerInfo = this.players.get(playerId);
+
+    if (!playerInfo || tileBarIds.length !== playerInfo.tileBar.length) {
+      return;
+    }
+
+    const tileMap = playerInfo.tileBar.reduce(
+      (map, tile) => map.set(tile.id, tile),
+      new Map()
+    );
+
+    const newTileBar = [];
+
+    for (const tileId of tileBarIds) {
+      const tile = tileMap.get(tileId);
+
+      if (!tile) {
+        return;
+      }
+
+      newTileBar.push(tile);
+    }
+
+    playerInfo.tileBar = newTileBar;
+  }
+
+  playTile(playerId: string, tileId: string, pos: [number, number]) {
+    const [row, col] = pos;
+
+    const playerInfo = this.players.get(playerId);
+
+    if (!playerInfo || this.xWord.grid[row][col].char !== ' ') {
+      // TODO: should these log an error?
+      return;
+    }
+
+    const { tileBar } = playerInfo;
+    const tileIndex = tileBar.findIndex((tile) => tile.id === tileId);
+
+    if (tileIndex === -1) {
+      return;
+    }
+
+    const tile = tileBar[tileIndex];
+
+    if (this.solvedXWord[row][col].char !== tile.char) {
+      // incorrect play
+      playerInfo.score += SCORE_DECREASE;
+      return;
+    }
+
+    // correct play
+    playerInfo.score += SCORE_INCREASE;
+    tileBar.splice(tileIndex, 1);
+    this.xWord.grid[row][col] = tile;
+  }
+
+  setReady(playerId: string, ready: boolean) {
+    const playerInfo = this.players.get(playerId);
+
+    if (!playerInfo) {
+      return;
+    }
+
+    playerInfo.ready = ready;
   }
 }
