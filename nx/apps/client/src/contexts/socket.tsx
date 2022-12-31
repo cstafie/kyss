@@ -14,11 +14,16 @@ import {
   XWord,
   GameState,
   Tile,
+  SocketClientToServerEvents,
+  ClientToServerEvent,
+  SocketServerToClientEvents,
+  ClientToGameEvent,
+  ServerToClientEvent,
   ServerToClientEvents,
-  ClientToServerEvents,
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { eventNames } from 'process';
 
 export interface Game {
   xWord: XWord;
@@ -55,11 +60,41 @@ const SocketContext = createContext<SocketContextI>({
 
 export const useSocketContext = () => useContext(SocketContext);
 
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
+const socket: Socket<SocketServerToClientEvents, SocketClientToServerEvents> =
+  io();
 
-const createGame = (gameName: string) => socket.emit('newGame', gameName);
-const joinGame = (gameId: string) => socket.emit('joinGame', gameId);
-const startGame = () => socket.emit('startGame');
+const createGame = (gameName: string) => {
+  const event: ClientToServerEvent<'newGame'> = {
+    type: 'newGame',
+    data: { name: gameName },
+  };
+  socket.emit('clientToServerEvent', event);
+};
+
+const joinGame = (gameId: string) => {
+  const event: ClientToServerEvent<'joinGame'> = {
+    type: 'joinGame',
+    data: { gameId },
+  };
+  socket.emit('clientToServerEvent', event);
+};
+
+const startGame = () => {
+  const event: ClientToGameEvent<'startGame'> = {
+    type: 'startGame',
+    data: null,
+  };
+  socket.emit('clientToGameEvent', event);
+};
+
+const joinServer = (userId: string, userName: string) => {
+  const event: ClientToServerEvent<'joinServer'> = {
+    type: 'joinServer',
+    data: { id: userId, name: userName },
+  };
+  console.log('emitting join server');
+  socket.emit('clientToServerEvent', event);
+};
 
 interface Props {
   children: ReactNode;
@@ -85,43 +120,55 @@ export const SocketContextProvider = ({ children }: Props) => {
   }, [navigate, location, game]);
 
   useEffect(() => {
+    // TODO: should this run on `socket.on('connect', () => {...})`
     if (user.name && user.id) {
-      socket.emit('joinServer', {
-        id: user.id,
-        name: user.name,
-      });
+      joinServer(user.id, user.name);
     }
   }, [user.name, user.id]);
 
-  useEffect(() => {
-    // subscribe
-    socket.on('updateGamesList', (games) => {
-      setGames(games);
-    });
-    socket.on(
-      'updateGame',
-      ({ serializedPlayersMap, ...rest }: ServerGameUpdate) => {
-        setGame({
-          players: new Map(JSON.parse(serializedPlayersMap)),
-          ...rest,
-        });
+  const handleEvent = useCallback(
+    (event: ServerToClientEvent<keyof ServerToClientEvents>) => {
+      switch (event.type) {
+        case 'updateGamesList': {
+          const { games } = (event as ServerToClientEvent<'updateGamesList'>)
+            .data;
+          return setGames(games);
+        }
+        case 'updateGame': {
+          const { gameUpdate } = (event as ServerToClientEvent<'updateGame'>)
+            .data;
+          const { serializedPlayersMap, ...rest } = gameUpdate;
+          return setGame({
+            players: new Map(JSON.parse(serializedPlayersMap)),
+            ...rest,
+          });
+        }
       }
-    );
-  }, []);
+    },
+    []
+  );
+
+  useEffect(() => {
+    socket.on('serverToClientEvent', handleEvent);
+  }, [handleEvent]);
 
   const playTile = useCallback((tileId: string, pos: [number, number]) => {
-    // setGame(gameUpdate);
-
-    // const playerGameUpdate: PlayerGameUpdate = {
-    //   xWord: gameUpdate.xWord,
-    //   ready: gameUpdate.ready,
-    //   tileBar: gameUpdate.tileBar,
-    // };
-    socket.emit('playTile', tileId, pos);
+    const event: ClientToGameEvent<'playTile'> = {
+      type: 'playTile',
+      data: {
+        tileId,
+        pos,
+      },
+    };
+    socket.emit('clientToGameEvent', event);
   }, []);
 
   const leaveGame = useCallback(() => {
-    socket.emit('leaveGame');
+    const event: ClientToServerEvent<'leaveGame'> = {
+      type: 'leaveGame',
+      data: null,
+    };
+    socket.emit('clientToServerEvent', event);
     setGame(null);
   }, []);
 
@@ -134,16 +181,23 @@ export const SocketContextProvider = ({ children }: Props) => {
           }
         : prevGame
     );
-    socket.emit(
-      'updateTileBar',
-      tileBar.map((tile) => tile.id)
-    );
+
+    const event: ClientToGameEvent<'updateTileBar'> = {
+      type: 'updateTileBar',
+      data: {
+        tileIds: tileBar.map((tile) => tile.id),
+      },
+    };
+    socket.emit('clientToGameEvent', event);
   }, []);
 
-  const setReady = useCallback(
-    (ready: boolean) => socket.emit('setReady', ready),
-    []
-  );
+  const setReady = useCallback((ready: boolean) => {
+    const event: ClientToGameEvent<'setReady'> = {
+      type: 'setReady',
+      data: { ready },
+    };
+    socket.emit('clientToGameEvent', event);
+  }, []);
 
   return (
     <SocketContext.Provider

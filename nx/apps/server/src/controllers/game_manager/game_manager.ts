@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   BotDifficulty,
+  ClientToGameEvent,
+  ClientToGameEvents,
   countEmpty,
   GameMetaData,
   GameState,
@@ -49,6 +51,34 @@ export class GameManager extends Entity {
     bot.currentGameId = game.id;
   }
 
+  handleEvent(
+    userId: string,
+    event: ClientToGameEvent<keyof ClientToGameEvents>
+  ) {
+    switch (event.type) {
+      case 'playTile':
+        return this.game.playTile({
+          playerId: userId,
+          ...(event as ClientToGameEvent<'playTile'>).data,
+        });
+      case 'updateTileBar':
+        return event.data;
+    }
+
+    // user.socket.on('playTile', (tileId: string, pos: [number, number]) => {
+    //   this.game.playTile(user.id, tileId, pos);
+    //   // this.updateGame(user.id, game, gameUpdate);
+    // });
+    // user.socket.on('updateTileBar', (tileIds: Array<string>) => {
+    //   this.game.updateTileBar(user.id, tileIds);
+    // });
+    // user.socket.on('setReady', (ready: boolean) => {
+    //   this.game.setReady(user.id, ready);
+    // });
+    // user.socket.on('startGame', () => this.startGame());
+    // user.socket.on('leaveGame', () => this.playerLeaveGame(user.id));
+  }
+
   userJoinGame(user: User, wasDisconnected = false) {
     const canJoin =
       wasDisconnected || this.game.gameState === GameState.waitingToStart;
@@ -59,18 +89,11 @@ export class GameManager extends Entity {
 
     this.game.addPlayer(user.id, user.name);
 
-    user.socket.on('playTile', (tileId: string, pos: [number, number]) => {
-      this.game.playTile(user.id, tileId, pos);
-      // this.updateGame(user.id, game, gameUpdate);
-    });
-    user.socket.on('updateTileBar', (tileIds: Array<string>) => {
-      this.game.updateTileBar(user.id, tileIds);
-    });
-    user.socket.on('setReady', (ready: boolean) => {
-      this.game.setReady(user.id, ready);
-    });
-    user.socket.on('startGame', () => this.startGame());
-    user.socket.on('leaveGame', () => this.playerLeaveGame(user.id));
+    user.socket.on(
+      'clientToGameEvent',
+      (event: ClientToGameEvent<keyof ClientToGameEvents>) =>
+        this.handleEvent(user.id, event)
+    );
 
     // this.updateGamePlayers(game);
   }

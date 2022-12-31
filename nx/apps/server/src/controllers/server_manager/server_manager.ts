@@ -1,8 +1,11 @@
 import {
+  ClientToServerEvent,
   ClientToServerEvents,
   GameMetaData,
   GameState,
-  ServerToClientEvents,
+  ServerToClientEvent,
+  SocketClientToServerEvents,
+  SocketServerToClientEvents,
 } from '@nx/api-interfaces';
 import { Socket } from 'socket.io';
 import GameManager from '../game_manager/game_manager';
@@ -11,7 +14,7 @@ import User from '../user/user';
 interface JoinServerParams {
   id: string;
   name: string;
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
+  socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>;
 }
 
 class ServerManager {
@@ -65,6 +68,28 @@ class ServerManager {
     // game?.playerDisconnect(user.id);
   }
 
+  handleEvent(
+    user: User,
+    event: ClientToServerEvent<keyof ClientToServerEvents>
+  ) {
+    // TODO: this almost looks like we could do `this[event.type](user, event);`
+    switch (event.type) {
+      case 'newGame': {
+        const { name } = (event as ClientToServerEvent<'newGame'>).data;
+        return this.newGame(name, user);
+      }
+      case 'joinGame': {
+        const { gameId } = (event as ClientToServerEvent<'joinGame'>).data;
+        return this.joinGame(gameId, user);
+      }
+      case 'leaveGame': {
+        return this.leaveGame(user);
+      }
+    }
+
+    this.updateUsers();
+  }
+
   joinServer({ id, name, socket }: JoinServerParams) {
     const user = this.users.get(id) || new User({ id, name, socket });
 
@@ -76,12 +101,21 @@ class ServerManager {
 
     this.tryRejoinGame(user);
 
-    socket.on('newGame', (gameName: string) => this.newGame(gameName, user));
-    socket.on('joinGame', (gameId: string) => this.joinGame(gameId, user));
-    socket.on('leaveGame', () => this.leaveGame(user));
-    socket.on('disconnect', () => this.disconnect(user));
+    socket.on(
+      'clientToServerEvent',
+      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
+        console.log(event.type);
+        this.handleEvent(user, event);
+      }
+    );
+    socket.on('disconnect', () => {
+      this.disconnect(user);
+      this.updateUsers();
+    });
 
     this.updateUsers();
+
+    console.log(`${name} joined server`);
   }
 
   updateUsers() {
@@ -95,12 +129,21 @@ class ServerManager {
       }
     }
 
-    console.log('updateUsers', gamesList);
+    gamesList.sort((gameA, gameB) => {
+      return gameB.createdAt.getTime() - gameA.createdAt.getTime();
+    });
+
+    const event: ServerToClientEvent<'updateGamesList'> = {
+      type: 'updateGamesList',
+      data: {
+        games: gamesList,
+      },
+    };
 
     // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
     for (const user of this.users.values()) {
       if (user.isConnected) {
-        user.socket.emit('updateGamesList', gamesList);
+        user.socket.emit('serverToClientEvent', event);
       }
     }
   }

@@ -3,14 +3,21 @@ import { Server, Socket } from 'socket.io';
 import * as http from 'http';
 import * as cookieParser from 'cookie-parser';
 
-import { ClientToServerEvents, ServerToClientEvents } from '@nx/api-interfaces';
+import {
+  ClientToServerEvent,
+  ClientToServerEvents,
+  SocketClientToServerEvents,
+  SocketServerToClientEvents,
+} from '@nx/api-interfaces';
 
 import serverManager from './controllers/server_manager/server_manager';
 
 // TODO: should i separate express and socket servers into separate apps?
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer);
+const io = new Server<SocketClientToServerEvents, SocketServerToClientEvents>(
+  httpServer
+);
 io.listen(4444);
 
 app.use(cookieParser());
@@ -31,11 +38,19 @@ app.get('/api/login', (req, res) => {
 
 io.on(
   'connection',
-  (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
+  (socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>) => {
     console.log(`user connected with socket id: ${socket.id}`);
 
-    socket.on('joinServer', ({ id, name }) =>
-      serverManager.joinServer({ id, name, socket })
+    // TODO: this should probably live on the server manager
+    socket.on(
+      'clientToServerEvent',
+      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
+        if (event.type === 'joinServer') {
+          const { id, name } = (event as ClientToServerEvent<'joinServer'>)
+            .data;
+          serverManager.joinServer({ id, name, socket });
+        }
+      }
     );
   }
 );

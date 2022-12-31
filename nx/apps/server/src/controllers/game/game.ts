@@ -148,7 +148,15 @@ export class Game extends Entity {
     playerInfo.tileBar = newTileBar;
   }
 
-  playTile(playerId: string, tileId: string, pos: [number, number]) {
+  playTile({
+    playerId,
+    tileId,
+    pos,
+  }: {
+    playerId: string;
+    tileId: string;
+    pos: [number, number];
+  }) {
     const [row, col] = pos;
 
     const playerInfo = this.players.get(playerId);
