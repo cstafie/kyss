@@ -25,11 +25,17 @@ import { Socket } from 'socket.io';
 export class GameManager extends Entity {
   bots: Map<string, Bot> = new Map();
   game: Game;
+  updatePlayer: (id, update) => void;
 
-  constructor(gameName: string, player: User) {
+  constructor(
+    gameName: string,
+    player: User,
+    updatePlayer: (id, update) => void
+  ) {
     super();
     const randomXWord = getRandomXWord();
     this.game = new Game(gameName, player, randomXWord);
+    this.updatePlayer = updatePlayer;
 
     // add the creator of the game to their own game
     this.userJoinGame(player);
@@ -95,38 +101,29 @@ export class GameManager extends Entity {
         this.handleEvent(user.id, event)
     );
 
-    // this.updateGamePlayers(game);
+    this.updateGamePlayers(this.game);
   }
 
-  // makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
-  //   const { tileBar, score, ready } = playerInfo;
+  makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
+    const { tileBar, score, ready } = playerInfo;
 
-  //   const gameUpdate: ServerGameUpdate = {
-  //     xWord: game.xWord,
-  //     gameState: game.gameState,
-  //     serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
-  //     ready,
-  //     score,
-  //     tileBar,
-  //   };
+    const gameUpdate: ServerGameUpdate = {
+      xWord: game.xWord,
+      gameState: game.gameState,
+      serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
+      ready,
+      score,
+      tileBar,
+    };
 
-  //   return gameUpdate;
-  // }
+    return gameUpdate;
+  }
 
-  // updateGamePlayers(game: Game) {
-  //   Array.from(game.players.entries()).forEach(([playerId, playerInfo]) => {
-  //     const player = this.players.get(playerId);
-
-  //     if (!player) {
-  //       return;
-  //     }
-
-  //     player.socket.emit(
-  //       'game-update',
-  //       this.makeServerGameUpdate(playerInfo, game)
-  //     );
-  //   });
-  // }
+  updateGamePlayers(game: Game) {
+    Array.from(game.players.entries()).forEach(([playerId, playerInfo]) => {
+      this.updatePlayer(playerId, this.makeServerGameUpdate(playerInfo, game));
+    });
+  }
 
   // TODO: split this into playTile and setReady
   updateGame(playerId: string, game: Game, gameUpdate: PlayerGameUpdate) {

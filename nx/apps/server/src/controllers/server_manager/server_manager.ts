@@ -3,6 +3,7 @@ import {
   ClientToServerEvents,
   GameMetaData,
   GameState,
+  ServerGameUpdate,
   ServerToClientEvent,
   SocketClientToServerEvents,
   SocketServerToClientEvents,
@@ -39,7 +40,7 @@ class ServerManager {
   }
 
   private newGame(gameName: string, creator: User) {
-    const game = new GameManager(gameName, creator);
+    const game = new GameManager(gameName, creator, this.updateGame.bind(this));
     this.games.set(game.id, game);
 
     game.userJoinGame(creator);
@@ -73,21 +74,24 @@ class ServerManager {
     event: ClientToServerEvent<keyof ClientToServerEvents>
   ) {
     // TODO: this almost looks like we could do `this[event.type](user, event);`
-    switch (event.type) {
-      case 'newGame': {
+    const eventToHandlerMap = {
+      newGame: () => {
         const { name } = (event as ClientToServerEvent<'newGame'>).data;
-        return this.newGame(name, user);
-      }
-      case 'joinGame': {
+        this.newGame(name, user);
+      },
+      joinGame: () => {
         const { gameId } = (event as ClientToServerEvent<'joinGame'>).data;
-        return this.joinGame(gameId, user);
-      }
-      case 'leaveGame': {
-        return this.leaveGame(user);
-      }
-    }
+        this.joinGame(gameId, user);
+      },
+      leaveGame: () => {
+        this.leaveGame(user);
+      },
+    };
 
-    this.updateUsers();
+    if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
+      eventToHandlerMap[event.type]();
+      this.updateGamesList();
+    }
   }
 
   joinServer({ id, name, socket }: JoinServerParams) {
@@ -110,15 +114,31 @@ class ServerManager {
     );
     socket.on('disconnect', () => {
       this.disconnect(user);
-      this.updateUsers();
+      this.updateGamesList();
     });
 
-    this.updateUsers();
+    this.updateGamesList();
 
     console.log(`${name} joined server`);
   }
 
-  updateUsers() {
+  updateGame(userId: string, gameUpdate: ServerGameUpdate) {
+    const user = this.users.get(userId);
+
+    console.log('updateGame');
+
+    if (!user || !user.isConnected) {
+      return;
+    }
+
+    const event: ServerToClientEvent<'updateGame'> = {
+      type: 'updateGame',
+      data: { gameUpdate },
+    };
+    user.socket.emit('serverToClientEvent', event);
+  }
+
+  updateGamesList() {
     const gamesList: Array<GameMetaData> = [];
 
     for (const game of this.games.values()) {

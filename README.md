@@ -7,6 +7,7 @@
 3. polish bot
 4. add tap to play interface for mobile (will probably work on web too)
 5. instructions on how to play (potentially in a menu)
+6. destroy stale games logic
 
 ---
 

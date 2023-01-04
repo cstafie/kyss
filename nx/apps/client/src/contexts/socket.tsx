@@ -23,7 +23,6 @@ import {
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { eventNames } from 'process';
 
 export interface Game {
   xWord: XWord;
@@ -128,6 +127,8 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   const handleEvent = useCallback(
     (event: ServerToClientEvent<keyof ServerToClientEvents>) => {
+      console.log(event);
+
       switch (event.type) {
         case 'updateGamesList': {
           const { games } = (event as ServerToClientEvent<'updateGamesList'>)
