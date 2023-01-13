@@ -52,11 +52,11 @@ class Bot extends Entity {
             const updatedTileBar = cloneDeep(tileBar);
             updatedTileBar.splice(i, 1);
 
-            this.gameManager.updateGame(this.id, this.game, {
-              xWord: updatedXword,
-              ready: true,
-              tileBar: updatedTileBar,
-            });
+            // this.gameManager.updateGame(this.id, this.game, {
+            //   xWord: updatedXword,
+            //   ready: true,
+            //   tileBar: updatedTileBar,
+            // });
             return;
           }
         }
@@ -83,11 +83,11 @@ class Bot extends Entity {
             const updatedTileBar = cloneDeep(tileBar);
             updatedTileBar.splice(i, 1);
 
-            this.gameManager.updateGame(this.id, this.game, {
-              xWord: updatedXword,
-              ready: true,
-              tileBar: updatedTileBar,
-            });
+            // this.gameManager.updateGame(this.id, this.game, {
+            //   xWord: updatedXword,
+            //   ready: true,
+            //   tileBar: updatedTileBar,
+            // });
             return;
           }
         }

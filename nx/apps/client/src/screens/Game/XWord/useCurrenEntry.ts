@@ -62,8 +62,6 @@ const useCurrentEntry = (xWord: XWord): Result => {
 
       setCurrentCell(newCurrentCell);
 
-      console.log(currentEntry);
-
       if (!entryContainsCell(currentEntry, newCurrentCell)) {
         for (let i = 0; i < xWord.entries.length; i++) {
           const entry = xWord.entries[i];

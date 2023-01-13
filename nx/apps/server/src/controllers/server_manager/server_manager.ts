@@ -40,10 +40,9 @@ class ServerManager {
   }
 
   private newGame(gameName: string, creator: User) {
+    // the Game Manager will automatically add the creator to the game
     const game = new GameManager(gameName, creator, this.updateGame.bind(this));
     this.games.set(game.id, game);
-
-    game.userJoinGame(creator);
   }
 
   private joinGame(gameId: string, user: User) {
@@ -69,7 +68,7 @@ class ServerManager {
     // game?.playerDisconnect(user.id);
   }
 
-  handleEvent(
+  private handleEvent(
     user: User,
     event: ClientToServerEvent<keyof ClientToServerEvents>
   ) {
@@ -108,7 +107,7 @@ class ServerManager {
     socket.on(
       'clientToServerEvent',
       (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
-        console.log(event.type);
+        console.log('server manager: ', event.type);
         this.handleEvent(user, event);
       }
     );
@@ -125,8 +124,6 @@ class ServerManager {
   updateGame(userId: string, gameUpdate: ServerGameUpdate) {
     const user = this.users.get(userId);
 
-    console.log('updateGame');
-
     if (!user || !user.isConnected) {
       return;
     }
@@ -138,7 +135,7 @@ class ServerManager {
     user.socket.emit('serverToClientEvent', event);
   }
 
-  updateGamesList() {
+  private updateGamesList() {
     const gamesList: Array<GameMetaData> = [];
 
     for (const game of this.games.values()) {

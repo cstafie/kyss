@@ -8,6 +8,7 @@ import {
   SCORE_INCREASE,
   SCORE_DECREASE,
   charToTile,
+  countEmpty,
 } from '@nx/api-interfaces';
 import Entity from '../entity/entity';
 import { TileManager } from './tile_manager';
@@ -72,10 +73,10 @@ export class Game extends Entity {
       otherPlayersTiles.push(...info.tileBar);
     });
 
-    const playeTrileIds = new Set(player.tileBar.map((tile) => tile.id));
+    const playerTileChars = new Set(player.tileBar.map((tile) => tile.char));
 
     const filteredTiles = otherPlayersTiles.filter(
-      (tile) => !playeTrileIds.has(tile.id)
+      (tile) => !playerTileChars.has(tile.char)
     );
 
     if (filteredTiles.length === 0 || player.tileBar.length === TILE_BAR_SIZE) {
@@ -158,7 +159,6 @@ export class Game extends Entity {
     pos: [number, number];
   }) {
     const [row, col] = pos;
-
     const playerInfo = this.players.get(playerId);
 
     if (!playerInfo || this.xWord.grid[row][col].char !== ' ') {
@@ -175,16 +175,32 @@ export class Game extends Entity {
 
     const tile = tileBar[tileIndex];
 
-    if (this.solvedXWord[row][col].char !== tile.char) {
-      // incorrect play
+    // -- incorrect play --
+    if (this.solvedXWord.grid[row][col].char !== tile.char) {
       playerInfo.score += SCORE_DECREASE;
       return;
     }
 
-    // correct play
+    // -- correct play --
+    // update player score and tilebar
     playerInfo.score += SCORE_INCREASE;
     tileBar.splice(tileIndex, 1);
+    this.fillPlayerTileBar(playerId);
+
+    // play the tile
     this.xWord.grid[row][col] = tile;
+
+    this.checkGameOver();
+  }
+
+  checkGameOver() {
+    const numEmptyTiles = countEmpty(this.xWord);
+    const isGameOver = numEmptyTiles === 0;
+
+    if (isGameOver) {
+      // TODO: mark game for deletion
+      this.gameState = GameState.complete;
+    }
   }
 
   setReady(playerId: string, ready: boolean) {

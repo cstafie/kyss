@@ -91,7 +91,6 @@ const joinServer = (userId: string, userName: string) => {
     type: 'joinServer',
     data: { id: userId, name: userName },
   };
-  console.log('emitting join server');
   socket.emit('clientToServerEvent', event);
 };
 
@@ -113,7 +112,6 @@ export const SocketContextProvider = ({ children }: Props) => {
     if (location.pathname === '/xword' && game === null) {
       navigate('/');
     } else if (location.pathname === '/' && game !== null) {
-      console.log('should navigate to /xword');
       navigate('/xword');
     }
   }, [navigate, location, game]);
