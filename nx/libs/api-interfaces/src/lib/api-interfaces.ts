@@ -55,6 +55,8 @@ export interface ServerGameUpdate {
   ready: boolean;
   tileBar: Array<Tile>;
   score: number;
+  gameCreatorId: string;
+  botIds: Array<string>;
 }
 
 export interface GameMetaData {

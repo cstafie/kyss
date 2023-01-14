@@ -1,39 +1,72 @@
-import { BotDifficulty, random } from '@nx/api-interfaces';
+import { v4 as uuidv4 } from 'uuid';
+
+import {
+  BotDifficulty,
+  countEmpty,
+  random,
+  randomInRange,
+} from '@nx/api-interfaces';
 
 import Entity from '../entity/entity';
 import { Game } from '../game/game';
-import GameManager from '../game_manager/game_manager';
-
-import { cloneDeep } from 'lodash';
 
 class Bot extends Entity {
   name: string;
-  currentGameId: string;
   difficulty: BotDifficulty;
   game?: Game;
-  gameManager: GameManager;
+  timeout: NodeJS.Timeout;
+  updateGamePlayers: () => void;
 
-  constructor(name: string, difficulty: BotDifficulty, id?: string) {
-    super(id);
-    this.name = name;
-    this.currentGameId = '';
+  constructor(
+    updateGamePlayers: () => void,
+    difficulty: BotDifficulty = BotDifficulty.medium
+  ) {
+    super();
+    this.name = `🤖-${uuidv4().substring(0, 4)}`;
     this.difficulty = difficulty;
+    this.updateGamePlayers = updateGamePlayers;
   }
 
-  start(game: Game, gameManager: GameManager) {
+  start(game: Game) {
     this.game = game;
-    this.gameManager = gameManager;
-
-    // TODO: cleanup
-    setInterval(() => {
-      if (random(2) === 0) {
-        this.makeMove();
-      } else {
-        this.makeDumbMove();
-      }
-    }, 5000);
+    this.playGame();
   }
 
+  playGame() {
+    const difficultyTimeoutMap = {
+      [BotDifficulty.easy]: 15,
+      [BotDifficulty.medium]: 10,
+      [BotDifficulty.hard]: 5,
+    };
+
+    const difficultyErrorFrequencyMap = {
+      [BotDifficulty.easy]: 3,
+      [BotDifficulty.medium]: 6,
+      [BotDifficulty.hard]: 10,
+    };
+
+    const emptyCount = countEmpty(this.game.xWord);
+    const timeoutTime =
+      randomInRange(700, 1300) * difficultyTimeoutMap[this.difficulty] +
+      emptyCount * 25; // the more empty tiles the slower we play
+
+    this.timeout = setTimeout(() => {
+      if (random(difficultyErrorFrequencyMap[this.difficulty]) === 0) {
+        this.makeDumbMove();
+      } else {
+        this.makeMove();
+      }
+
+      this.updateGamePlayers();
+      this.playGame();
+    }, timeoutTime);
+  }
+
+  onDestroy() {
+    clearTimeout(this.timeout);
+  }
+
+  // TODO: make these move functions dry
   makeDumbMove() {
     const { tileBar } = this.game.players.get(this.id);
 
@@ -45,18 +78,11 @@ class Bot extends Entity {
           const played = this.game.xWord.grid[row][col];
 
           if (played.char === ' ') {
-            const updatedXword = cloneDeep(this.game.xWord);
-
-            updatedXword.grid[row][col] = tile;
-
-            const updatedTileBar = cloneDeep(tileBar);
-            updatedTileBar.splice(i, 1);
-
-            // this.gameManager.updateGame(this.id, this.game, {
-            //   xWord: updatedXword,
-            //   ready: true,
-            //   tileBar: updatedTileBar,
-            // });
+            this.game.playTile({
+              playerId: this.id,
+              tileId: tile.id,
+              pos: [row, col],
+            });
             return;
           }
         }
@@ -76,18 +102,11 @@ class Bot extends Entity {
           const played = this.game.xWord.grid[row][col];
 
           if (solved.char === tile.char && played.char === ' ') {
-            const updatedXword = cloneDeep(this.game.xWord);
-
-            updatedXword.grid[row][col] = tile;
-
-            const updatedTileBar = cloneDeep(tileBar);
-            updatedTileBar.splice(i, 1);
-
-            // this.gameManager.updateGame(this.id, this.game, {
-            //   xWord: updatedXword,
-            //   ready: true,
-            //   tileBar: updatedTileBar,
-            // });
+            this.game.playTile({
+              playerId: this.id,
+              tileId: tile.id,
+              pos: [row, col],
+            });
             return;
           }
         }

@@ -9,10 +9,10 @@ import { TILE_BAR_ID } from './constants';
 
 import Grid from './grid';
 import TileBar from './tile_bar';
-import { Game, useSocketContext } from 'apps/client/src/contexts/socket';
+import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
 
 interface Props {
-  game: Game;
+  game: GameInfo;
   currentEntry: XWordEntry;
   currentCell: Cell;
   handleSelectCell: (cell: Cell) => void;

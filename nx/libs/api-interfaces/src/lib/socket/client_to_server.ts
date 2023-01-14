@@ -1,3 +1,5 @@
+import { BotDifficulty } from '../api-interfaces';
+
 export interface SocketClientToServerEvents {
   clientToServerEvent: (
     event: ClientToServerEvent<keyof ClientToServerEvents>
@@ -29,4 +31,7 @@ export interface ClientToGameEvents {
   playTile: { tileId: string; pos: [number, number] };
   updateTileBar: { tileIds: Array<string> };
   setReady: { ready: boolean };
+  addBot: null;
+  removeBot: { botId: string };
+  setBotDifficulty: { botId: string; difficulty: BotDifficulty };
 }

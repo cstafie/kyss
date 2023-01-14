@@ -9,7 +9,6 @@ import {
 import { io, Socket } from 'socket.io-client';
 import {
   GameMetaData,
-  ServerGameUpdate,
   PlayerInfo,
   XWord,
   GameState,
@@ -20,16 +19,19 @@ import {
   ClientToGameEvent,
   ServerToClientEvent,
   ServerToClientEvents,
+  BotDifficulty,
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export interface Game {
+export interface GameInfo {
   xWord: XWord;
   gameState: GameState;
   players: Map<string, PlayerInfo>;
   ready: boolean;
   tileBar: Array<Tile>;
+  gameCreatorId: string;
+  botIds: Set<string>;
 }
 
 interface SocketContextI {
@@ -41,7 +43,10 @@ interface SocketContextI {
   leaveGame: () => void;
   setReady: (ready: boolean) => void;
   games: Array<GameMetaData>;
-  game: Game | null;
+  game: GameInfo | null;
+  addBot: () => void;
+  removeBot: (botId: string) => void;
+  setBotDifficulty: (botId: string, difficulty: BotDifficulty) => void;
 }
 
 const warning = () => console.error('No matching provider for SocketContext');
@@ -55,6 +60,9 @@ const SocketContext = createContext<SocketContextI>({
   setReady: (ready: boolean) => warning(),
   games: [],
   game: null,
+  addBot: () => warning(),
+  removeBot: (botId: string) => warning(),
+  setBotDifficulty: (botId: string, difficulty: BotDifficulty) => warning(),
 });
 
 export const useSocketContext = () => useContext(SocketContext);
@@ -62,6 +70,7 @@ export const useSocketContext = () => useContext(SocketContext);
 const socket: Socket<SocketServerToClientEvents, SocketClientToServerEvents> =
   io();
 
+// TODO: make these event emitters DRY
 const createGame = (gameName: string) => {
   const event: ClientToServerEvent<'newGame'> = {
     type: 'newGame',
@@ -94,6 +103,35 @@ const joinServer = (userId: string, userName: string) => {
   socket.emit('clientToServerEvent', event);
 };
 
+const addBot = () => {
+  const event: ClientToGameEvent<'addBot'> = {
+    type: 'addBot',
+    data: null,
+  };
+  socket.emit('clientToGameEvent', event);
+};
+
+const removeBot = (botId: string) => {
+  const event: ClientToGameEvent<'removeBot'> = {
+    type: 'removeBot',
+    data: {
+      botId,
+    },
+  };
+  socket.emit('clientToGameEvent', event);
+};
+
+const setBotDifficulty = (botId: string, difficulty: BotDifficulty) => {
+  const event: ClientToGameEvent<'setBotDifficulty'> = {
+    type: 'setBotDifficulty',
+    data: {
+      botId,
+      difficulty,
+    },
+  };
+  socket.emit('clientToGameEvent', event);
+};
+
 interface Props {
   children: ReactNode;
 }
@@ -105,7 +143,7 @@ export const SocketContextProvider = ({ children }: Props) => {
   const { user } = useAuthContext();
 
   const [games, setGames] = useState<Array<GameMetaData>>([]);
-  const [game, setGame] = useState<Game | null>(null);
+  const [game, setGame] = useState<GameInfo | null>(null);
 
   useEffect(() => {
     // todo make these paths constants
@@ -136,9 +174,10 @@ export const SocketContextProvider = ({ children }: Props) => {
         case 'updateGame': {
           const { gameUpdate } = (event as ServerToClientEvent<'updateGame'>)
             .data;
-          const { serializedPlayersMap, ...rest } = gameUpdate;
+          const { serializedPlayersMap, botIds, ...rest } = gameUpdate;
           return setGame({
             players: new Map(JSON.parse(serializedPlayersMap)),
+            botIds: new Set(botIds),
             ...rest,
           });
         }
@@ -210,6 +249,9 @@ export const SocketContextProvider = ({ children }: Props) => {
         leaveGame,
         games,
         game,
+        addBot,
+        removeBot,
+        setBotDifficulty,
       }}
     >
       {children}

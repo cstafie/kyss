@@ -1,18 +1,17 @@
 import { useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import produce from 'immer';
 
-import { Direction } from '@nx/api-interfaces';
+import { Direction, GameState } from '@nx/api-interfaces';
 import Clues from './clues';
 import Puzzle from './puzzle';
-import { Game, useSocketContext } from 'apps/client/src/contexts/socket';
+import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
 import useCurrentEntry from './useCurrenEntry';
 import Clue from './clue';
 
 interface Props {
-  game: Game;
+  game: GameInfo;
 }
 
 const ALPHABET = Array(26)
@@ -83,7 +82,10 @@ const XWord = ({ game }: Props) => {
     <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 h-full gap-4">
       <section className="m-2">
         <h2 className="font-bold text-lg">PLAYERS</h2>
-        <Players players={Array.from(game.players.values())} />
+        <Players
+          players={Array.from(game.players.values())}
+          isGameOver={game.gameState === GameState.complete}
+        />
       </section>
 
       {/* small screen clue */}

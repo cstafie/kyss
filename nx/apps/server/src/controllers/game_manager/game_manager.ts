@@ -1,4 +1,5 @@
 import {
+  BotDifficulty,
   ClientToGameEvent,
   ClientToGameEvents,
   GameState,
@@ -29,18 +30,30 @@ export class GameManager extends Entity {
     // add the creator of the game to their own game
     this.userJoinGame(player);
 
-    // if (withBot) {
-    //   const bot = new Bot('x-🤖', BotDifficulty.medium);
-    //   this.botJoinGame(game, bot);
-    // }
+    this.updateGamePlayers();
 
     console.log(`${player.name} created a new game`);
   }
 
-  botJoinGame(game: Game, bot: Bot) {
-    game.addPlayer(bot.id, bot.name, true);
+  addBot() {
+    const bot = new Bot(this.updateGamePlayers.bind(this));
+    this.game.addPlayer(bot.id, bot.name, true);
     this.bots.set(bot.id, bot);
-    bot.currentGameId = game.id;
+  }
+
+  removeBot(botId: string) {
+    this.game.removePlayer(botId);
+    this.bots.delete(botId);
+  }
+
+  setBotDifficulty(botId: string, difficulty: BotDifficulty) {
+    const bot = this.bots.get(botId);
+
+    if (!bot) {
+      return;
+    }
+
+    bot.difficulty = difficulty;
   }
 
   handleEvent(
@@ -63,6 +76,17 @@ export class GameManager extends Entity {
         this.game.setReady(userId, ready);
       },
       startGame: this.startGame.bind(this),
+      addBot: this.addBot.bind(this),
+      removeBot: () => {
+        const { botId } = (event as ClientToGameEvent<'removeBot'>).data;
+        this.removeBot(botId);
+      },
+      setBotDifficulty: () => {
+        const { botId, difficulty } = (
+          event as ClientToGameEvent<'setBotDifficulty'>
+        ).data;
+        this.setBotDifficulty(botId, difficulty);
+      },
     };
 
     if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
@@ -95,6 +119,11 @@ export class GameManager extends Entity {
   makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
     const { tileBar, score, ready } = playerInfo;
 
+    const botIds = [];
+    for (const bot of this.bots.values()) {
+      botIds.push(bot.id);
+    }
+
     const gameUpdate: ServerGameUpdate = {
       xWord: game.xWord,
       gameState: game.gameState,
@@ -102,12 +131,16 @@ export class GameManager extends Entity {
       ready,
       score,
       tileBar,
+      gameCreatorId: game.creatorId,
+      botIds,
     };
 
     return gameUpdate;
   }
 
   updateGamePlayers() {
+    console.log(this.game.players);
+
     Array.from(this.game.players.entries()).forEach(
       ([playerId, playerInfo]) => {
         this.updatePlayer(
@@ -119,18 +152,23 @@ export class GameManager extends Entity {
   }
 
   startGame() {
-    this.game.start();
+    // can only start games that are not started
+    if (this.game.gameState !== GameState.waitingToStart) {
+      return;
+    }
 
-    if (this.game.gameState === GameState.inProgress) {
-      for (const playerId of this.game.players.keys()) {
-        const bot = this.bots.get(playerId);
-
-        bot?.start(this.game, this);
+    // return true if started successfully
+    if (this.game.start()) {
+      for (const bot of this.bots.values()) {
+        console.log('starting bot');
+        bot.start(this.game);
       }
     }
   }
 
   playerLeaveGame(playerId: string) {
+    console.log('player leave game');
+
     this.game.removePlayer(playerId);
 
     if (this.game.players.size === 0) {
@@ -153,6 +191,10 @@ export class GameManager extends Entity {
       creatorName: creatorName,
       gameState: gameState,
     };
+  }
+
+  onDestroy() {
+    // destroy game bots
   }
 }
 

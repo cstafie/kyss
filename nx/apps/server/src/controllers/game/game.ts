@@ -50,7 +50,10 @@ export class Game extends Entity {
 
     if (allPlayersReady) {
       this.gameState = GameState.inProgress;
+      return true;
     }
+
+    return false;
   }
 
   fillPlayerTileBar(playerId: string) {

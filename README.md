@@ -4,9 +4,10 @@
 
 - polish bot
 - add tap to play interface for mobile (will probably work on web too)
-- instructions on how to play (potentially in a menu)
+- leave game issues
 - destroy stale games logic
 - domain and SSL
+- instructions on how to play (potentially in a menu)
 
 ---
 

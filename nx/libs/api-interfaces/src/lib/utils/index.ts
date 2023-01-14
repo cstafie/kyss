@@ -68,6 +68,10 @@ export function random(n: number) {
   return Math.floor(Math.random() * n);
 }
 
+export function randomInRange(a: number, b: number) {
+  return random(b - a) + a;
+}
+
 export function get1Random<T>(a: T[]): T {
   return getNRandom(a, 1)[0];
 }

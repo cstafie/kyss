@@ -1,5 +1,4 @@
-import React, {
-  ChangeEvent,
+import {
   FormEvent,
   SyntheticEvent,
   useCallback,
