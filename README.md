@@ -3,6 +3,7 @@
 ## alpha release
 
 - add tap to play interface for mobile (will probably work on web too)
+- fix scrollbar issues (mobile and web)
 - leave game issues
 - destroy stale games logic
 - domain and SSL

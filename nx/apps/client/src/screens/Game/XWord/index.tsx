@@ -7,7 +7,7 @@ import Puzzle from './puzzle';
 import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
-import useCurrentEntry from './use_current_entry';
+import useCurrentEntry from './hooks/use_current_entry';
 import Clue from './clue';
 
 interface Props {
@@ -56,22 +56,6 @@ const XWord = ({ game }: Props) => {
       }
 
       playTile(game.tileBar[letterIndex].id, [row, col]);
-
-      // // TODO: this code is duplicated from drag and drop (want DRY)
-      // const newTileBar = [...game.tileBar];
-
-      // // remove value from tile-bar
-      // newTileBar.splice(letterIndex, 1);
-
-      // const newXword = produce(xWord, (draft) => {
-      //   draft.grid[row][col] = game.tileBar[letterIndex];
-      // });
-
-      // updateGame({
-      //   ...game,
-      //   xWord: newXword,
-      //   tileBar: newTileBar,
-      // });
     },
     [game, currentCell]
   );
