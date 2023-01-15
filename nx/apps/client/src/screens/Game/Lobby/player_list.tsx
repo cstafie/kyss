@@ -18,7 +18,7 @@ function PlayerList({ game }: Props) {
 
   return (
     <section className="text-xl flex flex-col justify-center">
-      <h3 className="mb-3"> Players </h3>
+      <h3 className="mb-3"> PLAYERS </h3>
       {players.map(({ id, name, ready }) => (
         <div key={id} className={`${id === user.id ? 'text-purple-400' : ''}`}>
           {ready ? '🟢' : '🔴'} {name}

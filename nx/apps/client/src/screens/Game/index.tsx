@@ -18,7 +18,7 @@ const Game = () => {
         <Link to="/" onClick={leaveGame}>
           <span role="img" aria-label="back-arrow">
             {LEFT_ARROW_EMOJI}
-          </span>
+          </span>{' '}
           LEAVE
         </Link>
       </button>
