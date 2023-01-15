@@ -2,7 +2,6 @@
 
 ## alpha release
 
-- polish bot
 - add tap to play interface for mobile (will probably work on web too)
 - leave game issues
 - destroy stale games logic

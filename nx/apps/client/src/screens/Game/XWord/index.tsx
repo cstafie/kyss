@@ -7,7 +7,7 @@ import Puzzle from './puzzle';
 import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
 import Players from './players';
 import { filterEntriesByDirection } from 'apps/client/src/utils';
-import useCurrentEntry from './useCurrenEntry';
+import useCurrentEntry from './use_current_entry';
 import Clue from './clue';
 
 interface Props {

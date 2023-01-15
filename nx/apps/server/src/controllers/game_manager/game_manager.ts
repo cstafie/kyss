@@ -1,5 +1,6 @@
 import {
   BotDifficulty,
+  BotInfo,
   ClientToGameEvent,
   ClientToGameEvents,
   GameState,
@@ -119,20 +120,24 @@ export class GameManager extends Entity {
   makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
     const { tileBar, score, ready } = playerInfo;
 
-    const botIds = [];
+    const botInfos: Map<string, BotInfo> = new Map();
     for (const bot of this.bots.values()) {
-      botIds.push(bot.id);
+      botInfos.set(bot.id, {
+        id: bot.id,
+        name: bot.name,
+        difficulty: bot.difficulty,
+      });
     }
 
     const gameUpdate: ServerGameUpdate = {
       xWord: game.xWord,
       gameState: game.gameState,
       serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
+      serializedBotsMap: JSON.stringify(Array.from(botInfos.entries())),
       ready,
       score,
       tileBar,
       gameCreatorId: game.creatorId,
-      botIds,
     };
 
     return gameUpdate;

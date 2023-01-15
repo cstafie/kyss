@@ -20,6 +20,7 @@ import {
   ServerToClientEvent,
   ServerToClientEvents,
   BotDifficulty,
+  BotInfo,
 } from '@nx/api-interfaces';
 import { useAuthContext } from './auth';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -28,10 +29,10 @@ export interface GameInfo {
   xWord: XWord;
   gameState: GameState;
   players: Map<string, PlayerInfo>;
+  bots: Map<string, BotInfo>;
   ready: boolean;
   tileBar: Array<Tile>;
   gameCreatorId: string;
-  botIds: Set<string>;
 }
 
 interface SocketContextI {
@@ -174,10 +175,11 @@ export const SocketContextProvider = ({ children }: Props) => {
         case 'updateGame': {
           const { gameUpdate } = (event as ServerToClientEvent<'updateGame'>)
             .data;
-          const { serializedPlayersMap, botIds, ...rest } = gameUpdate;
+          const { serializedPlayersMap, serializedBotsMap, ...rest } =
+            gameUpdate;
           return setGame({
             players: new Map(JSON.parse(serializedPlayersMap)),
-            botIds: new Set(botIds),
+            bots: new Map(JSON.parse(serializedBotsMap)),
             ...rest,
           });
         }

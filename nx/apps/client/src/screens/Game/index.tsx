@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavContext } from '../../contexts/nav';
 import { useSocketContext } from '../../contexts/socket';
-import Lobby from './lobby';
+import Lobby from './Lobby/lobby';
 import XWord from './XWord';
 
 const LEFT_ARROW_EMOJI = '⬅️';

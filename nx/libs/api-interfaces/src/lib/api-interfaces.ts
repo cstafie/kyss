@@ -37,6 +37,12 @@ export interface PlayerInfo {
   name: string;
 }
 
+export interface BotInfo {
+  id: string;
+  name: string;
+  difficulty: BotDifficulty;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -52,11 +58,11 @@ export interface ServerGameUpdate {
   xWord: XWord;
   gameState: GameState;
   serializedPlayersMap: string;
+  serializedBotsMap: string;
   ready: boolean;
   tileBar: Array<Tile>;
   score: number;
   gameCreatorId: string;
-  botIds: Array<string>;
 }
 
 export interface GameMetaData {
@@ -77,8 +83,8 @@ export const GameState = {
 export type GameState = typeof GameState[keyof typeof GameState];
 
 export const BotDifficulty = {
-  easy: 'easy',
-  medium: 'medium',
-  hard: 'hard',
+  easy: 0,
+  medium: 1,
+  hard: 2,
 } as const;
 export type BotDifficulty = typeof BotDifficulty[keyof typeof BotDifficulty];
