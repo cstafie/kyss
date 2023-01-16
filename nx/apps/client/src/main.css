@@ -47,7 +47,7 @@ body,
 
 /* borderless button */
 .btn-borderless {
-  @apply bg-transparent text-blue-50;
+  @apply bg-transparent text-blue-500;
 }
 
 /* only have hover styles on devices that support it */

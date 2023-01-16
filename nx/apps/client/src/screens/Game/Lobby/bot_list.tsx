@@ -71,7 +71,7 @@ function BotList({ game }: Props) {
           {isGameCreator && (
             <button
               onClick={() => removeBot(id)}
-              className="flex btn btn-blue btn-borderless text-sm items-center gap-1"
+              className="flex btn btn-borderless text-sm items-center gap-1"
             >
               DELETE <MdDeleteForever />
             </button>
@@ -80,10 +80,7 @@ function BotList({ game }: Props) {
       ))}
 
       {isGameCreator && bots.size < 10 && (
-        <button
-          onClick={addBot}
-          className="btn btn-blue btn-transparent text-sm mt-6"
-        >
+        <button onClick={addBot} className="btn btn-transparent text-sm mt-6">
           + ADD BOT
         </button>
       )}

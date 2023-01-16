@@ -47,7 +47,7 @@ const UserName = () => {
     e.target?.select();
   }, []);
 
-  const className = 'flex justify-end items-center gap-2 w-full';
+  const className = 'flex justify-end items-center gap-2';
 
   return editing ? (
     <form onSubmit={handleSubmit} className={className}>
@@ -64,9 +64,14 @@ const UserName = () => {
       </button>
     </form>
   ) : (
-    <section onClick={() => setEditing(true)} className={className}>
-      <div>{user.name}</div>
-      <div>{pencilEmoji}</div>
+    <section className={className}>
+      <button
+        onClick={() => setEditing(true)}
+        className="btn btn-borderless flex gap-2"
+      >
+        <div>{user.name}</div>
+        <div>{pencilEmoji}</div>
+      </button>
     </section>
   );
 };

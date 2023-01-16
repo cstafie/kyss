@@ -10,7 +10,7 @@ const Clue = ({ handleSelect, isHighlighted, entry }: Props) => {
   return (
     <div
       onClick={handleSelect}
-      className={`flex flex-row items-center p-2 cursor-pointer hover:scale-105 active:scale-95 ${
+      className={`flex flex-row items-center cursor-pointer  hover:scale-105 active:scale-95 p-2 mx-6 border-2 h-20 border-purple-500 rounded-md sm:border-none sm:h-auto sm:rounded-none ${
         isHighlighted ? 'bg-blue-500' : ''
       } ${entry.isComplete && !isHighlighted ? 'text-gray-500' : ''}`}
     >

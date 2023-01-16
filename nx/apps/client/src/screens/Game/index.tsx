@@ -14,7 +14,7 @@ const Game = () => {
 
   useEffect(() => {
     setNavLeft(
-      <button className="hover:scale-105 active:scale-95">
+      <button className="btn btn-borderless">
         <Link to="/" onClick={leaveGame}>
           <span role="img" aria-label="back-arrow">
             {LEFT_ARROW_EMOJI}

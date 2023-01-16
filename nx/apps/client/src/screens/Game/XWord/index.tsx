@@ -73,7 +73,7 @@ const XWord = ({ game }: Props) => {
       </section>
 
       {/* small screen clue */}
-      <section className="block sm:hidden">
+      <section className="block sm:hidden w-full">
         <Clue
           isHighlighted={false}
           entry={currentEntry}
