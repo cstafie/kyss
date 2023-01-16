@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserName from '../components/user_name';
+import NavTitle from '../components/nav_title';
+import UserName from '../components/user_name/user_name';
 
 interface Nav {
   setNavLeft: (node: React.ReactNode) => void;
@@ -14,14 +15,6 @@ const NavContext = createContext<Nav>({
 });
 
 export const useNavContext = () => useContext(NavContext);
-
-const NavTitle = () => (
-  <Link to="/">
-    <h1 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-700 text-transparent bg-clip-text w-fit">
-      CROSSABLE
-    </h1>
-  </Link>
-);
 
 export const NavContextProvider = ({ children }: any) => {
   const [navLeft, setNavLeft] = useState<React.ReactNode>(<NavTitle />);

@@ -2,11 +2,12 @@
 
 ## alpha release
 
-- add tap to play interface for mobile (will probably work on web too)
+- enforce setting username
 - fix scrollbar issues (mobile and web)
 - leave game issues
 - destroy stale games logic
-- domain and SSL
+- domain
+- SSL
 - instructions on how to play (potentially in a menu)
 
 ---
@@ -36,8 +37,6 @@
 - filter out bad clues
 
 ### front-end
-
-- add tap to play interface for mobile (will probably work on web too)
 
 ### back-end
 

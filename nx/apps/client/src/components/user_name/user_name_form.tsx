@@ -1,13 +1,5 @@
-import {
-  FormEvent,
-  SyntheticEvent,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
-import { useAuthContext } from '../contexts/auth';
-
-const pencilEmoji = '✏️';
+import { FormEvent, SyntheticEvent, useCallback, useRef } from 'react';
+import { useAuthContext } from '../../contexts/auth';
 
 const MAX_PLAYER_NAME_LENGTH = 12;
 
@@ -18,12 +10,15 @@ interface FocusEvent<T = Element> extends SyntheticEvent<T> {
   target: EventTarget & T;
 }
 
-const UserName = () => {
-  const { user, setName } = useAuthContext();
+interface Props {
+  className?: string;
+  onSubmit?: () => void;
+}
+
+function UserNameForm({ className, onSubmit }: Props) {
+  const { setName } = useAuthContext();
 
   const userName = useRef<HTMLInputElement>(null);
-
-  const [editing, setEditing] = useState(false);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -34,46 +29,34 @@ const UserName = () => {
       // TODO: better validation
       if (value && value.toLocaleLowerCase() !== 'you') {
         setName(value);
-        setEditing(false);
+        onSubmit && onSubmit();
 
         // TODO: this is a bit faux pas
         window.location.reload();
       }
     },
-    [setName]
+    [setName, onSubmit]
   );
 
   const handleFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
     e.target?.select();
   }, []);
 
-  const className = 'flex justify-end items-center gap-2';
-
-  return editing ? (
+  return (
     <form onSubmit={handleSubmit} className={className}>
       <input
         ref={userName}
         className="text-black p-1 h-6 w-36 rounded-md text-sm"
         autoFocus
-        placeholder="Enter username..."
+        placeholder="Enter user name..."
         onFocus={handleFocus}
         maxLength={MAX_PLAYER_NAME_LENGTH}
       />
-      <button type="submit" className="btn btn-transparent btn-sm">
+      <button type="submit" className="btn btn-blue btn-sm">
         OK
       </button>
     </form>
-  ) : (
-    <section className={className}>
-      <button
-        onClick={() => setEditing(true)}
-        className="btn btn-borderless flex gap-2"
-      >
-        <div>{user.name}</div>
-        <div>{pencilEmoji}</div>
-      </button>
-    </section>
   );
-};
+}
 
-export default UserName;
+export default UserNameForm;
