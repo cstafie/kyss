@@ -5,9 +5,11 @@ import Tile from './tile';
 
 interface Props {
   tiles: Array<TileType>;
+  selectedTileId: string;
+  setSelectedTileId: (tileId: string) => void;
 }
 
-const TileBar = ({ tiles }: Props) => {
+const TileBar = ({ tiles, selectedTileId, setSelectedTileId }: Props) => {
   return (
     <Droppable droppableId={TILE_BAR_ID} direction="horizontal">
       {(provided) => (
@@ -23,7 +25,8 @@ const TileBar = ({ tiles }: Props) => {
               index={i}
               isDragDisabled={false}
               isHighlighted={false}
-              isCurrentCell={false}
+              isCurrentCell={selectedTileId === tile.id}
+              onClick={() => setSelectedTileId(tile.id)}
             />
           ))}
           {provided.placeholder}

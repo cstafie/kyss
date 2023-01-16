@@ -21,7 +21,7 @@ const ALPHABET = Array(26)
 
 const XWord = ({ game }: Props) => {
   const { xWord } = game;
-  const { playTile } = useSocketContext();
+  const { playTile, createGame } = useSocketContext();
 
   const { currentCell, currentEntry, handleSelectEntry, handleSelectCell } =
     useCurrentEntry(xWord);
@@ -60,52 +60,63 @@ const XWord = ({ game }: Props) => {
     [game, currentCell]
   );
 
+  const isGameOver = game.gameState === GameState.complete;
+
   const cluesClass = 'm-2 hidden sm:block';
 
   return (
-    <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 h-full gap-4">
-      <section className="m-2">
-        <h2 className="font-bold text-lg">PLAYERS</h2>
-        <Players
-          players={Array.from(game.players.values())}
-          isGameOver={game.gameState === GameState.complete}
-        />
-      </section>
+    <>
+      {isGameOver && (
+        <section className="flex justify-center">
+          <button onClick={createGame} className="btn btn-blue">
+            START A NEW GAME!
+          </button>
+        </section>
+      )}
+      <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 h-full gap-4">
+        <section className="m-2">
+          <h2 className="font-bold text-lg">PLAYERS</h2>
+          <Players
+            players={Array.from(game.players.values())}
+            isGameOver={isGameOver}
+          />
+        </section>
 
-      {/* small screen clue */}
-      <section className="block sm:hidden w-full">
-        <Clue
-          isHighlighted={false}
-          entry={currentEntry}
-          handleSelect={() => null}
-        />
-      </section>
+        {/* small screen clue */}
+        <section className="block sm:hidden w-full">
+          <Clue
+            isHighlighted={false}
+            entry={currentEntry}
+            handleSelect={() => null}
+          />
+        </section>
 
-      <Puzzle
-        game={game}
-        currentEntry={currentEntry}
-        currentCell={currentCell}
-        handleSelectCell={handleSelectCell}
-      />
-
-      {/* large screen clues */}
-      <section className={cluesClass}>
-        <h2 className="font-bold text-lg">ACROSS</h2>
-        <Clues
-          entries={acrossEntries}
+        <Puzzle
+          game={game}
           currentEntry={currentEntry}
-          handleSelect={handleSelectEntry}
+          currentCell={currentCell}
+          handleSelectCell={handleSelectCell}
         />
+
+        {/* large screen clues */}
+        <section className={cluesClass}>
+          <h2 className="font-bold text-lg">ACROSS</h2>
+          <Clues
+            entries={acrossEntries}
+            currentEntry={currentEntry}
+            handleSelect={handleSelectEntry}
+          />
+        </section>
+        <section className={cluesClass}>
+          <h2 className="font-bold text-lg">DOWN</h2>
+          <Clues
+            entries={downEntries}
+            currentEntry={currentEntry}
+            handleSelect={handleSelectEntry}
+          />
+        </section>
       </section>
-      <section className={cluesClass}>
-        <h2 className="font-bold text-lg">DOWN</h2>
-        <Clues
-          entries={downEntries}
-          currentEntry={currentEntry}
-          handleSelect={handleSelectEntry}
-        />
-      </section>
-    </section>
+    </>
   );
 };
 

@@ -5,6 +5,8 @@ import Grid from './grid';
 import TileBar from './tile_bar';
 import { GameInfo } from 'apps/client/src/contexts/socket';
 import useDragAndDrop from './hooks/use_drag_and_drop';
+import { useCallback } from 'react';
+import useTapToPlay from './hooks/use_tap_to_play';
 
 interface Props {
   game: GameInfo;
@@ -27,6 +29,21 @@ const Puzzle = ({
     onDragEnd,
   } = useDragAndDrop(game);
 
+  const {
+    // TODO: find a nicer way to solve this
+    handleSelectCell: handleSelectCell2,
+    selectedTileId,
+    setSelectedTileId,
+  } = useTapToPlay();
+
+  const combinedHandleSelectCell = useCallback(
+    (cell: Cell) => {
+      handleSelectCell(cell);
+      handleSelectCell2([cell.row, cell.col]);
+    },
+    [handleSelectCell, handleSelectCell2]
+  );
+
   return (
     <section className="flex items-center flex-col mx-12 select-none">
       <DragDropContext
@@ -42,9 +59,14 @@ const Puzzle = ({
           currentEntry={currentEntry}
           gameState={game.gameState}
           currentCell={currentCell}
-          handleSelectCell={handleSelectCell}
+          handleSelectCell={combinedHandleSelectCell}
+          showHover={selectedTileId !== ''}
         />
-        <TileBar tiles={game.tileBar} />
+        <TileBar
+          tiles={game.tileBar}
+          selectedTileId={selectedTileId}
+          setSelectedTileId={setSelectedTileId}
+        />
       </DragDropContext>
     </section>
   );

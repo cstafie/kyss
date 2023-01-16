@@ -8,6 +8,7 @@ interface Props {
   number: number;
   isHighlighted: boolean;
   isCurrentCell: boolean;
+  showHover: boolean;
   onClick: (e: any) => void;
 }
 
@@ -17,6 +18,7 @@ const Cell = ({
   number,
   isHighlighted,
   isCurrentCell,
+  showHover,
   onClick,
 }: Props) => {
   const isEmpty = tile.char === ' ';
@@ -28,7 +30,9 @@ const Cell = ({
           ref={provided.innerRef}
           className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'} ${
             isDraggingOver ? 'bg-purple-300' : ''
-          } ${isCurrentCell ? 'bg-yellow-300' : ''}`}
+          } ${isCurrentCell ? 'bg-yellow-300' : ''} ${
+            showHover ? 'hover:bg-purple-300' : ''
+          }`}
           {...provided.droppableProps}
           onClick={onClick}
         >

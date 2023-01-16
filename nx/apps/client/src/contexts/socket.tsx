@@ -7,6 +7,9 @@ import {
   useCallback,
 } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import {
   GameMetaData,
   PlayerInfo,
@@ -22,8 +25,8 @@ import {
   BotDifficulty,
   BotInfo,
 } from '@nx/api-interfaces';
+
 import { useAuthContext } from './auth';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface GameInfo {
   xWord: XWord;
@@ -36,7 +39,7 @@ export interface GameInfo {
 }
 
 interface SocketContextI {
-  createGame: (gameName: string) => void;
+  createGame: () => void;
   playTile: (tileId: string, pos: [number, number]) => void;
   updateTileBar: (tileBar: Array<Tile>) => void;
   joinGame: (gameId: string) => void;
@@ -52,7 +55,7 @@ interface SocketContextI {
 
 const warning = () => console.error('No matching provider for SocketContext');
 const SocketContext = createContext<SocketContextI>({
-  createGame: (gameName: string) => warning(),
+  createGame: () => warning(),
   playTile: (tileId: string, pos: [number, number]) => warning(),
   joinGame: (gameId: string) => warning(),
   updateTileBar: (tileBar: Array<Tile>) => warning(),
@@ -71,8 +74,11 @@ export const useSocketContext = () => useContext(SocketContext);
 const socket: Socket<SocketServerToClientEvents, SocketClientToServerEvents> =
   io();
 
+const GAME_NAME_LENGTH = 6;
+
 // TODO: make these event emitters DRY
-const createGame = (gameName: string) => {
+const createGame = () => {
+  const gameName = `game-${uuidv4().substring(0, GAME_NAME_LENGTH)}`;
   const event: ClientToServerEvent<'newGame'> = {
     type: 'newGame',
     data: { name: gameName },

@@ -31,6 +31,7 @@ interface Props {
   currentEntry: XWordEntry;
   gameState: GameState;
   currentCell: CellType;
+  showHover: boolean;
   handleSelectCell: (cell: CellType) => void;
 }
 
@@ -39,6 +40,7 @@ const Grid = ({
   currentEntry,
   gameState,
   currentCell,
+  showHover,
   handleSelectCell,
 }: Props) => {
   const numberLookUp = useMemo(() => {
@@ -103,6 +105,7 @@ const Grid = ({
                 isHighlighted={isHighlighted}
                 isCurrentCell={isCurrentCell}
                 onClick={() => handleSelectCell({ row, col })}
+                showHover={showHover}
               />
             );
         }

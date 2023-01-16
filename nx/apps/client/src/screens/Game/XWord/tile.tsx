@@ -1,5 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { Tile as TileType } from '@nx/api-interfaces';
+import { MouseEventHandler } from 'react';
 
 interface Props {
   tile: TileType;
@@ -7,6 +8,7 @@ interface Props {
   isDragDisabled: boolean;
   isHighlighted: boolean;
   isCurrentCell: boolean;
+  onClick?: MouseEventHandler<HTMLDivElement>;
 }
 
 const Tile = ({
@@ -15,6 +17,7 @@ const Tile = ({
   isDragDisabled,
   isHighlighted,
   isCurrentCell,
+  onClick,
 }: Props) => {
   return (
     <Draggable
@@ -25,6 +28,7 @@ const Tile = ({
       {(provided) => (
         <div
           ref={provided.innerRef}
+          onClick={onClick}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           // className="bg-orange-200 hover:bg-orange-300 active:shadow-lg active:bg-orange-300 w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg"
