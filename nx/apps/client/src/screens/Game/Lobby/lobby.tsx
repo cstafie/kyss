@@ -16,7 +16,7 @@ const Lobby = ({ game }: Props) => {
 
   const { ready } = game;
 
-  // const isGameCreator = user.id === gameCreatorId;s
+  // const isGameCreator = user.id === gameCreatorId;
 
   return (
     <section className="flex flex-col items-center gap-8">

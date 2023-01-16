@@ -33,7 +33,7 @@ body,
 
 /* blue botton */
 .btn-blue {
-  @apply bg-blue-500 hover:bg-blue-700;
+  @apply bg-blue-500;
 }
 
 .btn-sm {
@@ -42,12 +42,24 @@ body,
 
 /* transparent button */
 .btn-transparent {
-  @apply bg-transparent border border-blue-500  text-blue-500 hover:text-white hover:bg-blue-500 hover:border-transparent;
+  @apply bg-transparent border border-blue-500  text-blue-500;
 }
 
 /* borderless button */
 .btn-borderless {
-  @apply bg-transparent text-blue-500 hover:text-white hover:bg-blue-500 hover:border-transparent;
+  @apply bg-transparent text-blue-50;
+}
+
+/* only have hover styles on devices that support it */
+@media (hover: hover) {
+  .btn-transparent,
+  .btn-borderless {
+    @apply hover:text-white hover:bg-blue-500 hover:border-transparent;
+  }
+
+  .btn-blue {
+    @apply hover:bg-blue-700;
+  }
 }
 
 .btn-disabled {

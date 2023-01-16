@@ -43,7 +43,7 @@ function BotList({ game }: Props) {
                 onClick={() =>
                   setBotDifficulty(id, (difficulty - 1) as BotDifficultyType)
                 }
-                className={`flex items-center btn btn-blue btn-borderless text-sm  ${
+                className={`btn btn-borderless flex items-center text-sm  ${
                   difficulty === BotDifficultyType.easy ? 'btn-disabled' : ''
                 }`}
               >
@@ -59,7 +59,7 @@ function BotList({ game }: Props) {
                 onClick={() =>
                   setBotDifficulty(id, (difficulty + 1) as BotDifficultyType)
                 }
-                className={`flex items-center btn btn-blue btn-borderless text-sm ${
+                className={`btn btn-borderless flex items-center text-sm ${
                   difficulty === BotDifficultyType.hard ? 'btn-disabled' : ''
                 }`}
               >
