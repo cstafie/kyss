@@ -2,6 +2,7 @@ import { User } from '@nx/api-interfaces';
 import { createContext, useContext, useEffect, useState } from 'react';
 import reactUseCookie from 'react-use-cookie';
 import { v4 as uuidv4 } from 'uuid';
+import Emoji from '../components/emoji';
 import NavTitle from '../components/nav_title';
 import UserNameForm from '../components/user_name/user_name_form';
 
@@ -61,12 +62,14 @@ export const AuthContextProvider = ({ children }: any) => {
         <section className="bg-neutral-900 fixed w-full h-full flex flex-col items-center pt-40 bg-opacity-90 ">
           <section className="bg-gray-700 p-24 px-48 flex flex-col items-center gap-8 rounded-xl">
             <NavTitle className="text-6xl" />
-            <section className="flex flex-col gap-4 p-12">
+            <section className="flex flex-col items-center gap-4 p-12">
               <h2 className="text-lg"> USER NAME </h2>
-              <UserNameForm className="flex justify-between gap-4 items-center" />
+              <UserNameForm className="flex justify-start gap-4 items-center" />
               <div className="mt-8 max-w-xs">
-                ❔ Enter a user name other players can know you by. No need to
-                think too hard, you can always change it later! 😃
+                <Emoji description="Question mark">❔</Emoji>
+                Enter a user name which other players can know you by. No need
+                to think too hard, you can always change it later!{' '}
+                <Emoji description="Smiley face">😃</Emoji>
               </div>
             </section>
           </section>
