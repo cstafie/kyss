@@ -29,7 +29,7 @@ export class GameManager extends Entity {
     this.updatePlayer = updatePlayer;
 
     // add the creator of the game to their own game
-    this.userJoinGame(player);
+    // this.userJoinGame(player);
 
     this.updateGamePlayers();
 

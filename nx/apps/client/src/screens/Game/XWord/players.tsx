@@ -1,4 +1,5 @@
 import { PlayerInfo } from '@nx/api-interfaces';
+import Emoji from 'apps/client/src/components/emoji';
 import { useAuthContext } from 'apps/client/src/contexts/auth';
 
 interface Props {
@@ -8,14 +9,14 @@ interface Props {
 
 function computeMedal(spot: number) {
   if (spot === 0) {
-    return '🥇';
+    return <Emoji description="First place">🥇</Emoji>;
   } else if (spot === 1) {
-    return '🥈';
+    return <Emoji description="Second place">🥈</Emoji>;
   } else if (spot === 2) {
-    return '🥉';
+    return <Emoji description="Third place">🥉</Emoji>;
   }
 
-  return '💜';
+  return <Emoji description="Purple heart">💜</Emoji>;
 }
 
 const Players = ({ players, isGameOver }: Props) => {

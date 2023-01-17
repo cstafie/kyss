@@ -1,3 +1,4 @@
+import Emoji from 'apps/client/src/components/emoji';
 import { useAuthContext } from 'apps/client/src/contexts/auth';
 import { GameInfo } from 'apps/client/src/contexts/socket';
 import { useMemo } from 'react';
@@ -21,8 +22,12 @@ function PlayerList({ game }: Props) {
       <h3 className="mb-3"> PLAYERS </h3>
       {players.map(({ id, name, ready }) => (
         <div key={id} className={`${id === user.id ? 'text-purple-400' : ''}`}>
-          {ready ? '🟢' : '🔴'} {name}
-          {id === gameCreatorId && ' 👑'}
+          {ready ? (
+            <Emoji description="Ready">🟢</Emoji>
+          ) : (
+            <Emoji description="Not Ready">🟢</Emoji>
+          )}{' '}
+          {name} {id === gameCreatorId && <Emoji description="Crown">👑</Emoji>}
         </div>
       ))}
     </section>

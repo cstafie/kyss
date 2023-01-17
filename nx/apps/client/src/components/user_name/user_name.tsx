@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuthContext } from '../../contexts/auth';
+import Emoji from '../emoji';
 import UserNameForm from './user_name_form';
 
 const pencilEmoji = '✏️';
@@ -20,7 +21,7 @@ const UserName = () => {
         className="btn btn-borderless flex gap-2"
       >
         <div>{user.name}</div>
-        <div>{pencilEmoji}</div>
+        <Emoji description="Pencil">{pencilEmoji}</Emoji>
       </button>
     </section>
   );

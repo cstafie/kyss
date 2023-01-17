@@ -1,6 +1,7 @@
 import { GameState } from '@nx/api-interfaces';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Emoji from '../../components/emoji';
 import { useNavContext } from '../../contexts/nav';
 import { useSocketContext } from '../../contexts/socket';
 import Lobby from './Lobby/lobby';
@@ -16,10 +17,7 @@ const Game = () => {
     setNavLeft(
       <button className="btn btn-borderless">
         <Link to="/" onClick={leaveGame}>
-          <span role="img" aria-label="back-arrow">
-            {LEFT_ARROW_EMOJI}
-          </span>{' '}
-          LEAVE
+          <Emoji description="Back arrow">{LEFT_ARROW_EMOJI}</Emoji> LEAVE
         </Link>
       </button>
     );

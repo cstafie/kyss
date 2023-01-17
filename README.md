@@ -2,7 +2,6 @@
 
 ## alpha release
 
-- enforce setting username
 - fix scrollbar issues (mobile and web)
 - leave game issues
 - destroy stale games logic
