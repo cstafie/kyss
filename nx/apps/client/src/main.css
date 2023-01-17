@@ -24,7 +24,7 @@ h2 {
 html,
 body,
 #root {
-  @apply h-full overflow-y-hidden;
+  @apply h-full overflow-hidden flex flex-col;
 }
 
 .btn {

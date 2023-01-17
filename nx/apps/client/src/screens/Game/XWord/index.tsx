@@ -73,7 +73,7 @@ const XWord = ({ game }: Props) => {
           </button>
         </section>
       )}
-      <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 h-full gap-4">
+      <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 gap-4">
         <section className="m-2">
           <h2 className="font-bold text-lg">PLAYERS</h2>
           <Players

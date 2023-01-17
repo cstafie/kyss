@@ -30,7 +30,7 @@ export const NavContextProvider = ({ children }: any) => {
         resetNavLeft,
       }}
     >
-      <nav className="p-2 mb-4 bg-neutral-800 max-h-12 h-12">
+      <nav className="p-2 bg-neutral-800 max-h-12 h-12">
         <ul className="flex justify-between items-center gap-4 h-full">
           <li className="w-full">{navLeft}</li>
           <li className="w-full">

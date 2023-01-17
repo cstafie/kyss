@@ -9,6 +9,7 @@ interface Props {
   isHighlighted: boolean;
   isCurrentCell: boolean;
   onClick?: MouseEventHandler<HTMLDivElement>;
+  className?: string;
 }
 
 const Tile = ({
@@ -18,6 +19,7 @@ const Tile = ({
   isHighlighted,
   isCurrentCell,
   onClick,
+  className,
 }: Props) => {
   return (
     <Draggable
@@ -42,7 +44,7 @@ const Tile = ({
               ? 'bg-yellow-400 hover:bg-yellows-500  active:bg-yellows-500'
               : ''
           }
-          active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg`}
+          active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg ${className}`}
         >
           {tile.char}
         </div>

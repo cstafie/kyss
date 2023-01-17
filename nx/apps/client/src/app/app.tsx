@@ -6,7 +6,7 @@ import { NavContextProvider } from '../contexts/nav';
 export const App = () => {
   return (
     <NavContextProvider>
-      <main className="overflow-x-hidden h-full">
+      <main className="overflow-auto pt-4 flex-1">
         <Routes>
           <Route path="/" element={<GamesList />} />
           <Route path="/xword" element={<Game />} />

@@ -7,7 +7,7 @@ import { useSocketContext } from '../../contexts/socket';
 import Lobby from './Lobby/lobby';
 import XWord from './XWord';
 
-const LEFT_ARROW_EMOJI = '⬅️';
+const BACK_ARROW_EMOJI = '⬅️';
 
 const Game = () => {
   const { game, leaveGame } = useSocketContext();
@@ -17,7 +17,7 @@ const Game = () => {
     setNavLeft(
       <button className="btn btn-borderless">
         <Link to="/" onClick={leaveGame}>
-          <Emoji description="Back arrow">{LEFT_ARROW_EMOJI}</Emoji> LEAVE
+          <Emoji description="Back arrow">{BACK_ARROW_EMOJI}</Emoji> LEAVE
         </Link>
       </button>
     );

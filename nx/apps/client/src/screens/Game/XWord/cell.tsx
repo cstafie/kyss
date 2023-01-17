@@ -32,7 +32,7 @@ const Cell = ({
             isDraggingOver ? 'bg-purple-300' : ''
           } ${isCurrentCell ? 'bg-yellow-300' : ''} ${
             showHover ? 'hover:bg-purple-300' : ''
-          }`}
+          } relative`}
           {...provided.droppableProps}
           onClick={onClick}
         >
@@ -45,6 +45,7 @@ const Cell = ({
               isDragDisabled={true}
               isHighlighted={isHighlighted}
               isCurrentCell={isCurrentCell}
+              // className={'relative top-0 left-0'}
             />
           )}
           {provided.placeholder}

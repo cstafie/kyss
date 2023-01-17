@@ -23,9 +23,9 @@ function PlayerList({ game }: Props) {
       {players.map(({ id, name, ready }) => (
         <div key={id} className={`${id === user.id ? 'text-purple-400' : ''}`}>
           {ready ? (
-            <Emoji description="Ready">🟢</Emoji>
+            <Emoji description="Green circle">🟢</Emoji>
           ) : (
-            <Emoji description="Not Ready">🟢</Emoji>
+            <Emoji description="Red circle">🔴</Emoji>
           )}{' '}
           {name} {id === gameCreatorId && <Emoji description="Crown">👑</Emoji>}
         </div>
