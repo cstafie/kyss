@@ -2,7 +2,6 @@
 
 ## alpha release
 
-- fix scrollbar issues (mobile and web)
 - leave game issues
 - destroy stale games logic
 - domain
@@ -11,7 +10,11 @@
 
 ---
 
+- socket disconnect issue?
+- player not getting tiles issue
 - modal or page for game name and settings
+- fix local dev issues
+- way to receive
 
 ## todo
 

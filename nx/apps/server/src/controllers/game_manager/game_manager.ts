@@ -106,13 +106,15 @@ export class GameManager extends Entity {
 
     this.game.addPlayer(user.id, user.name);
 
-    user.socket.on(
-      'clientToGameEvent',
-      (event: ClientToGameEvent<keyof ClientToGameEvents>) => {
-        console.log('game manager: ', event.type);
-        this.handleEvent(user.id, event);
-      }
-    );
+    const eventHandler = (
+      event: ClientToGameEvent<keyof ClientToGameEvents>
+    ) => {
+      console.log('game manager: ', event.type);
+      this.handleEvent(user.id, event);
+    };
+
+    user.socket.off('clientToGameEvent', eventHandler);
+    user.socket.on('clientToGameEvent', eventHandler);
 
     this.updateGamePlayers();
   }
@@ -144,8 +146,6 @@ export class GameManager extends Entity {
   }
 
   updateGamePlayers() {
-    console.log(this.game.players);
-
     Array.from(this.game.players.entries()).forEach(
       ([playerId, playerInfo]) => {
         this.updatePlayer(
@@ -162,10 +162,9 @@ export class GameManager extends Entity {
       return;
     }
 
-    // return true if started successfully
+    // game.start returns true if started successfully
     if (this.game.start()) {
       for (const bot of this.bots.values()) {
-        console.log('starting bot');
         bot.start(this.game);
       }
     }
@@ -175,12 +174,7 @@ export class GameManager extends Entity {
     console.log('player leave game');
 
     this.game.removePlayer(playerId);
-
-    if (this.game.players.size === 0) {
-      // this.games.delete(game.id);
-    } else {
-      this.updateGamePlayers();
-    }
+    this.updateGamePlayers();
   }
 
   getMetaData() {
@@ -199,7 +193,7 @@ export class GameManager extends Entity {
   }
 
   onDestroy() {
-    // destroy game bots
+    Array.from(this.bots.values()).forEach((bot) => bot.onDestroy());
   }
 }
 

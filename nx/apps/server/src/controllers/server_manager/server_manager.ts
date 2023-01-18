@@ -30,8 +30,11 @@ class ServerManager {
         return game;
       }
 
+      // if the game corresponding to user.currentGameId doesn't exist
+      // the user's currentGameId is invalid and should be cleared
       user.currentGameId = '';
     }
+    console.log('user has no current game id');
   }
 
   private tryRejoinGame(user: User) {
@@ -43,6 +46,8 @@ class ServerManager {
     // the Game Manager will automatically add the creator to the game
     const game = new GameManager(gameName, creator, this.updateGame.bind(this));
     this.games.set(game.id, game);
+
+    creator.currentGameId = game.id;
   }
 
   private joinGame(gameId: string, user: User) {
@@ -56,7 +61,20 @@ class ServerManager {
 
   private leaveGame(user: User) {
     const game = this.tryGetUserGame(user);
-    game?.playerLeaveGame(user.id);
+
+    if (!game) {
+      console.log('could not find game to leave');
+      return;
+    }
+
+    game.playerLeaveGame(user.id);
+    user.currentGameId = '';
+
+    // destroy the game if it has players left
+    if (game.game.players.size - game.bots.size === 0) {
+      game.onDestroy();
+      this.games.delete(game.id);
+    }
   }
 
   private disconnect(user: User) {
@@ -93,46 +111,39 @@ class ServerManager {
     }
   }
 
-  joinServer({ id, name, socket }: JoinServerParams) {
+  private joinServer({ id, name, socket }: JoinServerParams) {
     const user = this.users.get(id) || new User({ id, name, socket });
 
     user.isConnected = true;
     user.name = name;
     user.socket = socket;
 
+    // TODO: if we store users by socket.id instead we could potentially treat joinServer event
+    // as we do all other events
     this.users.set(user.id, user);
 
     this.tryRejoinGame(user);
-
-    socket.on(
-      'clientToServerEvent',
-      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
-        console.log('server manager: ', event.type);
-        this.handleEvent(user, event);
-      }
-    );
-    socket.on('disconnect', () => {
-      this.disconnect(user);
-      this.updateGamesList();
-    });
-
     this.updateGamesList();
 
-    console.log(`${name} joined server`);
-  }
-
-  updateGame(userId: string, gameUpdate: ServerGameUpdate) {
-    const user = this.users.get(userId);
-
-    if (!user || !user.isConnected) {
-      return;
-    }
-
-    const event: ServerToClientEvent<'updateGame'> = {
-      type: 'updateGame',
-      data: { gameUpdate },
+    const eventHandler = (
+      event: ClientToServerEvent<keyof ClientToServerEvents>
+    ) => {
+      console.log('server manager: ', event.type);
+      this.handleEvent(user, event);
     };
-    user.socket.emit('serverToClientEvent', event);
+
+    socket.off('clientToServerEvent', eventHandler);
+    socket.on('clientToServerEvent', eventHandler);
+
+    const disconnectHandler = () => {
+      this.disconnect(user);
+      this.updateGamesList();
+    };
+
+    socket.off('disconnect', disconnectHandler);
+    socket.on('disconnect', disconnectHandler);
+
+    console.log(`${name} joined server`);
   }
 
   private updateGamesList() {
@@ -163,6 +174,39 @@ class ServerManager {
         user.socket.emit('serverToClientEvent', event);
       }
     }
+  }
+
+  updateGame(userId: string, gameUpdate: ServerGameUpdate) {
+    const user = this.users.get(userId);
+
+    if (!user || !user.isConnected) {
+      return;
+    }
+
+    const event: ServerToClientEvent<'updateGame'> = {
+      type: 'updateGame',
+      data: { gameUpdate },
+    };
+    user.socket.emit('serverToClientEvent', event);
+  }
+
+  onSocketConnect(
+    socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>
+  ) {
+    console.log(`user connected with socket id: ${socket.id}`);
+
+    socket.on(
+      'clientToServerEvent',
+      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
+        // the join server event is special as it gives us all the users info
+        // all other events require this info and are handled by `handleEvent`
+        if (event.type === 'joinServer') {
+          const { id, name } = (event as ClientToServerEvent<'joinServer'>)
+            .data;
+          this.joinServer({ id, name, socket });
+        }
+      }
+    );
   }
 }
 
