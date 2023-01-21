@@ -16,7 +16,6 @@ class User extends Entity {
   name: string;
   socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>;
   currentGameId = '';
-  isConnected = false;
 
   constructor({ name, socket, id }: ConstructorParams) {
     super(id);

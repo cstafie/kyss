@@ -55,6 +55,7 @@ export interface PlayerGameUpdate {
 }
 
 export interface ServerGameUpdate {
+  id: string;
   xWord: XWord;
   gameState: GameState;
   serializedPlayersMap: string;

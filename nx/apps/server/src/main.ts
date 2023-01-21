@@ -35,7 +35,7 @@ app.get('/api/login', (req, res) => {
   res.send('TODO');
 });
 
-io.on('connection', (socket) => serverManager.onSocketConnect(socket));
+io.on('connection', serverManager.onSocketConnect.bind(serverManager));
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {

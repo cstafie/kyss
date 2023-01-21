@@ -10,6 +10,7 @@ import {
   charToTile,
   countEmpty,
 } from '@nx/api-interfaces';
+import { timeStamp } from 'console';
 import Entity from '../entity/entity';
 import { TileManager } from './tile_manager';
 
@@ -64,31 +65,30 @@ export class Game extends Entity {
     }
 
     // tile manager ran out of tiles
-    // let's take a random tile we don't have from one of the other players
+    // let's take a random tile we don't have from one of the unplayed tiles
 
-    const otherPlayersTiles = [];
+    const unplayedChars = new Set<string>();
 
-    this.players.forEach((info, id) => {
-      if (id === playerId) {
-        return;
+    for (let row = 0; row < this.xWord.grid.length; row++) {
+      for (let col = 0; col < this.xWord.grid[row].length; col++) {
+        if (this.xWord.grid[row][col].char === ' ') {
+          unplayedChars.add(this.solvedXWord.grid[row][col].char);
+        }
       }
-
-      otherPlayersTiles.push(...info.tileBar);
-    });
+    }
 
     const playerTileChars = new Set(player.tileBar.map((tile) => tile.char));
-
-    const filteredTiles = otherPlayersTiles.filter(
-      (tile) => !playerTileChars.has(tile.char)
+    const filteredChars = Array.from(unplayedChars).filter(
+      (char) => !playerTileChars.has(char)
     );
 
-    if (filteredTiles.length === 0 || player.tileBar.length === TILE_BAR_SIZE) {
+    if (filteredChars.length === 0 || player.tileBar.length === TILE_BAR_SIZE) {
       return;
     }
 
-    const randomTile = get1Random(filteredTiles);
+    const randomChar = get1Random(filteredChars);
     // make a new tile with the same char
-    player.tileBar.push(charToTile(randomTile.char));
+    player.tileBar.push(charToTile(randomChar));
   }
 
   addPlayer(id: string, name: string, ready = false) {

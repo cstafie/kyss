@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   BotDifficulty,
   countEmpty,
+  GameState,
   random,
   randomInRange,
 } from '@nx/api-interfaces';
@@ -50,6 +51,13 @@ class Bot extends Entity {
       randomInRange(700, 1300) * difficultyTimeoutMap[this.difficulty] +
       emptyCount * 25; // the more empty tiles the slower we play
 
+    // TODO: this is a hack because i have a bug with cleartimeout,
+    // once that's fixed this if statement should not be necessary
+    if (this.game.gameState === GameState.complete) {
+      console.log('stopping because game is complete');
+      return;
+    }
+
     this.timeout = setTimeout(() => {
       if (random(difficultyErrorFrequencyMap[this.difficulty]) === 0) {
         this.makeDumbMove();
@@ -63,6 +71,7 @@ class Bot extends Entity {
   }
 
   onDestroy() {
+    console.log('destroying bot:', this.name);
     clearTimeout(this.timeout);
   }
 

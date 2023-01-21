@@ -2,8 +2,6 @@
 
 ## alpha release
 
-- leave game issues
-- destroy stale games logic
 - domain
 - SSL
 - instructions on how to play (potentially in a menu)

@@ -8,6 +8,7 @@ import {
   SocketClientToServerEvents,
   SocketServerToClientEvents,
 } from '@nx/api-interfaces';
+import e = require('express');
 import { Socket } from 'socket.io';
 import GameManager from '../game_manager/game_manager';
 import User from '../user/user';
@@ -48,6 +49,12 @@ class ServerManager {
     this.games.set(game.id, game);
 
     creator.currentGameId = game.id;
+
+    // games get destroyed after 30min
+    const gameId = game.id;
+    setTimeout(() => {
+      this.destroyGame(gameId);
+    }, 30 * 60 * 1000);
   }
 
   private joinGame(gameId: string, user: User) {
@@ -68,18 +75,17 @@ class ServerManager {
     }
 
     game.playerLeaveGame(user.id);
-    user.currentGameId = '';
+    this.resetAndRejoinUser(user);
 
-    // destroy the game if it has players left
+    console.log(game.game.players.size, game.bots.size);
+
+    // destroy the game if it has no players left
     if (game.game.players.size - game.bots.size === 0) {
-      game.onDestroy();
-      this.games.delete(game.id);
+      this.destroyGame(game.id);
     }
   }
 
   private disconnect(user: User) {
-    user.isConnected = false;
-
     // TODO: handle game disconnect nicely?
     // should maybe clean up the socket listeners here
     // const game = this.tryGetUserGame(user);
@@ -114,7 +120,6 @@ class ServerManager {
   private joinServer({ id, name, socket }: JoinServerParams) {
     const user = this.users.get(id) || new User({ id, name, socket });
 
-    user.isConnected = true;
     user.name = name;
     user.socket = socket;
 
@@ -125,28 +130,29 @@ class ServerManager {
     this.tryRejoinGame(user);
     this.updateGamesList();
 
-    const eventHandler = (
-      event: ClientToServerEvent<keyof ClientToServerEvents>
-    ) => {
-      console.log('server manager: ', event.type);
-      this.handleEvent(user, event);
-    };
+    socket.removeAllListeners();
 
-    socket.off('clientToServerEvent', eventHandler);
-    socket.on('clientToServerEvent', eventHandler);
+    socket.on(
+      'clientToServerEvent',
+      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
+        console.log('server manager: ', event.type);
+        this.handleEvent(user, event);
+      }
+    );
 
     const disconnectHandler = () => {
       this.disconnect(user);
       this.updateGamesList();
     };
 
-    socket.off('disconnect', disconnectHandler);
     socket.on('disconnect', disconnectHandler);
 
     console.log(`${name} joined server`);
   }
 
   private updateGamesList() {
+    console.log('updating games list');
+
     const gamesList: Array<GameMetaData> = [];
 
     for (const game of this.games.values()) {
@@ -170,16 +176,18 @@ class ServerManager {
 
     // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
     for (const user of this.users.values()) {
-      if (user.isConnected) {
+      if (user.socket.connected) {
         user.socket.emit('serverToClientEvent', event);
       }
     }
+
+    console.log('done updating games list', event.data.games.length);
   }
 
   updateGame(userId: string, gameUpdate: ServerGameUpdate) {
     const user = this.users.get(userId);
 
-    if (!user || !user.isConnected) {
+    if (!user || !user.socket.connected) {
       return;
     }
 
@@ -188,6 +196,43 @@ class ServerManager {
       data: { gameUpdate },
     };
     user.socket.emit('serverToClientEvent', event);
+
+    if (gameUpdate.gameState === GameState.complete) {
+      this.destroyGame(gameUpdate.id);
+    }
+  }
+
+  destroyGame(gameId) {
+    const game = this.games.get(gameId);
+
+    if (!game) {
+      console.log('could not find game to destroy');
+      return;
+    }
+
+    Array.from(game.game.players.values()).forEach((player) => {
+      const user = this.users.get(player.id);
+
+      if (!user) {
+        return;
+      }
+
+      this.resetAndRejoinUser(user);
+    });
+
+    console.log('destroying game!');
+
+    game.onDestroy();
+    this.games.delete(gameId);
+
+    console.log('destroy game complete', !this.games.has(gameId));
+    this.updateGamesList();
+  }
+
+  resetAndRejoinUser(user: User) {
+    user.currentGameId = '';
+    user.socket.offAny();
+    this.joinServer(user);
   }
 
   onSocketConnect(

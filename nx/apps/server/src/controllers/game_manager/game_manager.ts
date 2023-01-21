@@ -132,6 +132,7 @@ export class GameManager extends Entity {
     }
 
     const gameUpdate: ServerGameUpdate = {
+      id: this.id,
       xWord: game.xWord,
       gameState: game.gameState,
       serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
@@ -148,6 +149,8 @@ export class GameManager extends Entity {
   updateGamePlayers() {
     Array.from(this.game.players.entries()).forEach(
       ([playerId, playerInfo]) => {
+        console.log('updating: ', playerInfo.name);
+
         this.updatePlayer(
           playerId,
           this.makeServerGameUpdate(playerInfo, this.game)
@@ -194,6 +197,7 @@ export class GameManager extends Entity {
 
   onDestroy() {
     Array.from(this.bots.values()).forEach((bot) => bot.onDestroy());
+    this.bots.clear();
   }
 }
 
