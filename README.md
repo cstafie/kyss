@@ -2,17 +2,17 @@
 
 ## alpha release
 
-- domain
-- SSL
 - instructions on how to play (potentially in a menu)
 
 ---
 
+-
 - socket disconnect issue?
-- player not getting tiles issue
 - modal or page for game name and settings
 - fix local dev issues
-- way to receive
+- way to receive feedback
+- scale!
+- SEO
 
 ## todo
 
