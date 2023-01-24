@@ -2,6 +2,11 @@
 
 ## alpha release
 
+- move onto next square
+- provide user feedback when tile is played
+- handle issue with flash empty
+- handle issue with rename after game start
+- add game type without tilebars
 - instructions on how to play (potentially in a menu)
 
 ---
@@ -17,7 +22,6 @@
 ## todo
 
 - cleaner container deployment
-- write docker commands corresponding to the docker compose (may also need to edit image export ports)
 - tests?
 
 ### game
@@ -26,8 +30,6 @@
 
 ### overall
 
-- fix user connected to multiple games issue
-
 - address todos in code
 - design and implement a routing strategy
 
@@ -35,6 +37,8 @@
 - auto deploy?
 
 - filter out bad clues
+- use this https://www.xwordinfo.com/Crossword?date=5/27/2019 data source
+-
 
 ### front-end
 
