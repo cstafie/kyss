@@ -1,4 +1,40 @@
-import { XWordEntry, Direction, XWord, Tile } from '../api-interfaces';
+import { XWordEntry, Direction, XWord, Tile, Cell } from '../api-interfaces';
+
+export const flipDirection = (direction: Direction) => {
+  if (direction === Direction.across) {
+    return Direction.down;
+  }
+
+  return Direction.across;
+};
+
+export const entryContainsCell = (entry: XWordEntry, cell: Cell): boolean => {
+  const { row, col } = cell;
+
+  if (row === entry.cell.row && entry.direction === Direction.across) {
+    return entry.cell.col <= col && col < entry.cell.col + entry.length;
+  }
+
+  if (col === entry.cell.col && entry.direction === Direction.down) {
+    return entry.cell.row <= row && row < entry.cell.row + entry.length;
+  }
+
+  return false;
+};
+
+export const getCrossingEntryIndex = (
+  currentEntry: XWordEntry,
+  currentCell: Cell,
+  entries: Array<XWordEntry>
+): number => {
+  const desiredDirection = flipDirection(currentEntry.direction);
+
+  return entries.findIndex(
+    (entry) =>
+      entry.direction === desiredDirection &&
+      entryContainsCell(entry, currentCell)
+  );
+};
 
 export const isEntryComplete = (xWord: XWord, entry: XWordEntry) => {
   const entryString = getEntry(xWord, entry);
@@ -36,7 +72,7 @@ const getDownEntry = (xWord: XWord, downEntry: XWordEntry) => {
 };
 
 export const getEntry = (xWord: XWord, entry: XWordEntry) => {
-  if (entry.direction === Direction.DOWN) {
+  if (entry.direction === Direction.down) {
     return getDownEntry(xWord, entry);
   }
 

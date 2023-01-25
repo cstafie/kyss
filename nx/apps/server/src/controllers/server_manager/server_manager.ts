@@ -34,7 +34,7 @@ class ServerManager {
       // the user's currentGameId is invalid and should be cleared
       user.currentGameId = '';
     }
-    console.log('user has no current game id');
+    console.log('server manager: user has no current game id');
   }
 
   private tryRejoinGame(user: User) {
@@ -69,14 +69,12 @@ class ServerManager {
     const game = this.tryGetUserGame(user);
 
     if (!game) {
-      console.log('could not find game to leave');
+      console.log('server manager: could not find game to leave');
       return;
     }
 
     game.playerLeaveGame(user.id);
     this.resetAndRejoinUser(user);
-
-    console.log(game.game.players.size, game.bots.size);
 
     // destroy the game if it has no players left
     if (game.game.players.size - game.bots.size === 0) {
@@ -85,6 +83,8 @@ class ServerManager {
   }
 
   private disconnect(user: User) {
+    console.log('server manager: disconnect: ', user.name);
+
     // TODO: handle game disconnect nicely?
     // should maybe clean up the socket listeners here
     // const game = this.tryGetUserGame(user);
@@ -150,8 +150,6 @@ class ServerManager {
   }
 
   private updateGamesList() {
-    console.log('updating games list');
-
     const gamesList: Array<GameMetaData> = [];
 
     for (const game of this.games.values()) {
@@ -179,8 +177,6 @@ class ServerManager {
         user.socket.emit('serverToClientEvent', event);
       }
     }
-
-    console.log('done updating games list', event.data.games.length);
   }
 
   updateGame(userId: string, gameUpdate: ServerGameUpdate) {
@@ -219,12 +215,9 @@ class ServerManager {
       this.resetAndRejoinUser(user);
     });
 
-    console.log('destroying game!');
-
     game.onDestroy();
     this.games.delete(gameId);
 
-    console.log('destroy game complete', !this.games.has(gameId));
     this.updateGamesList();
   }
 

@@ -15,7 +15,7 @@ const mapEntries = (entries: any[]): Array<XWordEntry> => {
       col: entry.col,
     },
     isComplete: false,
-    direction: entry.direction === 'Across' ? Direction.ACROSS : Direction.DOWN,
+    direction: entry.direction === 'Across' ? Direction.across : Direction.down,
   }));
 };
 

@@ -9,6 +9,8 @@ import {
   SCORE_DECREASE,
   charToTile,
   countEmpty,
+  isEntryComplete,
+  getCrossingEntryIndex,
 } from '@nx/api-interfaces';
 import { timeStamp } from 'console';
 import Entity from '../entity/entity';
@@ -196,6 +198,13 @@ export class Game extends Entity {
     tileBar.splice(tileIndex, 1);
     this.fillPlayerTileBar(playerId);
 
+    // mark entries complete
+    this.xWord.entries.forEach((entry) => {
+      if (isEntryComplete(this.xWord, entry)) {
+        entry.isComplete = true;
+      }
+    });
+
     this.checkGameOver();
   }
 
@@ -204,7 +213,6 @@ export class Game extends Entity {
     const isGameOver = numEmptyTiles === 0;
 
     if (isGameOver) {
-      // TODO: mark game for deletion
       this.gameState = GameState.complete;
     }
   }

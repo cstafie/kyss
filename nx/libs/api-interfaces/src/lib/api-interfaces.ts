@@ -18,11 +18,6 @@ export interface Tile {
   // state: TileState;
 }
 
-export enum Direction {
-  ACROSS = 'across',
-  DOWN = 'down',
-}
-
 export interface Cell {
   row: number;
   col: number;
@@ -97,3 +92,9 @@ export const BotDifficulty = {
   hard: 2,
 } as const;
 export type BotDifficulty = typeof BotDifficulty[keyof typeof BotDifficulty];
+
+export const Direction = {
+  across: 'across',
+  down: 'down',
+};
+export type Direction = typeof Direction[keyof typeof Direction];

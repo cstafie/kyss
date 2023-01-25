@@ -1,10 +1,16 @@
-import { Cell, XWord, XWordEntry } from '@nx/api-interfaces';
+import {
+  Cell,
+  XWord,
+  XWordEntry,
+  entryContainsCell,
+  getCrossingEntryIndex,
+  Direction,
+} from '@nx/api-interfaces';
 import {
   computeNextEntryIndex,
   computePreviousEntryIndex,
-  entryContainsCell,
-  getCrossingEntryIndex,
   getFirstEmptyCell,
+  getNextEmptyCellInEntry,
 } from 'apps/client/src/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -14,6 +20,7 @@ interface Result {
   currentCell: Cell;
   handleSelectEntry: (entry: XWordEntry) => void;
   handleSelectCell: (cell: Cell) => void;
+  goToNextEmptyCell: () => void;
 }
 
 const useCurrentEntry = (xWord: XWord): Result => {
@@ -27,13 +34,14 @@ const useCurrentEntry = (xWord: XWord): Result => {
   );
 
   const [currentCell, setCurrentCell] = useState<Cell>(
-    getFirstEmptyCell(xWord, currentEntry)
+    getFirstEmptyCell(xWord, currentEntry) || currentEntry.cell
   );
 
   const updateCurrentEntryIndex = useCallback(
     (newEntryIndex: number) => {
       setCurrentEntryIndex(newEntryIndex);
-      setCurrentCell(getFirstEmptyCell(xWord, xWord.entries[newEntryIndex]));
+      const newEntry = xWord.entries[newEntryIndex];
+      setCurrentCell(getFirstEmptyCell(xWord, newEntry) || newEntry.cell);
     },
     [xWord]
   );
@@ -82,10 +90,29 @@ const useCurrentEntry = (xWord: XWord): Result => {
     (entry: XWordEntry) => {
       const newIndex = xWord.entries.indexOf(entry);
       setCurrentEntryIndex(newIndex);
-      setCurrentCell(getFirstEmptyCell(xWord, xWord.entries[newIndex]));
+
+      const newEntry = xWord.entries[newIndex];
+      setCurrentCell(getFirstEmptyCell(xWord, newEntry) || newEntry.cell);
     },
     [xWord]
   );
+
+  const goToNextEmptyCell = useCallback(() => {
+    const entry = xWord.entries[currentEntryIndex];
+    const cell = getNextEmptyCellInEntry(xWord, entry, currentCell);
+
+    if (cell) {
+      updateCurrentCell(cell);
+    } else {
+      updateCurrentEntryIndex(computeNextEntryIndex(currentEntryIndex, xWord));
+    }
+  }, [
+    xWord,
+    currentCell,
+    currentEntryIndex,
+    updateCurrentCell,
+    updateCurrentEntryIndex,
+  ]);
 
   useHotkeys(
     'shift+tab',
@@ -148,11 +175,26 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [updateCurrentCell, currentCell, xWord]
   );
 
+  // useHotkeys(
+  //   'backspace',
+  //   (e: KeyboardEvent) => {
+  //     e.preventDefault();
+
+  //     if (currentEntry.direction === Direction.across) {
+  //       updateCurrentCell(getNextCellLeft(xWord, currentCell));
+  //     } else {
+  //       updateCurrentCell(getNextCellRight(xWord, currentCell));
+  //     }
+  //   },
+  //   [updateCurrentCell, currentCell, xWord]
+  // );
+
   return {
     currentEntry,
     currentCell,
     handleSelectEntry,
     handleSelectCell: updateCurrentCell,
+    goToNextEmptyCell,
   };
 };
 
@@ -209,18 +251,3 @@ const getNextCellRight = (xWord: XWord, currentCell: Cell): Cell => {
 
   return currentCell;
 };
-
-// useEffect(() => {
-//   // if (!entryContainsCell(currentEntry, currentCell)) {
-//   setCurrentCell(getFirstEmptyCell(xWord, currentEntry));
-//   // }
-// }, [xWord, currentEntry]);
-
-// useEffect(() => {
-//   if (game.gameState !== GameState.complete && currentEntry.isComplete) {
-//     setCurrentEntryIndex(computeNextEntryIndex(currentEntryIndex, xWord));
-//   }
-//   // else if (!entryContainsCell(currentEntry, currentCell)) {
-//   //   setCurrentCell(getFirstEmptyCell(xWord, currentEntry));
-//   // }
-// }, [xWord, currentEntry, currentEntryIndex, game.gameState]);

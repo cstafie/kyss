@@ -54,7 +54,6 @@ class Bot extends Entity {
     // TODO: this is a hack because i have a bug with cleartimeout,
     // once that's fixed this if statement should not be necessary
     if (this.game.gameState === GameState.complete) {
-      console.log('stopping because game is complete');
       return;
     }
 
@@ -71,7 +70,6 @@ class Bot extends Entity {
   }
 
   onDestroy() {
-    console.log('destroying bot:', this.name);
     clearTimeout(this.timeout);
   }
 

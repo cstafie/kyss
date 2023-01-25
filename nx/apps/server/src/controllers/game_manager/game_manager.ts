@@ -149,7 +149,7 @@ export class GameManager extends Entity {
   updateGamePlayers() {
     Array.from(this.game.players.entries()).forEach(
       ([playerId, playerInfo]) => {
-        console.log('updating: ', playerInfo.name);
+        console.log('game manager: updating: ', playerInfo.name);
 
         this.updatePlayer(
           playerId,
@@ -174,7 +174,7 @@ export class GameManager extends Entity {
   }
 
   playerLeaveGame(playerId: string) {
-    console.log('player leave game');
+    console.log('game manager: player leave game');
 
     this.game.removePlayer(playerId);
     this.updateGamePlayers();

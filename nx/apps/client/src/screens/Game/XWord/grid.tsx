@@ -56,18 +56,20 @@ const Grid = ({
   const isCellInCurrentEntry = useCallback(
     (row: number, col: number) => {
       switch (currentEntry.direction) {
-        case Direction.ACROSS:
+        case Direction.across:
           return (
             row === currentEntry.cell.row &&
             col >= currentEntry.cell.col &&
             col < currentEntry.cell.col + currentEntry.length
           );
-        case Direction.DOWN:
+        case Direction.down:
           return (
             col === currentEntry.cell.col &&
             row >= currentEntry.cell.row &&
             row < currentEntry.cell.row + currentEntry.length
           );
+        default:
+          return false;
       }
     },
     [currentEntry]

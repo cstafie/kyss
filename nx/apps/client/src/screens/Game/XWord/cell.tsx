@@ -29,9 +29,9 @@ const Cell = ({
         <div
           ref={provided.innerRef}
           className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'} ${
+            isCurrentCell ? 'bg-yellow-300' : ''
+          } ${showHover ? 'hover:bg-purple-300' : ''} ${
             isDraggingOver ? 'bg-purple-300' : ''
-          } ${isCurrentCell ? 'bg-yellow-300' : ''} ${
-            showHover ? 'hover:bg-purple-300' : ''
           } relative`}
           {...provided.droppableProps}
           onClick={onClick}

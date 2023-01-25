@@ -23,16 +23,21 @@ const XWord = ({ game }: Props) => {
   const { xWord } = game;
   const { playTile, createGame } = useSocketContext();
 
-  const { currentCell, currentEntry, handleSelectEntry, handleSelectCell } =
-    useCurrentEntry(xWord);
+  const {
+    currentCell,
+    currentEntry,
+    handleSelectEntry,
+    handleSelectCell,
+    goToNextEmptyCell,
+  } = useCurrentEntry(xWord);
 
   const acrossEntries = useMemo(
-    () => filterEntriesByDirection(xWord.entries, Direction.ACROSS),
+    () => filterEntriesByDirection(xWord.entries, Direction.across),
     [xWord.entries]
   );
 
   const downEntries = useMemo(
-    () => filterEntriesByDirection(xWord.entries, Direction.DOWN),
+    () => filterEntriesByDirection(xWord.entries, Direction.down),
     [xWord.entries]
   );
 
@@ -45,19 +50,17 @@ const XWord = ({ game }: Props) => {
         (tile) => tile.char.toUpperCase() === letter.toUpperCase()
       );
 
-      if (letterIndex === -1) {
-        return;
-      }
-
       const { row, col } = currentCell;
 
-      if (game.xWord.grid[row][col].char !== ' ') {
+      if (letterIndex === -1 || game.xWord.grid[row][col].char !== ' ') {
+        goToNextEmptyCell();
         return;
       }
 
       playTile(game.tileBar[letterIndex].id, [row, col]);
+      goToNextEmptyCell();
     },
-    [game, currentCell]
+    [game, currentCell, goToNextEmptyCell]
   );
 
   const isGameOver = game.gameState === GameState.complete;

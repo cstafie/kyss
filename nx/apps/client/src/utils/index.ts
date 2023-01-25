@@ -4,37 +4,13 @@ import {
   XWordEntry,
   getEntry,
   Cell,
+  flipDirection,
 } from '@nx/api-interfaces';
 
-export const entryContainsCell = (entry: XWordEntry, cell: Cell): boolean => {
-  const { row, col } = cell;
-
-  if (row === entry.cell.row && entry.direction === Direction.ACROSS) {
-    return entry.cell.col <= col && col < entry.cell.col + entry.length;
-  }
-
-  if (col === entry.cell.col && entry.direction === Direction.DOWN) {
-    return entry.cell.row <= row && row < entry.cell.row + entry.length;
-  }
-
-  return false;
-};
-
-export const getCrossingEntryIndex = (
-  currentEntry: XWordEntry,
-  currentCell: Cell,
-  entries: Array<XWordEntry>
-): number => {
-  const desiredDirection = flipDirection(currentEntry.direction);
-
-  return entries.findIndex(
-    (entry) =>
-      entry.direction === desiredDirection &&
-      entryContainsCell(entry, currentCell)
-  );
-};
-
-export const getFirstEmptyCell = (xWord: XWord, entry: XWordEntry): Cell => {
+export const getFirstEmptyCell = (
+  xWord: XWord,
+  entry: XWordEntry
+): Cell | null => {
   const entryString = getEntry(xWord, entry);
 
   const spaceIndex = entryString.indexOf(' ');
@@ -46,7 +22,7 @@ export const getFirstEmptyCell = (xWord: XWord, entry: XWordEntry): Cell => {
     };
   }
 
-  if (entry.direction === Direction.DOWN) {
+  if (entry.direction === Direction.down) {
     return {
       row: entry.cell.row + spaceIndex,
       col: entry.cell.col,
@@ -59,19 +35,42 @@ export const getFirstEmptyCell = (xWord: XWord, entry: XWordEntry): Cell => {
   };
 };
 
+export const getNextEmptyCellInEntry = (
+  xWord: XWord,
+  entry: XWordEntry,
+  currentCell: Cell
+): Cell | null => {
+  const entryString = getEntry(xWord, entry);
+
+  const startIndex =
+    entry.direction === Direction.across
+      ? currentCell.col - entry.cell.col + 1
+      : currentCell.row - entry.cell.row + 1;
+
+  const spaceIndex = entryString.indexOf(' ', startIndex);
+
+  if (spaceIndex === -1) {
+    return null;
+  }
+
+  if (entry.direction === Direction.across) {
+    return {
+      row: entry.cell.row,
+      col: entry.cell.col + spaceIndex,
+    };
+  }
+
+  return {
+    row: entry.cell.row + spaceIndex,
+    col: entry.cell.col,
+  };
+};
+
 export const filterEntriesByDirection = (
   entries: Array<XWordEntry>,
   direction: Direction
 ) => {
   return entries.filter((entry) => entry.direction === direction);
-};
-
-const flipDirection = (direction: Direction) => {
-  if (direction === Direction.ACROSS) {
-    return Direction.DOWN;
-  }
-
-  return Direction.ACROSS;
 };
 
 const computeEntryIndex = (
@@ -81,11 +80,7 @@ const computeEntryIndex = (
   flipPoint: number
 ) => {
   let nextEntryIndex = next(currentEntryIndex);
-  let requireIncomplete = true;
-
-  if (entries.every((entry) => entry.isComplete)) {
-    requireIncomplete = false;
-  }
+  const isEveryEntryComplete = entries.every((entry) => entry.isComplete);
 
   let desiredDirection = entries[currentEntryIndex].direction;
 
@@ -97,7 +92,7 @@ const computeEntryIndex = (
     }
 
     // TODO: this is gross and hard to read
-    if (requireIncomplete) {
+    if (!isEveryEntryComplete) {
       if (entry.direction === desiredDirection && !entry.isComplete) {
         return nextEntryIndex;
       }

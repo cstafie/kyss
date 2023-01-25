@@ -2,9 +2,8 @@
 
 ## alpha release
 
-- handle issue with flash empty
-- move onto next square
 - handle issue with rename after game start
+- handle issue with refresh in game
 - provide user feedback when tile is played
 - add game type without tile bars
 - instructions on how to play (potentially in a menu)
