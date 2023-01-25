@@ -8,7 +8,6 @@ import {
   SocketClientToServerEvents,
   SocketServerToClientEvents,
 } from '@nx/api-interfaces';
-import e = require('express');
 import { Socket } from 'socket.io';
 import GameManager from '../game_manager/game_manager';
 import User from '../user/user';

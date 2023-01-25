@@ -9,6 +9,7 @@ import {
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocation, useNavigate } from 'react-router-dom';
+import produce from 'immer';
 
 import {
   GameMetaData,
@@ -198,16 +199,36 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('serverToClientEvent', handleEvent);
   }, [handleEvent]);
 
-  const playTile = useCallback((tileId: string, pos: [number, number]) => {
-    const event: ClientToGameEvent<'playTile'> = {
-      type: 'playTile',
-      data: {
-        tileId,
-        pos,
-      },
-    };
-    socket.emit('clientToGameEvent', event);
-  }, []);
+  const playTile = useCallback(
+    (tileId: string, pos: [number, number]) => {
+      const event: ClientToGameEvent<'playTile'> = {
+        type: 'playTile',
+        data: {
+          tileId,
+          pos,
+        },
+      };
+      socket.emit('clientToGameEvent', event);
+
+      if (!game) {
+        return;
+      }
+
+      const tileIndex = game.tileBar.findIndex((tile) => tile.id === tileId);
+      if (tileIndex === -1) {
+        return;
+      }
+
+      const tile = game.tileBar.splice(tileIndex, 1)[0];
+
+      setGame(
+        produce(game, (gameDraft) => {
+          gameDraft.xWord.grid[pos[0]][pos[1]] = tile;
+        })
+      );
+    },
+    [game]
+  );
 
   const leaveGame = useCallback(() => {
     const event: ClientToServerEvent<'leaveGame'> = {

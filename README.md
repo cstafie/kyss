@@ -2,16 +2,15 @@
 
 ## alpha release
 
-- move onto next square
-- provide user feedback when tile is played
 - handle issue with flash empty
+- move onto next square
 - handle issue with rename after game start
-- add game type without tilebars
+- provide user feedback when tile is played
+- add game type without tile bars
 - instructions on how to play (potentially in a menu)
 
 ---
 
--
 - socket disconnect issue?
 - modal or page for game name and settings
 - fix local dev issues

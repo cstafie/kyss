@@ -5,9 +5,17 @@ export interface XWord {
   entries: Array<XWordEntry>;
 }
 
+// export const TileState = {
+//   attempted: 'attempted',
+//   correct: 'correct',
+//   wrong: 'wrong',
+// } as const;
+// export type TileState = typeof TileState[keyof typeof TileState];
+
 export interface Tile {
   id: string;
   char: string;
+  // state: TileState;
 }
 
 export enum Direction {

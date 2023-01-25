@@ -185,13 +185,16 @@ export class Game extends Entity {
     }
 
     // -- correct play --
-    // update player score and tilebar
-    playerInfo.score += SCORE_INCREASE;
-    tileBar.splice(tileIndex, 1);
-    this.fillPlayerTileBar(playerId);
 
     // play the tile
     this.xWord.grid[row][col] = tile;
+
+    // update player score
+    playerInfo.score += SCORE_INCREASE;
+
+    // update tile bar
+    tileBar.splice(tileIndex, 1);
+    this.fillPlayerTileBar(playerId);
 
     this.checkGameOver();
   }
