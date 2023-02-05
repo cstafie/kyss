@@ -1,5 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Emoji from '../components/emoji';
+import { Menu, MenuItem } from '../components/menu';
 import NavTitle from '../components/nav_title';
 import UserName from '../components/user_name/user_name';
 
@@ -16,7 +18,11 @@ const NavContext = createContext<Nav>({
 
 export const useNavContext = () => useContext(NavContext);
 
-export const NavContextProvider = ({ children }: any) => {
+interface Props {
+  children: React.ReactNode;
+}
+
+export const NavContextProvider = ({ children }: Props) => {
   const [navLeft, setNavLeft] = useState<React.ReactNode>(<NavTitle />);
 
   const resetNavLeft = useCallback(() => {
@@ -30,11 +36,28 @@ export const NavContextProvider = ({ children }: any) => {
         resetNavLeft,
       }}
     >
-      <nav className="p-2 bg-neutral-800 max-h-12 h-12">
-        <ul className="flex justify-between items-center gap-4 h-full">
+      <nav className="p-2 bg-neutral-800 max-h-12 h-12 flex justify-center w-full">
+        <ul className="flex justify-between items-center gap-4 h-full w-full max-w-screen-2xl">
           <li className="w-full">{navLeft}</li>
-          <li className="w-full">
+          <li className="flex items-center">
             <UserName />
+            <Menu>
+              <Link to="/instructions">
+                <MenuItem>
+                  <Emoji description="Notebook">📔</Emoji> Instructions
+                </MenuItem>
+              </Link>
+              <Link to="/feedback">
+                <MenuItem>
+                  <Emoji description="Megaphone">📣</Emoji> Feedback
+                </MenuItem>
+              </Link>
+              <Link to="/coffee">
+                <MenuItem>
+                  <Emoji description="Coffee">☕</Emoji> Buy me a coffee
+                </MenuItem>
+              </Link>
+            </Menu>
           </li>
         </ul>
       </nav>
