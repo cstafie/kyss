@@ -2,15 +2,15 @@
 
 ## alpha release
 
-- handle issue with rename after game start
-- handle issue with refresh in game
 - provide user feedback when tile is played
+
 - add game type without tile bars
 - instructions on how to play (potentially in a menu)
 
 ---
 
 - socket disconnect issue?
+- breakup / refactor socket.tsx
 - modal or page for game name and settings
 - fix local dev issues
 - way to receive feedback

@@ -9,6 +9,8 @@ import {
 } from '@nx/api-interfaces';
 import Block from './block';
 import Cell from './cell';
+import { makePosString } from 'apps/client/src/utils';
+import { is } from 'immer/dist/internal';
 
 interface GridContainerProps {
   numCols: number;
@@ -33,6 +35,7 @@ interface Props {
   currentCell: CellType;
   showHover: boolean;
   handleSelectCell: (cell: CellType) => void;
+  incorrectPosStrings: Set<string>;
 }
 
 const Grid = ({
@@ -42,6 +45,7 @@ const Grid = ({
   currentCell,
   showHover,
   handleSelectCell,
+  incorrectPosStrings,
 }: Props) => {
   const numberLookUp = useMemo(() => {
     const numberMap = new Map();
@@ -84,10 +88,11 @@ const Grid = ({
       {xWord.grid.flat().map((tile, i) => {
         const row = Math.floor(i / xWord.width);
         const col = i % xWord.width;
-        const cellId = `cell-${row}-${col}`;
+        const cellId = makePosString([row, col]);
         const isHighlighted = isCellInCurrentEntry(row, col);
         const isCurrentCell =
           row === currentCell.row && col === currentCell.col;
+        const isError = incorrectPosStrings.has(cellId);
 
         switch (tile.char) {
           case '#':
@@ -108,6 +113,7 @@ const Grid = ({
                 isCurrentCell={isCurrentCell}
                 onClick={() => handleSelectCell({ row, col })}
                 showHover={showHover}
+                isError={isError}
               />
             );
         }

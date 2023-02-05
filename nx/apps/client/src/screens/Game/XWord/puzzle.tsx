@@ -13,6 +13,7 @@ interface Props {
   currentEntry: XWordEntry;
   currentCell: Cell;
   handleSelectCell: (cell: Cell) => void;
+  incorrectPosStrings: Set<string>;
 }
 
 const Puzzle = ({
@@ -20,6 +21,7 @@ const Puzzle = ({
   currentEntry,
   currentCell,
   handleSelectCell,
+  incorrectPosStrings,
 }: Props) => {
   const {
     onBeforeCapture,
@@ -61,6 +63,7 @@ const Puzzle = ({
           currentCell={currentCell}
           handleSelectCell={combinedHandleSelectCell}
           showHover={selectedTileId !== ''}
+          incorrectPosStrings={incorrectPosStrings}
         />
         <TileBar
           tiles={game.tileBar}

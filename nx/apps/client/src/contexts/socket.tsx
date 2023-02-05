@@ -25,9 +25,12 @@ import {
   ServerToClientEvents,
   BotDifficulty,
   BotInfo,
+  GameToClientEvent,
+  GameToClientEvents,
 } from '@nx/api-interfaces';
 
 import { useAuthContext } from './auth';
+import { makePosString } from '../utils';
 
 export interface GameInfo {
   xWord: XWord;
@@ -49,6 +52,7 @@ interface SocketContextI {
   setReady: (ready: boolean) => void;
   games: Array<GameMetaData>;
   game: GameInfo | null;
+  incorrectPosStrings: Set<string>;
   addBot: () => void;
   removeBot: (botId: string) => void;
   setBotDifficulty: (botId: string, difficulty: BotDifficulty) => void;
@@ -65,6 +69,7 @@ const SocketContext = createContext<SocketContextI>({
   setReady: (ready: boolean) => warning(),
   games: [],
   game: null,
+  incorrectPosStrings: new Set(),
   addBot: () => warning(),
   removeBot: (botId: string) => warning(),
   setBotDifficulty: (botId: string, difficulty: BotDifficulty) => warning(),
@@ -152,6 +157,9 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   const [games, setGames] = useState<Array<GameMetaData>>([]);
   const [game, setGame] = useState<GameInfo | null>(null);
+  const [incorrectPosStrings, setIncorrectPosStrings] = useState(
+    new Set<string>()
+  );
 
   useEffect(() => {
     // todo make these paths constants
@@ -169,18 +177,12 @@ export const SocketContextProvider = ({ children }: Props) => {
     }
   }, [user.name, user.id]);
 
-  const handleEvent = useCallback(
-    (event: ServerToClientEvent<keyof ServerToClientEvents>) => {
+  const handleGameToClientEvent = useCallback(
+    (event: GameToClientEvent<keyof GameToClientEvents>) => {
       console.log(event);
-
       switch (event.type) {
-        case 'updateGamesList': {
-          const { games } = (event as ServerToClientEvent<'updateGamesList'>)
-            .data;
-          return setGames(games);
-        }
         case 'updateGame': {
-          const { gameUpdate } = (event as ServerToClientEvent<'updateGame'>)
+          const { gameUpdate } = (event as GameToClientEvent<'updateGame'>)
             .data;
           const { serializedPlayersMap, serializedBotsMap, ...rest } =
             gameUpdate;
@@ -190,14 +192,53 @@ export const SocketContextProvider = ({ children }: Props) => {
             ...rest,
           });
         }
+        case 'incorrectTilePlayed': {
+          const { pos } = (event as GameToClientEvent<'incorrectTilePlayed'>)
+            .data;
+
+          const posString = makePosString(pos);
+
+          setIncorrectPosStrings((incorrectPosStrings) =>
+            produce(incorrectPosStrings, (draft) => {
+              draft.add(posString);
+            })
+          );
+
+          setTimeout(() => {
+            setIncorrectPosStrings((incorrectPosStrings) =>
+              produce(incorrectPosStrings, (draft) => {
+                draft.delete(posString);
+              })
+            );
+          }, 750);
+        }
+      }
+    },
+    []
+  );
+
+  const handleServerToClientEvent = useCallback(
+    (event: ServerToClientEvent<keyof ServerToClientEvents>) => {
+      console.log(event);
+
+      switch (event.type) {
+        case 'updateGamesList': {
+          const { games } = (event as ServerToClientEvent<'updateGamesList'>)
+            .data;
+          return setGames(games);
+        }
       }
     },
     []
   );
 
   useEffect(() => {
-    socket.on('serverToClientEvent', handleEvent);
-  }, [handleEvent]);
+    socket.on('serverToClientEvent', handleServerToClientEvent);
+  }, [handleServerToClientEvent]);
+
+  useEffect(() => {
+    socket.on('gameToClientEvent', handleGameToClientEvent);
+  }, [handleGameToClientEvent]);
 
   const playTile = useCallback(
     (tileId: string, pos: [number, number]) => {
@@ -278,6 +319,7 @@ export const SocketContextProvider = ({ children }: Props) => {
         leaveGame,
         games,
         game,
+        incorrectPosStrings,
         addBot,
         removeBot,
         setBotDifficulty,

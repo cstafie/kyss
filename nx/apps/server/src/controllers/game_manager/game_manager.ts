@@ -4,6 +4,8 @@ import {
   ClientToGameEvent,
   ClientToGameEvents,
   GameState,
+  GameToClientEvent,
+  GameToClientEvents,
   PlayerInfo,
   ServerGameUpdate,
 } from '@nx/api-interfaces';
@@ -16,12 +18,18 @@ import Entity from '../entity/entity';
 export class GameManager extends Entity {
   bots: Map<string, Bot> = new Map();
   game: Game;
-  updatePlayer: (id, update) => void;
+  updatePlayer: (
+    id: string,
+    event: GameToClientEvent<keyof GameToClientEvents>
+  ) => void;
 
   constructor(
     gameName: string,
     player: User,
-    updatePlayer: (id, update) => void
+    updatePlayer: (
+      id: string,
+      event: GameToClientEvent<keyof GameToClientEvents>
+    ) => void
   ) {
     super();
     const randomXWord = getRandomXWord();
@@ -31,13 +39,13 @@ export class GameManager extends Entity {
     // add the creator of the game to their own game
     this.userJoinGame(player);
 
-    this.updateGamePlayers();
+    this.updateGameForAllPlayers();
 
     console.log(`${player.name} created a new game`);
   }
 
   addBot() {
-    const bot = new Bot(this.updateGamePlayers.bind(this));
+    const bot = new Bot(this.updateGameForAllPlayers.bind(this));
     this.game.addPlayer(bot.id, bot.name, true);
     this.bots.set(bot.id, bot);
   }
@@ -63,9 +71,21 @@ export class GameManager extends Entity {
   ) {
     const eventToHandlerMap = {
       playTile: () => {
-        this.game.playTile({
+        const eventData = (event as ClientToGameEvent<'playTile'>).data;
+        const playTileSuccess = this.game.playTile({
           playerId: userId,
-          ...(event as ClientToGameEvent<'playTile'>).data,
+          ...eventData,
+        });
+
+        if (playTileSuccess) {
+          return;
+        }
+
+        this.updatePlayer(userId, {
+          type: 'incorrectTilePlayed',
+          data: {
+            pos: eventData.pos,
+          },
         });
       },
       updateTileBar: () => {
@@ -92,7 +112,7 @@ export class GameManager extends Entity {
 
     if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
       eventToHandlerMap[event.type]();
-      this.updateGamePlayers();
+      this.updateGameForAllPlayers();
     }
   }
 
@@ -116,7 +136,7 @@ export class GameManager extends Entity {
     user.socket.off('clientToGameEvent', eventHandler);
     user.socket.on('clientToGameEvent', eventHandler);
 
-    this.updateGamePlayers();
+    this.updateGameForAllPlayers();
   }
 
   makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
@@ -146,15 +166,17 @@ export class GameManager extends Entity {
     return gameUpdate;
   }
 
-  updateGamePlayers() {
+  updateGameForAllPlayers() {
     Array.from(this.game.players.entries()).forEach(
       ([playerId, playerInfo]) => {
         console.log('game manager: updating: ', playerInfo.name);
 
-        this.updatePlayer(
-          playerId,
-          this.makeServerGameUpdate(playerInfo, this.game)
-        );
+        this.updatePlayer(playerId, {
+          type: 'updateGame',
+          data: {
+            gameUpdate: this.makeServerGameUpdate(playerInfo, this.game),
+          },
+        });
       }
     );
   }
@@ -177,7 +199,7 @@ export class GameManager extends Entity {
     console.log('game manager: player leave game');
 
     this.game.removePlayer(playerId);
-    this.updateGamePlayers();
+    this.updateGameForAllPlayers();
   }
 
   getMetaData() {

@@ -21,7 +21,7 @@ const ALPHABET = Array(26)
 
 const XWord = ({ game }: Props) => {
   const { xWord } = game;
-  const { playTile, createGame } = useSocketContext();
+  const { playTile, createGame, incorrectPosStrings } = useSocketContext();
 
   const {
     currentCell,
@@ -99,6 +99,7 @@ const XWord = ({ game }: Props) => {
           currentEntry={currentEntry}
           currentCell={currentCell}
           handleSelectCell={handleSelectCell}
+          incorrectPosStrings={incorrectPosStrings}
         />
 
         {/* large screen clues */}

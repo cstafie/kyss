@@ -3,7 +3,8 @@ import {
   ClientToServerEvents,
   GameMetaData,
   GameState,
-  ServerGameUpdate,
+  GameToClientEvent,
+  GameToClientEvents,
   ServerToClientEvent,
   SocketClientToServerEvents,
   SocketServerToClientEvents,
@@ -44,7 +45,11 @@ class ServerManager {
 
   private newGame(gameName: string, creator: User) {
     // the Game Manager will automatically add the creator to the game
-    const game = new GameManager(gameName, creator, this.updateGame.bind(this));
+    const game = new GameManager(
+      gameName,
+      creator,
+      this.emitGameToClientEvent.bind(this)
+    );
     this.games.set(game.id, game);
 
     creator.currentGameId = game.id;
@@ -126,10 +131,11 @@ class ServerManager {
     // as we do all other events
     this.users.set(user.id, user);
 
+    // hard socket reset as we are about to resubscribe to all relevant events
+    socket.removeAllListeners();
+
     this.tryRejoinGame(user);
     this.updateGamesList();
-
-    socket.removeAllListeners();
 
     socket.on(
       'clientToServerEvent',
@@ -179,21 +185,25 @@ class ServerManager {
     }
   }
 
-  updateGame(userId: string, gameUpdate: ServerGameUpdate) {
+  emitGameToClientEvent(
+    userId: string,
+    event: GameToClientEvent<keyof GameToClientEvents>
+  ) {
     const user = this.users.get(userId);
 
     if (!user || !user.socket.connected) {
       return;
     }
 
-    const event: ServerToClientEvent<'updateGame'> = {
-      type: 'updateGame',
-      data: { gameUpdate },
-    };
-    user.socket.emit('serverToClientEvent', event);
+    user.socket.emit('gameToClientEvent', event);
 
-    if (gameUpdate.gameState === GameState.complete) {
-      this.destroyGame(gameUpdate.id);
+    // destroy game if it's over
+    // TODO: this should be done explicitly instead of checking every event
+    if (event.type === 'updateGame') {
+      const { gameUpdate } = (event as GameToClientEvent<'updateGame'>).data;
+      if (gameUpdate.gameState === GameState.complete) {
+        this.destroyGame(gameUpdate.id);
+      }
     }
   }
 

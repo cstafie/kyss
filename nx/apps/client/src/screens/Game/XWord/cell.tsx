@@ -10,6 +10,7 @@ interface Props {
   isCurrentCell: boolean;
   showHover: boolean;
   onClick: (e: any) => void;
+  isError: boolean;
 }
 
 const Cell = ({
@@ -20,6 +21,7 @@ const Cell = ({
   isCurrentCell,
   showHover,
   onClick,
+  isError,
 }: Props) => {
   const isEmpty = tile.char === ' ';
 
@@ -32,7 +34,7 @@ const Cell = ({
             isCurrentCell ? 'bg-yellow-300' : ''
           } ${showHover ? 'hover:bg-purple-300' : ''} ${
             isDraggingOver ? 'bg-purple-300' : ''
-          } relative`}
+          } ${isError ? 'bg-red-300' : ''} relative`}
           {...provided.droppableProps}
           onClick={onClick}
         >

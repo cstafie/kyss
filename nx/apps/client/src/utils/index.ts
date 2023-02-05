@@ -7,6 +7,10 @@ import {
   flipDirection,
 } from '@nx/api-interfaces';
 
+export const makePosString = (pos: [number, number]): string => {
+  return `pos:${pos[0]},${pos[1]}`;
+};
+
 export const getFirstEmptyCell = (
   xWord: XWord,
   entry: XWordEntry

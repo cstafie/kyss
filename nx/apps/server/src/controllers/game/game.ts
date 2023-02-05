@@ -162,20 +162,21 @@ export class Game extends Entity {
     playerId: string;
     tileId: string;
     pos: [number, number];
-  }) {
+  }): boolean {
     const [row, col] = pos;
     const playerInfo = this.players.get(playerId);
 
+    // this might happen in a race condition
     if (!playerInfo || this.xWord.grid[row][col].char !== ' ') {
-      // TODO: should these log an error?
-      return;
+      return true;
     }
 
     const { tileBar } = playerInfo;
     const tileIndex = tileBar.findIndex((tile) => tile.id === tileId);
 
+    // this should probably never happen
     if (tileIndex === -1) {
-      return;
+      return true;
     }
 
     const tile = tileBar[tileIndex];
@@ -183,7 +184,7 @@ export class Game extends Entity {
     // -- incorrect play --
     if (this.solvedXWord.grid[row][col].char !== tile.char) {
       playerInfo.score += SCORE_DECREASE;
-      return;
+      return false;
     }
 
     // -- correct play --
@@ -206,6 +207,7 @@ export class Game extends Entity {
     });
 
     this.checkGameOver();
+    return true;
   }
 
   checkGameOver() {
