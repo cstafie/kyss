@@ -58,11 +58,15 @@ export const NavContextProvider = ({ children }: Props) => {
                   <Emoji description="Megaphone">📣</Emoji> Feedback
                 </MenuItem>
               </Link>
-              <Link to="/coffee">
+              <a
+                href="https://www.buymeacoffee.com/crossable"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <MenuItem>
                   <Emoji description="Coffee">☕</Emoji> Buy me a coffee
                 </MenuItem>
-              </Link>
+              </a>
             </Menu>
           </li>
         </ul>
