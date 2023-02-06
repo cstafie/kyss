@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as cookieParser from 'cookie-parser';
 
 import {
+  FeedbackInfo,
   SocketClientToServerEvents,
   SocketServerToClientEvents,
 } from '@nx/api-interfaces';
@@ -20,19 +21,20 @@ const io = new Server<SocketClientToServerEvents, SocketServerToClientEvents>(
 io.listen(4444);
 
 app.use(cookieParser());
+app.use(express.json());
 
 // https://github.com/nodejs/help/issues/705#issuecomment-757578500
 httpServer.on('clientError', console.error);
 httpServer.on('error', console.error);
 
-app.get('/api/login', (req, res) => {
-  console.log('api');
+app.post('/api/feedback', (req, res) => {
+  const { email, content } = req.body as FeedbackInfo;
+  const { id, name } = req.cookies;
 
-  // who is it?
-  // if known player then connect them to their in progress games
-  // else give unknown player their id
+  console.log(email, content);
+  console.log(id, name);
 
-  res.send('TODO');
+  res.send('Success!');
 });
 
 io.on('connection', serverManager.onSocketConnect.bind(serverManager));

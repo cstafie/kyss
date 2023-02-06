@@ -5,6 +5,12 @@ export interface XWord {
   entries: Array<XWordEntry>;
 }
 
+export interface FeedbackInfo {
+  email: string;
+  content: string;
+  user: User;
+}
+
 // export const TileState = {
 //   attempted: 'attempted',
 //   correct: 'correct',

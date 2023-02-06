@@ -6,12 +6,12 @@ interface Props {
 }
 
 function Menu({ children }: Props) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = useCallback(() => setIsOpen((isOpen) => !isOpen), []);
 
   return (
-    <div className="relative">
-      <button className="btn btn-borderless" onClick={toggleOpen}>
+    <div className="relative" onClick={toggleOpen}>
+      <button className="btn btn-borderless">
         <GiHamburgerMenu />
       </button>
       {isOpen && (

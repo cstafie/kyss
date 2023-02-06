@@ -20,8 +20,8 @@ const UserName = () => {
         onClick={() => setEditing(true)}
         className="btn btn-borderless flex gap-2"
       >
-        <div>{user.name}</div>
         <Emoji description="Pencil">{pencilEmoji}</Emoji>
+        <div>{user.name}</div>
       </button>
     </section>
   );

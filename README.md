@@ -11,6 +11,7 @@
 - instructions on how to play (potentially in a menu)
 - way to receive feedback
 - share link to game?
+- buy me a coffee screen / link
 
 ---
 
