@@ -38,8 +38,10 @@ function Feedback() {
           to hearing what you have to say!
         </p>
 
-        {sending && 'Sending...'}
-        {sent && 'Feedback sent!'}
+        <div className="flex text-2xl justify-center font-extrabold">
+          {sending && 'Sending...'}
+          {sent && 'Feedback sent!'}
+        </div>
 
         {!sending && !sent && (
           <form

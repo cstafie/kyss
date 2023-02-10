@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import * as express from 'express';
 import { Server } from 'socket.io';
 import * as http from 'http';
@@ -10,6 +13,7 @@ import {
 } from '@nx/api-interfaces';
 
 import serverManager from './controllers/server_manager/server_manager';
+import sendEmail from './api/feedback/send_email';
 
 // TODO: should i separate express and socket servers into separate apps?
 const app = express();
@@ -27,12 +31,16 @@ app.use(express.json());
 httpServer.on('clientError', console.error);
 httpServer.on('error', console.error);
 
-app.post('/api/feedback', (req, res) => {
+app.post('/api/feedback', async (req, res) => {
   const { email, content } = req.body as FeedbackInfo;
   const { id, name } = req.cookies;
 
-  console.log(email, content);
-  console.log(id, name);
+  await sendEmail({
+    subject: `${name} - Crossable Feedback!`,
+    textBody: `${id || 'no id'}
+    ${email || '--No email provided--'}
+    ${content || '--No content provided--'}`,
+  });
 
   res.send('Success!');
 });
