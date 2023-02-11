@@ -3,19 +3,18 @@
 ## alpha release
 
 - don't skip letters when typing (or make it a setting)
-- get cleaner data
+- get cleaner data use this https://www.xwordinfo.com/Crossword?date=5/27/2019 data source
 - remake puzzles
 - use new shape
 
 - add game type without tile bars
 - instructions on how to play (potentially in a menu)
-- way to receive feedback
+- test email in prod
+- socket disconnect issue?
 - share link to game?
-- buy me a coffee screen / link
 
 ---
 
-- socket disconnect issue?
 - breakup / refactor socket.tsx
 - modal or page for game name and settings
 - fix local dev issues
@@ -35,13 +34,12 @@
 ### overall
 
 - address todos in code
-- design and implement a routing strategy
+- design and implement a FE and BE routing strategy
 
 - env variables
 - auto deploy?
 
 - filter out bad clues
-- use this https://www.xwordinfo.com/Crossword?date=5/27/2019 data source
 -
 
 ### front-end

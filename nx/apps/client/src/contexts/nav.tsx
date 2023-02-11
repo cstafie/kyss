@@ -42,6 +42,11 @@ export const NavContextProvider = ({ children }: Props) => {
           <li className="flex items-center">
             <UserName />
             <Menu>
+              <Link to="/">
+                <MenuItem>
+                  <Emoji description="Home">🏡</Emoji> Home
+                </MenuItem>
+              </Link>
               <Link to="/instructions">
                 <MenuItem>
                   <Emoji description="Notebook">📔</Emoji> Instructions
