@@ -9,6 +9,7 @@ import {
   computeNextEntryIndex,
   computePreviousEntryIndex,
   getFirstEmptyCell,
+  getNextCellInEntry,
   getNextEmptyCellInEntry,
 } from 'apps/client/src/utils';
 import { useCallback, useMemo, useState } from 'react';
@@ -19,6 +20,7 @@ interface Result {
   currentCell: Cell;
   handleSelectEntry: (entry: XWordEntry) => void;
   handleSelectCell: (cell: Cell) => void;
+  goToNextCell: () => void;
   goToNextEmptyCell: () => void;
 }
 
@@ -95,6 +97,23 @@ const useCurrentEntry = (xWord: XWord): Result => {
     },
     [xWord]
   );
+
+  const goToNextCell = useCallback(() => {
+    const entry = xWord.entries[currentEntryIndex];
+    const cell = getNextCellInEntry(entry, currentCell);
+
+    if (cell) {
+      updateCurrentCell(cell);
+    } else {
+      updateCurrentEntryIndex(computeNextEntryIndex(currentEntryIndex, xWord));
+    }
+  }, [
+    xWord,
+    currentCell,
+    currentEntryIndex,
+    updateCurrentCell,
+    updateCurrentEntryIndex,
+  ]);
 
   const goToNextEmptyCell = useCallback(() => {
     const entry = xWord.entries[currentEntryIndex];
@@ -194,6 +213,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     handleSelectEntry,
     handleSelectCell: updateCurrentCell,
     goToNextEmptyCell,
+    goToNextCell,
   };
 };
 

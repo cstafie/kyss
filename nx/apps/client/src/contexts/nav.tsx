@@ -63,7 +63,7 @@ export const NavContextProvider = ({ children }: Props) => {
                 rel="noreferrer"
               >
                 <MenuItem>
-                  <Emoji description="Coffee">☕</Emoji> Buy me a coffee
+                  <Emoji description="Heart">💜</Emoji> Donate
                 </MenuItem>
               </a>
             </Menu>

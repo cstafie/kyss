@@ -28,7 +28,7 @@ const XWord = ({ game }: Props) => {
     currentEntry,
     handleSelectEntry,
     handleSelectCell,
-    goToNextEmptyCell,
+    goToNextCell,
   } = useCurrentEntry(xWord);
 
   const acrossEntries = useMemo(
@@ -53,14 +53,18 @@ const XWord = ({ game }: Props) => {
       const { row, col } = currentCell;
 
       if (letterIndex === -1 || game.xWord.grid[row][col].char !== ' ') {
-        goToNextEmptyCell();
+        // TODO: this should be a setting
+        // could be goToNextEmptyCell instead
+        goToNextCell();
         return;
       }
 
       playTile(game.tileBar[letterIndex].id, [row, col]);
-      goToNextEmptyCell();
+      // TODO: this should be a setting
+      // could be goToNextEmptyCell instead
+      goToNextCell();
     },
-    [game, currentCell, goToNextEmptyCell]
+    [game, currentCell, goToNextCell]
   );
 
   const isGameOver = game.gameState === GameState.complete;

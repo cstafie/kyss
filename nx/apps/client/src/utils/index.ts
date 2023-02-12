@@ -44,6 +44,32 @@ export const getFirstEmptyCell = (
   };
 };
 
+export const getNextCellInEntry = (
+  entry: XWordEntry,
+  currentCell: Cell
+): Cell | null => {
+  const index =
+    entry.direction === Direction.across
+      ? currentCell.col - entry.cell.col + 1
+      : currentCell.row - entry.cell.row + 1;
+
+  if (index >= entry.length) {
+    return null;
+  }
+
+  if (entry.direction === Direction.across) {
+    return {
+      row: entry.cell.row,
+      col: entry.cell.col + index,
+    };
+  }
+
+  return {
+    row: entry.cell.row + index,
+    col: entry.cell.col,
+  };
+};
+
 export const getNextEmptyCellInEntry = (
   xWord: XWord,
   entry: XWordEntry,
