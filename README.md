@@ -2,11 +2,14 @@
 
 ## alpha release
 
-- remake puzzles
 - use new shape
+- remake puzzles
+
 - instructions on how to play
 - test email in prod
 - make reddit post
+
+- one last round of bugs
 
 ---
 

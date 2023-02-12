@@ -170,6 +170,8 @@ fn is_clue_good(clue: &str) -> bool {
         r"$-^",
     ];
 
+    // println!("{:?}", clue);
+
     for bad_clue in bad_clues {
         // TODO: building the same regex over and over again is inefficient
         // but it doesn't really matter since this code rarely runs
@@ -189,7 +191,7 @@ fn get_answers_clues_map(
 ) -> HashMap<String, HashSet<String>> {
     let mut clue_answers = Vec::new();
 
-    for year in 2017..=2022 {
+    for year in 2017..=2023 {
         for month in 1..=12 {
             for day in 1..31 {
                 // let's skip THU and SUN to lower the chance of bad/weird words/clues
@@ -206,7 +208,7 @@ fn get_answers_clues_map(
                 }
 
                 let path = format!(
-                    "../js_scripts/scraped_xwords/{}/{:0>2}/{:0>2}.json",
+                    "../js_scripts/xword_info_scraper/scraped_xwords/{}/{:0>2}/{:0>2}.json",
                     year, month, day
                 );
 
@@ -223,7 +225,13 @@ fn get_answers_clues_map(
     let mut answers_clues: HashMap<String, HashSet<String>> = HashMap::new();
 
     for clue_answer in clue_answers {
-        let ClueAnswer { clue, answer } = clue_answer;
+        let ClueAnswer {
+            mut clue,
+            mut answer,
+        } = clue_answer;
+
+        clue = clue.trim().to_string();
+        answer = answer.trim().to_ascii_uppercase().to_string();
 
         if !is_clue_good(&clue) {
             continue;
@@ -648,58 +656,58 @@ fn main() -> std::io::Result<()> {
 
     // println!("{:?}", words_clues_map);
 
-    for i in 0..999 {
-        let mut xword = XWord::new(
-            7,
-            7,
-            vec![
-                (0, 0),
-                (0, 1),
-                (0, 5),
-                (0, 6),
-                (1, 0),
-                (1, 6),
-                (3, 3),
-                (5, 0),
-                (5, 6),
-                (6, 0),
-                (6, 1),
-                (6, 5),
-                (6, 6),
-            ],
-        );
+    // for i in 0..999 {
+    let mut xword = XWord::new(
+        7,
+        7,
+        vec![
+            (0, 0),
+            (0, 1),
+            (0, 5),
+            (0, 6),
+            (1, 0),
+            (1, 6),
+            (3, 3),
+            (5, 0),
+            (5, 6),
+            (6, 0),
+            (6, 1),
+            (6, 5),
+            (6, 6),
+        ],
+    );
 
-        let mut entries = get_xword_entries(&xword);
+    let mut entries = get_xword_entries(&xword);
 
-        // println!("entries length: {:?}", entries.len());
-        // println!("entries: {:?}", entries);
+    // println!("entries length: {:?}", entries.len());
+    // println!("entries: {:?}", entries);
 
-        let mut iterations = 0;
+    let mut iterations = 0;
 
-        if generate_xword(
-            &mut xword,
-            &entries,
-            &words_map,
-            &mut HashSet::new(),
-            &0,
-            &mut iterations,
-        ) {
-            println!("{}\t found after {:?} iterations", i, iterations);
-            // println!("xWord {:?}", xword);
+    if generate_xword(
+        &mut xword,
+        &entries,
+        &words_map,
+        &mut HashSet::new(),
+        &0,
+        &mut iterations,
+    ) {
+        // println!("{}\t found after {:?} iterations", i, iterations);
+        // println!("xWord {:?}", xword);
 
-            populate_entries(&mut entries, &xword, &answers_clues_map);
-            number_entries(&mut entries);
+        populate_entries(&mut entries, &xword, &answers_clues_map);
+        number_entries(&mut entries);
 
-            xword.entries = entries;
+        xword.entries = entries;
 
-            let xword_json = serde_json::to_string(&xword).unwrap();
+        let xword_json = serde_json::to_string(&xword).unwrap();
 
-            let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
-            let file_name: String = format!("generated_xWords/{}.json", random_string);
+        let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
+        let file_name: String = format!("generated_xWords/{}.json", random_string);
 
-            let mut file = File::create(&file_name[..])?;
-            file.write_all(xword_json.as_bytes())?;
-        }
+        let mut file = File::create(&file_name[..])?;
+        file.write_all(xword_json.as_bytes())?;
+        // }
 
         // println!("xWord {:?}", xword);
     }
