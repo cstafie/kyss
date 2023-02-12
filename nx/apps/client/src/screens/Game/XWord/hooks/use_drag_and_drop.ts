@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
 import { OnDragUpdateResponder } from '@hello-pangea/dnd';
 import { TILE_BAR_ID } from '../constants';
+import { posStringToRowCol } from 'apps/client/src/utils';
 
 function useDragAndDrop(game: GameInfo) {
   const { playTile, updateTileBar } = useSocketContext();
@@ -64,7 +65,7 @@ function useDragAndDrop(game: GameInfo) {
         // // remove value from tile-bar
         // newTileBar.splice(si, 1);
 
-        const [_, row, col] = destination.droppableId.split('-').map(Number);
+        const [row, col] = posStringToRowCol(destination.droppableId);
 
         playTile(tileBar[si].id, [row, col]);
 
@@ -88,8 +89,8 @@ function useDragAndDrop(game: GameInfo) {
       //   source.droppableId !== TILE_BAR_ID &&
       //   destination.droppableId !== TILE_BAR_ID
       // ) {
-      //   const [_d, dRow, dCol] = destination.droppableId.split('-').map(Number);
-      //   const [_s, sRow, sCol] = source.droppableId.split('-').map(Number);
+      //   const [dRow, dCol] = posStringToRowCol(destination.droppableId);
+      //   const [sRow, sCol] = posStringToRowCol(source.droppableId);
 
       //   setXWord(
       //     produce(xWord, (draft) => {
@@ -108,7 +109,7 @@ function useDragAndDrop(game: GameInfo) {
       //   source.droppableId !== TILE_BAR_ID &&
       //   destination.droppableId === TILE_BAR_ID
       // ) {
-      //   const [_, row, col] = source.droppableId.split('-').map(Number);
+      //   const [row, col] =  posStringToRowCol(source.droppableId);
 
       //   const newTileBar = [...tileBar];
       //   newTileBar.splice(di, 0, xWord.grid[row][col]);

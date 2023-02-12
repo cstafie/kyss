@@ -11,6 +11,11 @@ export const makePosString = (pos: [number, number]): string => {
   return `pos:${pos[0]},${pos[1]}`;
 };
 
+export const posStringToRowCol = (posString: string): [number, number] => {
+  const [rowString, colString] = posString.split(':')[1].split(',');
+  return [Number(rowString), Number(colString)];
+};
+
 export const getFirstEmptyCell = (
   xWord: XWord,
   entry: XWordEntry

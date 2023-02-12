@@ -241,19 +241,19 @@ export const SocketContextProvider = ({ children }: Props) => {
   }, [handleGameToClientEvent]);
 
   const playTile = useCallback(
-    (tileId: string, pos: [number, number]) => {
+    (tileId: string, [row, col]: [number, number]) => {
+      if (!game || game.xWord.grid[row][col].char !== ' ') {
+        return;
+      }
+
       const event: ClientToGameEvent<'playTile'> = {
         type: 'playTile',
         data: {
           tileId,
-          pos,
+          pos: [row, col],
         },
       };
       socket.emit('clientToGameEvent', event);
-
-      if (!game) {
-        return;
-      }
 
       const tileIndex = game.tileBar.findIndex((tile) => tile.id === tileId);
       if (tileIndex === -1) {
@@ -264,7 +264,7 @@ export const SocketContextProvider = ({ children }: Props) => {
 
       setGame(
         produce(game, (gameDraft) => {
-          gameDraft.xWord.grid[pos[0]][pos[1]] = tile;
+          gameDraft.xWord.grid[row][col] = tile;
         })
       );
     },

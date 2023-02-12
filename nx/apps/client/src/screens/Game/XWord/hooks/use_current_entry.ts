@@ -4,7 +4,6 @@ import {
   XWordEntry,
   entryContainsCell,
   getCrossingEntryIndex,
-  Direction,
 } from '@nx/api-interfaces';
 import {
   computeNextEntryIndex,

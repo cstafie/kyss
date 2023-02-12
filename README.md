@@ -9,6 +9,7 @@
 
 - add game type without tile bars
 - instructions on how to play (potentially in a menu)
+- mobile hover / click issues
 - test email in prod
 - socket disconnect issue?
 - share link to game?

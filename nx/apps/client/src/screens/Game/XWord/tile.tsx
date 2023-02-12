@@ -41,7 +41,7 @@ const Tile = ({
           } 
           ${
             isCurrentCell
-              ? 'bg-yellow-400 hover:bg-yellows-500  active:bg-yellows-500'
+              ? 'bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-500'
               : ''
           }
           active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg ${className}`}

@@ -10,7 +10,6 @@ import {
 import Block from './block';
 import Cell from './cell';
 import { makePosString } from 'apps/client/src/utils';
-import { is } from 'immer/dist/internal';
 
 interface GridContainerProps {
   numCols: number;
