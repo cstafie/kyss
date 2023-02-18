@@ -3,7 +3,7 @@ use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 // use serde_json::Result;
 use chrono::prelude::*;
-use regex::Regex;
+use regex::RegexSet;
 use std::{
     cmp,
     collections::{HashMap, HashSet},
@@ -161,35 +161,51 @@ fn get_clue_answers(path: &str) -> Result<Vec<ClueAnswer>, Box<dyn Error>> {
     return Ok(clue_answers);
 }
 
-fn is_clue_good(clue: &str) -> bool {
-    let bad_clues = [
-        r"(?i)\[see note\]",
-        r"(?i)-across",
-        "(?i)-down",
-        r"$\*",
-        r"$-^",
-    ];
+// fn is_clue_good(clue: &str) -> bool {
+//     let bad_clues = [
+//         r"(?i)\[see note\]",
+//         r"(?i)-across",
+//         r"(?i)-down",
+//         r"$\*",
+//         r"$-^",
+//     ];
 
-    // println!("{:?}", clue);
+//     println!("{:?}", clue);
 
-    for bad_clue in bad_clues {
-        // TODO: building the same regex over and over again is inefficient
-        // but it doesn't really matter since this code rarely runs
-        let re = Regex::new(bad_clue).unwrap();
+//     for bad_clue in bad_clues {
+//         // TODO: building the same regex over and over again is inefficient
+//         // but it doesn't really matter since this code rarely runs
+//         let re = Regex::new(bad_clue).unwrap();
 
-        if re.is_match(clue) {
-            return false;
-        }
-    }
+//         if re.is_match(clue) {
+//             return false;
+//         }
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 fn get_answers_clues_map(
     min_word_len: usize,
     max_word_len: usize,
 ) -> HashMap<String, HashSet<String>> {
     let mut clue_answers = Vec::new();
+
+    let bad_clues = RegexSet::new(&[
+        r"(?i)\[see note\]",
+        r"(?i)-across",
+        r"(?i)-down",
+        r"^\*", // should not start with *
+        r"\*$", // should not end with *
+        r"puzzle",
+        r"starred clues",
+        r"or a hint",
+        r"shaded",
+        r"circled",
+        r"starred",
+        r"clue",
+    ])
+    .unwrap();
 
     for year in 2017..=2023 {
         for month in 1..=12 {
@@ -200,7 +216,11 @@ fn get_answers_clues_map(
                 match dt_option {
                     Some(dt) => {
                         let weekday = dt.weekday();
-                        if weekday.eq(&Weekday::Thu) || weekday.eq(&Weekday::Sun) {
+                        if weekday.eq(&Weekday::Thu)
+                            || weekday.eq(&Weekday::Sun)
+                            || weekday.eq(&Weekday::Fri)
+                            || weekday.eq(&Weekday::Sat)
+                        {
                             continue;
                         }
                     }
@@ -233,7 +253,9 @@ fn get_answers_clues_map(
         clue = clue.trim().to_string();
         answer = answer.trim().to_ascii_uppercase().to_string();
 
-        if !is_clue_good(&clue) {
+        let is_clue_bad = bad_clues.matches(&clue).matched_any();
+
+        if is_clue_bad {
             continue;
         }
 
@@ -244,6 +266,8 @@ fn get_answers_clues_map(
         if !(is_good_len && is_ascii_alphabetic) {
             continue;
         }
+
+        println!("{:?}", clue);
 
         answers_clues
             .entry(answer.to_ascii_uppercase())
