@@ -688,19 +688,19 @@ fn main() -> std::io::Result<()> {
             width,
             height,
             vec![
-                (0, 0),
-                (0, 1),
+                // (0, 0),
+                // (0, 1),
                 (0, 5),
                 (0, 6),
-                (1, 0),
+                // (1, 0),
                 (1, 6),
-                // (3, 3),
+                (3, 3),
                 (5, 0),
-                (5, 6),
+                // (5, 6),
                 (6, 0),
                 (6, 1),
-                (6, 5),
-                (6, 6),
+                // (6, 5),
+                // (6, 6),
             ],
         );
 
@@ -729,7 +729,7 @@ fn main() -> std::io::Result<()> {
 
             let xword_json = serde_json::to_string(&xword).unwrap();
 
-            let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 4);
+            let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 8);
             // let file_name: String = format!(
             //     "generated_xWords/{}x{}/{}.json",
             //     width, height, random_string
