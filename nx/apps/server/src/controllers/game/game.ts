@@ -10,9 +10,7 @@ import {
   charToTile,
   countEmpty,
   isEntryComplete,
-  getCrossingEntryIndex,
 } from '@nx/api-interfaces';
-import { timeStamp } from 'console';
 import Entity from '../entity/entity';
 import { TileManager } from './tile_manager';
 
@@ -79,18 +77,20 @@ export class Game extends Entity {
       }
     }
 
-    const playerTileChars = new Set(player.tileBar.map((tile) => tile.char));
-    const filteredChars = Array.from(unplayedChars).filter(
-      (char) => !playerTileChars.has(char)
-    );
+    while (player.tileBar.length < TILE_BAR_SIZE) {
+      const playerTileChars = new Set(player.tileBar.map((tile) => tile.char));
+      const filteredChars = Array.from(unplayedChars).filter(
+        (char) => !playerTileChars.has(char)
+      );
 
-    if (filteredChars.length === 0 || player.tileBar.length === TILE_BAR_SIZE) {
-      return;
+      if (filteredChars.length === 0) {
+        return;
+      }
+
+      const randomChar = get1Random(filteredChars);
+      // make a new tile with the same char
+      player.tileBar.push(charToTile(randomChar));
     }
-
-    const randomChar = get1Random(filteredChars);
-    // make a new tile with the same char
-    player.tileBar.push(charToTile(randomChar));
   }
 
   addPlayer(id: string, name: string, ready = false) {
@@ -102,7 +102,7 @@ export class Game extends Entity {
         tileBar: [],
         score: 0,
         ready,
-        name: name,
+        name,
       });
       this.fillPlayerTileBar(id);
     }

@@ -2,11 +2,7 @@
 
 ## alpha release
 
-- instructions on how to play
-- test email in prod
-
-- one last round of bugs
-
+- fix no letters handed out bug
 - make reddit post
 
 ---
