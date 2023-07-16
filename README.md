@@ -3,7 +3,6 @@
 ## alpha release
 
 - fix no letters handed out bug
-- make reddit post
 
 ---
 

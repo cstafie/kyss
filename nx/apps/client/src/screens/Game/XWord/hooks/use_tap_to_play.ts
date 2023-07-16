@@ -1,32 +1,18 @@
+import { Cell } from '@nx/api-interfaces';
 import { useSocketContext } from 'apps/client/src/contexts/socket';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
-function useTapToPlay() {
+function useTapToPlay(currentCell: Cell) {
   const { playTile } = useSocketContext();
-  const [selectedTileId, setSelectedTileId] = useState('');
 
-  const handleSelectCell = useCallback(
-    (pos: [number, number]) => {
-      if (selectedTileId) {
-        playTile(selectedTileId, pos);
-        setSelectedTileId('');
-      }
-    },
-    [selectedTileId, playTile]
-  );
-
-  const handleSetSelectedTileId = useCallback(
+  const handleTapTile = useCallback(
     (tileId: string) => {
-      setSelectedTileId(tileId === selectedTileId ? '' : tileId);
+      playTile(tileId, [currentCell.row, currentCell.col]);
     },
-    [selectedTileId]
+    [currentCell, playTile]
   );
 
-  return {
-    selectedTileId,
-    setSelectedTileId: handleSetSelectedTileId,
-    handleSelectCell,
-  };
+  return handleTapTile;
 }
 
 export default useTapToPlay;
