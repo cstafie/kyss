@@ -74,7 +74,21 @@ const XWord = ({ game }: Props) => {
   return (
     <>
       {isGameOver && (
-        <section className="flex justify-center">
+        <section className="flex flex-col gap-8 justify-center items-center">
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1932049158468894"
+            crossOrigin="anonymous"
+          ></script>
+          <ins
+            className="adsbygoogle"
+            style={{ display: 'block' }}
+            data-ad-client="ca-pub-1932049158468894"
+            data-ad-slot="3023427890"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
           <button onClick={createGame} className="btn btn-blue">
             START A NEW GAME!
           </button>

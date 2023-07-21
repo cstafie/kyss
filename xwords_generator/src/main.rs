@@ -576,7 +576,7 @@ fn generate_xword(
             )
         })
         // filter out 0s, they are dead ends
-        .filter(|(_, score)| *score != 0)
+        .filter(|(word, score)| *score != 0 && !used_words.contains(word))
         .collect();
 
     // sort by score high to low (TODO: probably not necessary any more)
@@ -593,10 +593,6 @@ fn generate_xword(
         //         *iterations
         //     );
         // }
-
-        if used_words.contains(word) {
-            continue;
-        }
 
         let used_word = word.clone();
 
@@ -681,69 +677,69 @@ fn main() -> std::io::Result<()> {
     let width = 7;
     let height = 7;
 
-    // println!("{:?}", words_clues_map);
+    println!("{:?}", words_map.get(&3));
 
-    for i in 0..1000 {
-        let mut xword = XWord::new(
-            width,
-            height,
-            vec![
-                // (0, 0),
-                // (0, 1),
-                (0, 5),
-                (0, 6),
-                // (1, 0),
-                (1, 6),
-                (3, 3),
-                (5, 0),
-                // (5, 6),
-                (6, 0),
-                (6, 1),
-                // (6, 5),
-                // (6, 6),
-            ],
-        );
+    // for i in 0..1000 {
+    //     let mut xword = XWord::new(
+    //         width,
+    //         height,
+    //         vec![
+    //             // (0, 0),
+    //             // (0, 1),
+    //             (0, 5),
+    //             (0, 6),
+    //             // (1, 0),
+    //             (1, 6),
+    //             (3, 3),
+    //             (5, 0),
+    //             // (5, 6),
+    //             (6, 0),
+    //             (6, 1),
+    //             // (6, 5),
+    //             // (6, 6),
+    //         ],
+    //     );
 
-        let mut entries = get_xword_entries(&xword);
+    //     let mut entries = get_xword_entries(&xword);
 
-        // println!("entries length: {:?}", entries.len());
-        // println!("entries: {:?}", entries);
+    //     // println!("entries length: {:?}", entries.len());
+    //     // println!("entries: {:?}", entries);
 
-        let mut iterations = 0;
+    //     let mut iterations = 0;
 
-        if generate_xword(
-            &mut xword,
-            &entries,
-            &words_map,
-            &mut HashSet::new(),
-            &0,
-            &mut iterations,
-        ) {
-            println!("{}\t found after {:?} iterations", i, iterations);
-            // println!("xWord {:?}", xword);
+    //     if generate_xword(
+    //         &mut xword,
+    //         &entries,
+    //         &words_map,
+    //         &mut HashSet::new(),
+    //         &0,
+    //         &mut iterations,
+    //     ) {
+    //         println!("{}\t found after {:?} iterations", i, iterations);
+    //         // println!("xWord {:?}", xword);
 
-            populate_entries(&mut entries, &xword, &answers_clues_map);
-            number_entries(&mut entries);
+    //         populate_entries(&mut entries, &xword, &answers_clues_map);
+    //         number_entries(&mut entries);
 
-            xword.entries = entries;
+    //         xword.entries = entries;
 
-            let xword_json = serde_json::to_string(&xword).unwrap();
+    //         let xword_json = serde_json::to_string(&xword).unwrap();
 
-            let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 8);
-            // let file_name: String = format!(
-            //     "generated_xWords/{}x{}/{}.json",
-            //     width, height, random_string
-            // );
-            let file_name: String = format!("generated_xWords/{}.json", random_string);
+    //         let random_string = Alphanumeric.sample_string(&mut rand::thread_rng(), 8);
+    //         // let file_name: String = format!(
+    //         //     "generated_xWords/{}x{}/{}.json",
+    //         //     width, height, random_string
+    //         // );
+    //         let file_name: String = format!("generated_xWords/{}.json", random_string);
 
-            let mut file = File::create(&file_name[..])?;
-            file.write_all(xword_json.as_bytes())?;
-        } else {
-            println!("Not found");
-        }
+    //         let mut file = File::create(&file_name[..])?;
+    //         file.write_all(xword_json.as_bytes())?;
+    //     } else {
+    //         println!("Not found");
+    //     }
 
-        // println!("xWord {:?}", xword);
-    }
+    //     // println!("xWord {:?}", xword);
+    // }
 
     Ok(())
 }
