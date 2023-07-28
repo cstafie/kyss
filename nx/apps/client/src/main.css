@@ -95,3 +95,7 @@ body,
     background-position: 100% 0%;
   }
 }
+
+#adsterra-ad {
+  @apply flex flex-col justify-start items-center p-2;
+}
