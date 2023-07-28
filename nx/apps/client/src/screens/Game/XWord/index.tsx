@@ -73,25 +73,8 @@ const XWord = ({ game }: Props) => {
 
   return (
     <>
-      {!isGameOver && (
+      {isGameOver && (
         <section className="flex flex-col gap-8 justify-center items-center">
-          {/* <script type="text/javascript">
-            {
-              null && ({const atOptions = {
-                key: '9e8938cf20423570703dcc63d62e8746',
-                format: 'iframe',
-                height: 60,
-                width: 468,
-                params: {},
-              }})
-            }
-          </script>
-
-          <script
-            type="text/javascript"
-            src="https://www.profitabledisplaynetwork.com/9e8938cf20423570703dcc63d62e8746/invoke.js"
-          ></script> */}
-
           <button onClick={createGame} className="btn btn-blue">
             START A NEW GAME!
           </button>
