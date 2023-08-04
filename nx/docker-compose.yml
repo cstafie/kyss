@@ -46,6 +46,7 @@ services:
 # npx nx run server:build:production
 
 # kill running docker containers
+# sudo docker kill $(sudo docker ps -q)
 # sudo docker system prune
 
 
