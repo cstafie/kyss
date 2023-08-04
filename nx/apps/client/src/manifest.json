@@ -1,0 +1,35 @@
+{
+  "theme_color": "#a855f7",
+  "background_color": "#262626",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Crossable",
+  "short_name": "Crossable",
+  "description": "Solve crosswords with friends!",
+
+  "icons": [
+    {
+      "src": "/assets/icons-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/icons-256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/assets/icons-384.png",
+      "type": "image/png",
+      "sizes": "384x384"
+    },
+    {
+      "src": "/assets/icons-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+
+  "id": "/?source=pwa"
+}
