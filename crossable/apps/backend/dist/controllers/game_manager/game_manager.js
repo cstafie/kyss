@@ -10,15 +10,13 @@ const game_1 = require("../game/game");
 const bot_1 = __importDefault(require("../bot/bot"));
 const entity_1 = __importDefault(require("../entity/entity"));
 class GameManager extends entity_1.default {
-    // updatePlayer: (id: string) => void;
-    constructor(gameName, user
-    // updatePlayer: (id: string) => void
-    ) {
+    constructor(gameName, user) {
         super();
         this.bots = new Map();
+        this.userUnsubscribes = new Map();
+        this.userUpdates = new Map();
         const randomXWord = (0, utils_1.getRandomXWord)();
         this.game = new game_1.Game(gameName, user, randomXWord);
-        // this.updatePlayer = updatePlayer;
         // add the creator of the game to their own game
         this.userJoinGame(user);
         this.updateGameForAllPlayers();
@@ -40,54 +38,8 @@ class GameManager extends entity_1.default {
         }
         bot.difficulty = difficulty;
     }
-    // handleEvent(
-    //   userId: string,
-    //   event: ClientToGameEvent<keyof ClientToGameEvents>
-    // ) {
-    //   const eventToHandlerMap = {
-    //     playTile: () => {
-    //       const eventData = (event as ClientToGameEvent<"playTile">).data;
-    //       const playTileSuccess = this.game.playTile({
-    //         playerId: userId,
-    //         ...eventData,
-    //       });
-    //       if (playTileSuccess) {
-    //         return;
-    //       }
-    //       this.updatePlayer(userId, {
-    //         type: "incorrectTilePlayed",
-    //         data: {
-    //           pos: eventData.pos,
-    //         },
-    //       });
-    //     },
-    //     updateTileBar: () => {
-    //       const { tileIds } = (event as ClientToGameEvent<"updateTileBar">).data;
-    //       this.game.updateTileBar(userId, tileIds);
-    //     },
-    //     setReady: () => {
-    //       const { ready } = (event as ClientToGameEvent<"setReady">).data;
-    //       this.game.setReady(userId, ready);
-    //     },
-    //     startGame: this.startGame.bind(this),
-    //     addBot: this.addBot.bind(this),
-    //     removeBot: () => {
-    //       const { botId } = (event as ClientToGameEvent<"removeBot">).data;
-    //       this.removeBot(botId);
-    //     },
-    //     setBotDifficulty: () => {
-    //       const { botId, difficulty } = (
-    //         event as ClientToGameEvent<"setBotDifficulty">
-    //       ).data;
-    //       this.setBotDifficulty(botId, difficulty);
-    //     },
-    //   };
-    //   if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
-    //     eventToHandlerMap[event.type]();
-    //     this.updateGameForAllPlayers();
-    //   }
-    // }
-    subscribePlayerToGameEvents(user) {
+    playerSetup(user) {
+        // setup socket listeners for the player
         const addBot = this.addBot.bind(this);
         const removeBot = this.removeBot.bind(this);
         const setBotDifficulty = this.setBotDifficulty.bind(this);
@@ -96,12 +48,21 @@ class GameManager extends entity_1.default {
         user.socket.on("removeBot", removeBot);
         user.socket.on("setBotDifficulty", setBotDifficulty);
         user.socket.on("startGame", startGame);
-        return () => {
+        const playerUnsubscribe = () => {
             user.socket.off("addBot", addBot);
             user.socket.off("removeBot", removeBot);
             user.socket.off("setBotDifficulty", setBotDifficulty);
             user.socket.off("startGame", startGame);
         };
+        this.userUnsubscribes.set(user.id, playerUnsubscribe);
+        // setup game update emitter for the player
+        this.userUpdates.set(user.id, () => {
+            const playerInfo = this.game.players.get(user.id);
+            if (!playerInfo) {
+                return;
+            }
+            user.socket.emit("updateGame", this.makeServerGameUpdate(playerInfo, this.game));
+        });
     }
     userJoinGame(user, wasDisconnected = false) {
         const canJoin = wasDisconnected || this.game.gameState === shared_1.GameState.waitingToStart;
@@ -109,15 +70,7 @@ class GameManager extends entity_1.default {
             return;
         }
         this.game.addPlayer(user.id, user.name);
-        this.subscribePlayerToGameEvents(user);
-        // const eventHandler = (
-        //   event: ClientToGameEvent<keyof ClientToGameEvents>
-        // ) => {
-        //   console.log("game manager: ", event.type);
-        //   this.handleEvent(user.id, event);
-        // };
-        // user.socket.off("clientToGameEvent", eventHandler);
-        // user.socket.on("clientToGameEvent", eventHandler);
+        this.playerSetup(user);
         this.updateGameForAllPlayers();
     }
     makeServerGameUpdate(playerInfo, game) {
@@ -146,12 +99,8 @@ class GameManager extends entity_1.default {
     updateGameForAllPlayers() {
         Array.from(this.game.players.entries()).forEach(([playerId, playerInfo]) => {
             console.log("game manager: updating: ", playerInfo.name);
-            this.this.updatePlayer(playerId, {
-                type: "updateGame",
-                data: {
-                    gameUpdate: this.makeServerGameUpdate(playerInfo, this.game),
-                },
-            });
+            const updateFn = this.userUpdates.get(playerId);
+            updateFn && updateFn();
         });
     }
     startGame() {
@@ -168,6 +117,11 @@ class GameManager extends entity_1.default {
     }
     playerLeaveGame(playerId) {
         console.log("game manager: player leave game");
+        const playerUnsubscribe = this.userUnsubscribes.get(playerId);
+        if (playerUnsubscribe) {
+            playerUnsubscribe();
+            this.userUnsubscribes.delete(playerId);
+        }
         this.game.removePlayer(playerId);
         this.updateGameForAllPlayers();
     }

@@ -123,6 +123,7 @@ class ServerManager {
             if (!user) {
                 return;
             }
+            // TODO: call the unsubscribe function from game manager to clean up listeners
             this.resetAndRejoinUser(user);
         });
         game.onDestroy();

@@ -17,15 +17,10 @@ export class GameManager extends Entity {
   userUnsubscribes: Map<string, () => void> = new Map();
   userUpdates: Map<string, () => void> = new Map();
 
-  constructor(
-    gameName: string,
-    user: User
-    // updatePlayer: (id: string) => void
-  ) {
+  constructor(gameName: string, user: User) {
     super();
     const randomXWord = getRandomXWord();
     this.game = new Game(gameName, user, randomXWord);
-    // this.updatePlayer = updatePlayer;
 
     // add the creator of the game to their own game
     this.userJoinGame(user);
@@ -56,58 +51,8 @@ export class GameManager extends Entity {
     bot.difficulty = difficulty;
   }
 
-  // handleEvent(
-  //   userId: string,
-  //   event: ClientToGameEvent<keyof ClientToGameEvents>
-  // ) {
-  //   const eventToHandlerMap = {
-  //     playTile: () => {
-  //       const eventData = (event as ClientToGameEvent<"playTile">).data;
-  //       const playTileSuccess = this.game.playTile({
-  //         playerId: userId,
-  //         ...eventData,
-  //       });
-
-  //       if (playTileSuccess) {
-  //         return;
-  //       }
-
-  //       this.updatePlayer(userId, {
-  //         type: "incorrectTilePlayed",
-  //         data: {
-  //           pos: eventData.pos,
-  //         },
-  //       });
-  //     },
-  //     updateTileBar: () => {
-  //       const { tileIds } = (event as ClientToGameEvent<"updateTileBar">).data;
-  //       this.game.updateTileBar(userId, tileIds);
-  //     },
-  //     setReady: () => {
-  //       const { ready } = (event as ClientToGameEvent<"setReady">).data;
-  //       this.game.setReady(userId, ready);
-  //     },
-  //     startGame: this.startGame.bind(this),
-  //     addBot: this.addBot.bind(this),
-  //     removeBot: () => {
-  //       const { botId } = (event as ClientToGameEvent<"removeBot">).data;
-  //       this.removeBot(botId);
-  //     },
-  //     setBotDifficulty: () => {
-  //       const { botId, difficulty } = (
-  //         event as ClientToGameEvent<"setBotDifficulty">
-  //       ).data;
-  //       this.setBotDifficulty(botId, difficulty);
-  //     },
-  //   };
-
-  //   if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
-  //     eventToHandlerMap[event.type]();
-  //     this.updateGameForAllPlayers();
-  //   }
-  // }
-
-  private subscribeToPlayerEvents(user: User) {
+  private playerSetup(user: User) {
+    // setup socket listeners for the player
     const addBot = this.addBot.bind(this);
     const removeBot = this.removeBot.bind(this);
     const setBotDifficulty = this.setBotDifficulty.bind(this);
@@ -125,10 +70,20 @@ export class GameManager extends Entity {
       user.socket.off("startGame", startGame);
     };
     this.userUnsubscribes.set(user.id, playerUnsubscribe);
+
+    // setup game update emitter for the player
+    this.userUpdates.set(user.id, () => {
+      const playerInfo = this.game.players.get(user.id);
+      if (!playerInfo) {
+        return;
+      }
+
+      user.socket.emit(
+        "updateGame",
+        this.makeServerGameUpdate(playerInfo, this.game)
+      );
+    });
   }
-
-  private subscribePlayerToGameUpdates(playerId: string, user: User) {
-
 
   userJoinGame(user: User, wasDisconnected = false) {
     const canJoin =
@@ -139,18 +94,7 @@ export class GameManager extends Entity {
     }
 
     this.game.addPlayer(user.id, user.name);
-    this.subscribeToPlayerEvents(user);
-    this.subscribePlayerToGameUpdates(user.id, user);
-
-    // const eventHandler = (
-    //   event: ClientToGameEvent<keyof ClientToGameEvents>
-    // ) => {
-    //   console.log("game manager: ", event.type);
-    //   this.handleEvent(user.id, event);
-    // };
-
-    // user.socket.off("clientToGameEvent", eventHandler);
-    // user.socket.on("clientToGameEvent", eventHandler);
+    this.playerSetup(user);
 
     this.updateGameForAllPlayers();
   }
@@ -187,14 +131,8 @@ export class GameManager extends Entity {
       ([playerId, playerInfo]) => {
         console.log("game manager: updating: ", playerInfo.name);
 
-
-
-        this.updatePlayer(playerId, {
-          type: "updateGame",
-          data: {
-            gameUpdate: this.makeServerGameUpdate(playerInfo, this.game),
-          },
-        });
+        const updateFn = this.userUpdates.get(playerId);
+        updateFn && updateFn();
       }
     );
   }
