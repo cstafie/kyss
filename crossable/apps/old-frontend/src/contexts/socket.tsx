@@ -5,11 +5,11 @@ import {
   useEffect,
   ReactNode,
   useCallback,
-} from 'react';
-import { io, Socket } from 'socket.io-client';
-import { v4 as uuidv4 } from 'uuid';
-import { useLocation, useNavigate } from 'react-router-dom';
-import produce from 'immer';
+} from "react";
+import { io, Socket } from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
+import { useLocation, useNavigate } from "react-router-dom";
+import produce from "immer";
 
 import {
   GameMetaData,
@@ -27,10 +27,10 @@ import {
   BotInfo,
   GameToClientEvent,
   GameToClientEvents,
-} from '@nx/api-interfaces';
+} from "shared";
 
-import { useAuthContext } from './auth';
-import { makePosString } from '../utils';
+import { useAuthContext } from "./auth";
+import { makePosString } from "../utils";
 
 export interface GameInfo {
   xWord: XWord;
@@ -58,7 +58,7 @@ interface SocketContextI {
   setBotDifficulty: (botId: string, difficulty: BotDifficulty) => void;
 }
 
-const warning = () => console.error('No matching provider for SocketContext');
+const warning = () => console.error("No matching provider for SocketContext");
 const SocketContext = createContext<SocketContextI>({
   createGame: () => warning(),
   playTile: (tileId: string, pos: [number, number]) => warning(),
@@ -85,64 +85,64 @@ const GAME_NAME_LENGTH = 6;
 // TODO: make these event emitters DRY
 const createGame = () => {
   const gameName = `game-${uuidv4().substring(0, GAME_NAME_LENGTH)}`;
-  const event: ClientToServerEvent<'newGame'> = {
-    type: 'newGame',
+  const event: ClientToServerEvent<"newGame"> = {
+    type: "newGame",
     data: { name: gameName },
   };
-  socket.emit('clientToServerEvent', event);
+  socket.emit("clientToServerEvent", event);
 };
 
 const joinGame = (gameId: string) => {
-  const event: ClientToServerEvent<'joinGame'> = {
-    type: 'joinGame',
+  const event: ClientToServerEvent<"joinGame"> = {
+    type: "joinGame",
     data: { gameId },
   };
-  socket.emit('clientToServerEvent', event);
+  socket.emit("clientToServerEvent", event);
 };
 
 const startGame = () => {
-  const event: ClientToGameEvent<'startGame'> = {
-    type: 'startGame',
+  const event: ClientToGameEvent<"startGame"> = {
+    type: "startGame",
     data: null,
   };
-  socket.emit('clientToGameEvent', event);
+  socket.emit("clientToGameEvent", event);
 };
 
 const joinServer = (userId: string, userName: string) => {
-  const event: ClientToServerEvent<'joinServer'> = {
-    type: 'joinServer',
+  const event: ClientToServerEvent<"joinServer"> = {
+    type: "joinServer",
     data: { id: userId, name: userName },
   };
-  socket.emit('clientToServerEvent', event);
+  socket.emit("clientToServerEvent", event);
 };
 
 const addBot = () => {
-  const event: ClientToGameEvent<'addBot'> = {
-    type: 'addBot',
+  const event: ClientToGameEvent<"addBot"> = {
+    type: "addBot",
     data: null,
   };
-  socket.emit('clientToGameEvent', event);
+  socket.emit("clientToGameEvent", event);
 };
 
 const removeBot = (botId: string) => {
-  const event: ClientToGameEvent<'removeBot'> = {
-    type: 'removeBot',
+  const event: ClientToGameEvent<"removeBot"> = {
+    type: "removeBot",
     data: {
       botId,
     },
   };
-  socket.emit('clientToGameEvent', event);
+  socket.emit("clientToGameEvent", event);
 };
 
 const setBotDifficulty = (botId: string, difficulty: BotDifficulty) => {
-  const event: ClientToGameEvent<'setBotDifficulty'> = {
-    type: 'setBotDifficulty',
+  const event: ClientToGameEvent<"setBotDifficulty"> = {
+    type: "setBotDifficulty",
     data: {
       botId,
       difficulty,
     },
   };
-  socket.emit('clientToGameEvent', event);
+  socket.emit("clientToGameEvent", event);
 };
 
 interface Props {
@@ -163,10 +163,10 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // todo make these paths constants
-    if (location.pathname === '/xword' && game === null) {
-      navigate('/');
-    } else if (location.pathname === '/' && game !== null) {
-      navigate('/xword');
+    if (location.pathname === "/xword" && game === null) {
+      navigate("/");
+    } else if (location.pathname === "/" && game !== null) {
+      navigate("/xword");
     }
   }, [navigate, location, game]);
 
@@ -181,8 +181,8 @@ export const SocketContextProvider = ({ children }: Props) => {
     (event: GameToClientEvent<keyof GameToClientEvents>) => {
       console.log(event);
       switch (event.type) {
-        case 'updateGame': {
-          const { gameUpdate } = (event as GameToClientEvent<'updateGame'>)
+        case "updateGame": {
+          const { gameUpdate } = (event as GameToClientEvent<"updateGame">)
             .data;
           const { serializedPlayersMap, serializedBotsMap, ...rest } =
             gameUpdate;
@@ -192,8 +192,8 @@ export const SocketContextProvider = ({ children }: Props) => {
             ...rest,
           });
         }
-        case 'incorrectTilePlayed': {
-          const { pos } = (event as GameToClientEvent<'incorrectTilePlayed'>)
+        case "incorrectTilePlayed": {
+          const { pos } = (event as GameToClientEvent<"incorrectTilePlayed">)
             .data;
 
           const posString = makePosString(pos);
@@ -222,8 +222,8 @@ export const SocketContextProvider = ({ children }: Props) => {
       console.log(event);
 
       switch (event.type) {
-        case 'updateGamesList': {
-          const { games } = (event as ServerToClientEvent<'updateGamesList'>)
+        case "updateGamesList": {
+          const { games } = (event as ServerToClientEvent<"updateGamesList">)
             .data;
           return setGames(games);
         }
@@ -233,27 +233,27 @@ export const SocketContextProvider = ({ children }: Props) => {
   );
 
   useEffect(() => {
-    socket.on('serverToClientEvent', handleServerToClientEvent);
+    socket.on("serverToClientEvent", handleServerToClientEvent);
   }, [handleServerToClientEvent]);
 
   useEffect(() => {
-    socket.on('gameToClientEvent', handleGameToClientEvent);
+    socket.on("gameToClientEvent", handleGameToClientEvent);
   }, [handleGameToClientEvent]);
 
   const playTile = useCallback(
     (tileId: string, [row, col]: [number, number]) => {
-      if (!game || game.xWord.grid[row][col].char !== ' ') {
+      if (!game || game.xWord.grid[row][col].char !== " ") {
         return;
       }
 
-      const event: ClientToGameEvent<'playTile'> = {
-        type: 'playTile',
+      const event: ClientToGameEvent<"playTile"> = {
+        type: "playTile",
         data: {
           tileId,
           pos: [row, col],
         },
       };
-      socket.emit('clientToGameEvent', event);
+      socket.emit("clientToGameEvent", event);
 
       const tileIndex = game.tileBar.findIndex((tile) => tile.id === tileId);
       if (tileIndex === -1) {
@@ -272,11 +272,11 @@ export const SocketContextProvider = ({ children }: Props) => {
   );
 
   const leaveGame = useCallback(() => {
-    const event: ClientToServerEvent<'leaveGame'> = {
-      type: 'leaveGame',
+    const event: ClientToServerEvent<"leaveGame"> = {
+      type: "leaveGame",
       data: null,
     };
-    socket.emit('clientToServerEvent', event);
+    socket.emit("clientToServerEvent", event);
     setGame(null);
   }, []);
 
@@ -290,21 +290,21 @@ export const SocketContextProvider = ({ children }: Props) => {
         : prevGame
     );
 
-    const event: ClientToGameEvent<'updateTileBar'> = {
-      type: 'updateTileBar',
+    const event: ClientToGameEvent<"updateTileBar"> = {
+      type: "updateTileBar",
       data: {
         tileIds: tileBar.map((tile) => tile.id),
       },
     };
-    socket.emit('clientToGameEvent', event);
+    socket.emit("clientToGameEvent", event);
   }, []);
 
   const setReady = useCallback((ready: boolean) => {
-    const event: ClientToGameEvent<'setReady'> = {
-      type: 'setReady',
+    const event: ClientToGameEvent<"setReady"> = {
+      type: "setReady",
       data: { ready },
     };
-    socket.emit('clientToGameEvent', event);
+    socket.emit("clientToGameEvent", event);
   }, []);
 
   return (

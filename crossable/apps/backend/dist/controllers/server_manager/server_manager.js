@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_interfaces_1 = require("@nx/api-interfaces");
+const shared_1 = require("shared");
 const game_manager_1 = __importDefault(require("../game_manager/game_manager"));
 const user_1 = __importDefault(require("../user/user"));
 class ServerManager {
@@ -19,9 +19,9 @@ class ServerManager {
             }
             // if the game corresponding to user.currentGameId doesn't exist
             // the user's currentGameId is invalid and should be cleared
-            user.currentGameId = '';
+            user.currentGameId = "";
         }
-        console.log('server manager: user has no current game id');
+        console.log("server manager: user has no current game id");
     }
     tryRejoinGame(user) {
         const game = this.tryGetUserGame(user);
@@ -29,7 +29,7 @@ class ServerManager {
     }
     newGame(gameName, creator) {
         // the Game Manager will automatically add the creator to the game
-        const game = new game_manager_1.default(gameName, creator, this.emitGameToClientEvent.bind(this));
+        const game = new game_manager_1.default(gameName, creator);
         this.games.set(game.id, game);
         creator.currentGameId = game.id;
         // games get destroyed after 30min
@@ -41,14 +41,14 @@ class ServerManager {
     joinGame(gameId, user) {
         const game = this.games.get(gameId);
         if (game) {
-            game.userJoinGame(user);
             user.currentGameId = gameId;
+            game.userJoinGame(user);
         }
     }
     leaveGame(user) {
         const game = this.tryGetUserGame(user);
         if (!game) {
-            console.log('server manager: could not find game to leave');
+            console.log("server manager: could not find game to leave");
             return;
         }
         game.playerLeaveGame(user.id);
@@ -59,97 +59,63 @@ class ServerManager {
         }
     }
     disconnect(user) {
-        console.log('server manager: disconnect: ', user.name);
+        console.log("server manager: disconnect: ", user.name);
+        user.socket.removeAllListeners();
+        user.socket.disconnect();
         // TODO: handle game disconnect nicely?
         // should maybe clean up the socket listeners here
         // const game = this.tryGetUserGame(user);
         // game?.playerDisconnect(user.id);
     }
-    handleEvent(user, event) {
-        // TODO: this almost looks like we could do `this[event.type](user, event);`
-        const eventToHandlerMap = {
-            newGame: () => {
-                const { name } = event.data;
-                this.newGame(name, user);
-            },
-            joinGame: () => {
-                const { gameId } = event.data;
-                this.joinGame(gameId, user);
-            },
-            leaveGame: () => {
-                this.leaveGame(user);
-            },
-        };
-        if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
-            eventToHandlerMap[event.type]();
-            this.updateGamesList();
-        }
-    }
     joinServer({ id, name, socket }) {
         const user = this.users.get(id) || new user_1.default({ id, name, socket });
         user.name = name;
         user.socket = socket;
-        // TODO: if we store users by socket.id instead we could potentially treat joinServer event
-        // as we do all other events
         this.users.set(user.id, user);
         // hard socket reset as we are about to resubscribe to all relevant events
         socket.removeAllListeners();
-        this.tryRejoinGame(user);
-        this.updateGamesList();
-        socket.on('clientToServerEvent', (event) => {
-            console.log('server manager: ', event.type);
-            this.handleEvent(user, event);
+        socket.on("newGame", (name) => {
+            this.newGame(name, user);
+            this.updateGamesList();
         });
-        const disconnectHandler = () => {
+        socket.on("joinGame", (gameId) => {
+            this.joinGame(gameId, user);
+            this.updateGamesList();
+        });
+        socket.on("leaveGame", () => {
+            this.leaveGame(user);
+            this.updateGamesList();
+        });
+        socket.on("disconnect", () => {
             this.disconnect(user);
             this.updateGamesList();
-        };
-        socket.on('disconnect', disconnectHandler);
+        });
+        this.tryRejoinGame(user);
+        this.updateGamesList();
         console.log(`${name} joined server`);
     }
     updateGamesList() {
         const gamesList = [];
         for (const game of this.games.values()) {
             const gameMetaData = game.getMetaData();
-            if (gameMetaData.gameState === api_interfaces_1.GameState.waitingToStart) {
+            if (gameMetaData.gameState === shared_1.GameState.waitingToStart) {
                 gamesList.push(gameMetaData);
             }
         }
         gamesList.sort((gameA, gameB) => {
             return gameB.createdAt.getTime() - gameA.createdAt.getTime();
         });
-        const event = {
-            type: 'updateGamesList',
-            data: {
-                games: gamesList,
-            },
-        };
         // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
         for (const user of this.users.values()) {
             if (user.socket.connected) {
-                user.socket.emit('serverToClientEvent', event);
-            }
-        }
-    }
-    emitGameToClientEvent(userId, event) {
-        const user = this.users.get(userId);
-        if (!user || !user.socket.connected) {
-            return;
-        }
-        user.socket.emit('gameToClientEvent', event);
-        // destroy game if it's over
-        // TODO: this should be done explicitly instead of checking every event
-        if (event.type === 'updateGame') {
-            const { gameUpdate } = event.data;
-            if (gameUpdate.gameState === api_interfaces_1.GameState.complete) {
-                this.destroyGame(gameUpdate.id);
+                user.socket.emit("updateGamesList", gamesList);
             }
         }
     }
     destroyGame(gameId) {
         const game = this.games.get(gameId);
         if (!game) {
-            console.log('could not find game to destroy');
+            console.log("could not find game to destroy");
             return;
         }
         Array.from(game.game.players.values()).forEach((player) => {
@@ -164,20 +130,14 @@ class ServerManager {
         this.updateGamesList();
     }
     resetAndRejoinUser(user) {
-        user.currentGameId = '';
+        user.currentGameId = "";
         user.socket.offAny();
         this.joinServer(user);
     }
     onSocketConnect(socket) {
         console.log(`user connected with socket id: ${socket.id}`);
-        socket.on('clientToServerEvent', (event) => {
-            // the join server event is special as it gives us all the users info
-            // all other events require this info and are handled by `handleEvent`
-            if (event.type === 'joinServer') {
-                const { id, name } = event
-                    .data;
-                this.joinServer({ id, name, socket });
-            }
+        socket.on("joinServer", (id, name) => {
+            this.joinServer({ id, name, socket });
         });
     }
 }

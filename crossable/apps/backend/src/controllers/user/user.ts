@@ -1,21 +1,18 @@
-import {
-  SocketClientToServerEvents,
-  SocketServerToClientEvents,
-} from '@nx/api-interfaces';
-import { Socket } from 'socket.io';
+import { ServerToClientEvents, ClientToServerEvents } from "shared";
+import { Socket } from "socket.io";
 
-import Entity from '../entity/entity';
+import Entity from "../entity/entity";
 
 interface ConstructorParams {
   name: string;
-  socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>;
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
   id?: string;
 }
 
 class User extends Entity {
   name: string;
-  socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>;
-  currentGameId = '';
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
+  currentGameId = "";
 
   constructor({ name, socket, id }: ConstructorParams) {
     super(id);

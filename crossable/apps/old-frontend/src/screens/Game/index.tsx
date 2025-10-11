@@ -1,13 +1,13 @@
-import { GameState } from '@nx/api-interfaces';
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Emoji from '../../components/emoji';
-import { useNavContext } from '../../contexts/nav';
-import { useSocketContext } from '../../contexts/socket';
-import Lobby from './Lobby/lobby';
-import XWord from './XWord';
+import { GameState } from "shared";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import Emoji from "../../components/emoji";
+import { useNavContext } from "../../contexts/nav";
+import { useSocketContext } from "../../contexts/socket";
+import Lobby from "./Lobby/lobby";
+import XWord from "./XWord";
 
-const BACK_ARROW_EMOJI = '⬅️';
+const BACK_ARROW_EMOJI = "⬅️";
 
 const Game = () => {
   const { game, leaveGame } = useSocketContext();

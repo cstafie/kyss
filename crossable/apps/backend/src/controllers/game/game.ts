@@ -10,9 +10,11 @@ import {
   charToTile,
   countEmpty,
   isEntryComplete,
-} from '@nx/api-interfaces';
-import Entity from '../entity/entity';
-import { TileManager } from './tile_manager';
+  Tile,
+  User,
+} from "shared";
+import Entity from "../entity/entity";
+import { TileManager } from "./tile_manager";
 
 export class Game extends Entity {
   name: string;
@@ -25,7 +27,7 @@ export class Game extends Entity {
   // log: Array<string>;
   gameState: GameState;
 
-  constructor(name, player, xWord) {
+  constructor(name: string, player: User, xWord: XWord) {
     super();
 
     this.name = name;
@@ -39,7 +41,7 @@ export class Game extends Entity {
     this.creatorId = player.id;
     this.creatorName = player.name;
     this.tileManager = new TileManager(
-      xWord.grid.flat().filter((tile) => tile.char !== '#')
+      xWord.grid.flat().filter((tile: Tile) => tile.char !== "#")
     );
     this.gameState = GameState.waitingToStart;
   }
@@ -60,6 +62,9 @@ export class Game extends Entity {
   fillPlayerTileBar(playerId: string) {
     const player = this.players.get(playerId);
 
+    // TODO: error management and consistency
+    if (!player) throw new Error("Player not found");
+
     if (this.tileManager.fillTileBar(player.tileBar)) {
       return;
     }
@@ -71,7 +76,7 @@ export class Game extends Entity {
 
     for (let row = 0; row < this.xWord.grid.length; row++) {
       for (let col = 0; col < this.xWord.grid[row].length; col++) {
-        if (this.xWord.grid[row][col].char === ' ') {
+        if (this.xWord.grid[row][col].char === " ") {
           unplayedChars.add(this.solvedXWord.grid[row][col].char);
         }
       }
@@ -167,7 +172,7 @@ export class Game extends Entity {
     const playerInfo = this.players.get(playerId);
 
     // this might happen in a race condition
-    if (!playerInfo || this.xWord.grid[row][col].char !== ' ') {
+    if (!playerInfo || this.xWord.grid[row][col].char !== " ") {
       return true;
     }
 

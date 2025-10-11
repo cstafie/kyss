@@ -1,15 +1,15 @@
-import { useCallback, useMemo } from 'react';
-import styled from 'styled-components';
+import { useCallback, useMemo } from "react";
+import styled from "styled-components";
 import {
   Direction,
   GameState,
   Cell as CellType,
   XWord,
   XWordEntry,
-} from '@nx/api-interfaces';
-import Block from './block';
-import Cell from './cell';
-import { makePosString } from 'apps/client/src/utils';
+} from "shared";
+import Block from "./block";
+import Cell from "./cell";
+import { makePosString } from "apps/client/src/utils";
 
 interface GridContainerProps {
   numCols: number;
@@ -94,7 +94,7 @@ const Grid = ({
         const isError = incorrectPosStrings.has(cellId);
 
         switch (tile.char) {
-          case '#':
+          case "#":
             return (
               <Block
                 key={cellId}

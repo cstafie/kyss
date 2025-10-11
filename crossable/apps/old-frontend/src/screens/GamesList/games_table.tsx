@@ -1,11 +1,11 @@
-import { GameMetaData } from '@nx/api-interfaces';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
-import { useAuthContext } from '../../contexts/auth';
-import { useSocketContext } from '../../contexts/socket';
+import { GameMetaData } from "shared";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
+import { useAuthContext } from "../../contexts/auth";
+import { useSocketContext } from "../../contexts/socket";
 
 TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo('en-US');
+const timeAgo = new TimeAgo("en-US");
 
 interface Props {
   games: Array<GameMetaData>;
@@ -51,7 +51,7 @@ const GamesTable = ({ games }: Props) => {
               </td> */}
               {/* <td className="text-left font-mono py-2">{name}</td> */}
               <td className="text-left font-mono">
-                {creatorId === user.id ? 'YOU' : creatorName}
+                {creatorId === user.id ? "YOU" : creatorName}
               </td>
               <td className="text-center">{numberOfPlayers}</td>
               <td className="text-right">

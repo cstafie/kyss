@@ -1,6 +1,6 @@
-import { Cell } from '@nx/api-interfaces';
-import { useSocketContext } from 'apps/client/src/contexts/socket';
-import { useCallback } from 'react';
+import { Cell } from "shared";
+import { useSocketContext } from "apps/client/src/contexts/socket";
+import { useCallback } from "react";
 
 function useTapToPlay(currentCell: Cell) {
   const { playTile } = useSocketContext();

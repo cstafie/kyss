@@ -4,16 +4,16 @@ import {
   XWordEntry,
   entryContainsCell,
   getCrossingEntryIndex,
-} from '@nx/api-interfaces';
+} from "shared";
 import {
   computeNextEntryIndex,
   computePreviousEntryIndex,
   getFirstEmptyCell,
   getNextCellInEntry,
   getNextEmptyCellInEntry,
-} from 'apps/client/src/utils';
-import { useCallback, useMemo, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+} from "apps/client/src/utils";
+import { useCallback, useMemo, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface Result {
   currentEntry: XWordEntry;
@@ -133,7 +133,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
   ]);
 
   useHotkeys(
-    'shift+tab',
+    "shift+tab",
     (e) => {
       e.preventDefault();
       updateCurrentEntryIndex(
@@ -143,7 +143,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [currentEntryIndex, xWord]
   );
   useHotkeys(
-    'tab',
+    "tab",
     (e) => {
       e.preventDefault();
       updateCurrentEntryIndex(computeNextEntryIndex(currentEntryIndex, xWord));
@@ -152,7 +152,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
   );
 
   useHotkeys(
-    'space',
+    "space",
     (e) => {
       e.preventDefault();
       switchDirection();
@@ -161,7 +161,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
   );
 
   useHotkeys(
-    'Up',
+    "Up",
     (e: KeyboardEvent) => {
       e.preventDefault();
       updateCurrentCell(getNextCellUp(xWord, currentCell));
@@ -169,7 +169,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
-    'Down',
+    "Down",
     (e: KeyboardEvent) => {
       e.preventDefault();
       updateCurrentCell(getNextCellDown(xWord, currentCell));
@@ -177,7 +177,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
-    'Left',
+    "Left",
     (e: KeyboardEvent) => {
       e.preventDefault();
       updateCurrentCell(getNextCellLeft(xWord, currentCell));
@@ -185,7 +185,7 @@ const useCurrentEntry = (xWord: XWord): Result => {
     [updateCurrentCell, currentCell, xWord]
   );
   useHotkeys(
-    'Right',
+    "Right",
     (e: KeyboardEvent) => {
       e.preventDefault();
       updateCurrentCell(getNextCellRight(xWord, currentCell));
@@ -221,7 +221,7 @@ export default useCurrentEntry;
 
 const getNextCellUp = (xWord: XWord, currentCell: Cell): Cell => {
   for (let row = currentCell.row - 1; row >= 0; row--) {
-    if (xWord.grid[row][currentCell.col].char !== '#') {
+    if (xWord.grid[row][currentCell.col].char !== "#") {
       return {
         row,
         col: currentCell.col,
@@ -234,7 +234,7 @@ const getNextCellUp = (xWord: XWord, currentCell: Cell): Cell => {
 
 const getNextCellDown = (xWord: XWord, currentCell: Cell): Cell => {
   for (let row = currentCell.row + 1; row < xWord.height; row++) {
-    if (xWord.grid[row][currentCell.col].char !== '#') {
+    if (xWord.grid[row][currentCell.col].char !== "#") {
       return {
         row,
         col: currentCell.col,
@@ -247,7 +247,7 @@ const getNextCellDown = (xWord: XWord, currentCell: Cell): Cell => {
 
 const getNextCellLeft = (xWord: XWord, currentCell: Cell): Cell => {
   for (let col = currentCell.col - 1; col >= 0; col--) {
-    if (xWord.grid[currentCell.row][col].char !== '#') {
+    if (xWord.grid[currentCell.row][col].char !== "#") {
       return {
         row: currentCell.row,
         col,
@@ -260,7 +260,7 @@ const getNextCellLeft = (xWord: XWord, currentCell: Cell): Cell => {
 
 const getNextCellRight = (xWord: XWord, currentCell: Cell): Cell => {
   for (let col = currentCell.col + 1; col < xWord.width; col++) {
-    if (xWord.grid[currentCell.row][col].char !== '#') {
+    if (xWord.grid[currentCell.row][col].char !== "#") {
       return {
         row: currentCell.row,
         col,

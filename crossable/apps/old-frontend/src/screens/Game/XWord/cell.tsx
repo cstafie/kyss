@@ -1,6 +1,6 @@
-import { Droppable } from '@hello-pangea/dnd';
-import { Tile as TileType } from '@nx/api-interfaces';
-import Tile from './tile';
+import { Droppable } from "@hello-pangea/dnd";
+import { Tile as TileType } from "shared";
+import Tile from "./tile";
 
 interface Props {
   id: string;
@@ -23,18 +23,18 @@ const Cell = ({
   onClick,
   isError,
 }: Props) => {
-  const isEmpty = tile.char === ' ';
+  const isEmpty = tile.char === " ";
 
   return (
     <Droppable droppableId={id} isDropDisabled={!isEmpty}>
       {(provided, { isDraggingOver }) => (
         <div
           ref={provided.innerRef}
-          className={`${isHighlighted ? 'bg-blue-300' : 'bg-white'} ${
-            isCurrentCell ? 'bg-yellow-300' : ''
-          } ${showHover ? 'hover:bg-purple-300' : ''} ${
-            isDraggingOver ? 'bg-purple-300' : ''
-          } ${isError ? 'bg-red-300' : ''} relative`}
+          className={`${isHighlighted ? "bg-blue-300" : "bg-white"} ${
+            isCurrentCell ? "bg-yellow-300" : ""
+          } ${showHover ? "hover:bg-purple-300" : ""} ${
+            isDraggingOver ? "bg-purple-300" : ""
+          } ${isError ? "bg-red-300" : ""} relative`}
           {...provided.droppableProps}
           onClick={onClick}
         >

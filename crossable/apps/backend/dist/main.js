@@ -38,37 +38,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const express = __importStar(require("express"));
+const express_1 = __importDefault(require("express"));
 const socket_io_1 = require("socket.io");
 const http = __importStar(require("http"));
-const cookieParser = __importStar(require("cookie-parser"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const server_manager_1 = __importDefault(require("./controllers/server_manager/server_manager"));
 const send_email_1 = __importDefault(require("./api/feedback/send_email"));
 // TODO: should i separate express and socket servers into separate apps?
-const app = express();
+const app = (0, express_1.default)();
 const httpServer = http.createServer(app);
 const io = new socket_io_1.Server(httpServer);
 io.listen(4444);
-app.use(cookieParser());
-app.use(express.json());
+app.use((0, cookie_parser_1.default)());
+app.use(express_1.default.json());
 // https://github.com/nodejs/help/issues/705#issuecomment-757578500
-httpServer.on('clientError', console.error);
-httpServer.on('error', console.error);
-app.post('/api/feedback', async (req, res) => {
+httpServer.on("clientError", console.error);
+httpServer.on("error", console.error);
+app.post("/api/feedback", async (req, res) => {
     const { email, content } = req.body;
     const { id, name } = req.cookies;
     await (0, send_email_1.default)({
         subject: `${name} - Crossable Feedback!`,
-        textBody: `${id || 'no id'}
-    ${email || '--No email provided--'}
-    ${content || '--No content provided--'}`,
+        textBody: `${id || "no id"}
+    ${email || "--No email provided--"}
+    ${content || "--No content provided--"}`,
     });
-    res.send('Success!');
+    res.send("Success!");
 });
-io.on('connection', server_manager_1.default.onSocketConnect.bind(server_manager_1.default));
+io.on("connection", server_manager_1.default.onSocketConnect.bind(server_manager_1.default));
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
-    console.log('Listening at http://localhost:' + port + '/api');
+    console.log("Listening at http://localhost:" + port + "/api");
 });
-server.on('error', console.error);
-server.on('clientError', console.error);
+server.on("error", console.error);
+server.on("clientError", console.error);

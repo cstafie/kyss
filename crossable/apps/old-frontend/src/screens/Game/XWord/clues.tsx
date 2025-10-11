@@ -1,5 +1,5 @@
-import { XWordEntry } from '@nx/api-interfaces';
-import Clue from './clue';
+import { XWordEntry } from "shared";
+import Clue from "./clue";
 
 interface Props {
   entries: Array<XWordEntry>;

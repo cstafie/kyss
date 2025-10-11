@@ -1,10 +1,9 @@
-import { User } from '@nx/api-interfaces';
-import { createContext, useContext, useEffect, useState } from 'react';
-import reactUseCookie from 'react-use-cookie';
-import { v4 as uuidv4 } from 'uuid';
-import Emoji from '../components/emoji';
-import NavTitle from '../components/nav_title';
-import UserNameForm from '../components/user_name/user_name_form';
+import { User } from "shared";
+import { createContext, useContext, useEffect, useState } from "react";
+import reactUseCookie from "react-use-cookie";
+import Emoji from "../components/emoji";
+import NavTitle from "../components/nav_title";
+import UserNameForm from "../components/user_name/user_name_form";
 
 interface Auth {
   signedIn: boolean;
@@ -15,18 +14,18 @@ interface Auth {
 const AuthContext = createContext<Auth>({
   signedIn: false,
   user: {
-    name: '',
-    id: '',
+    name: "",
+    id: "",
   },
   setName: (name: string) =>
-    console.error('No matching provider for AuthContext'),
+    console.error("No matching provider for AuthContext"),
 });
 
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthContextProvider = ({ children }: any) => {
-  const [id, setID] = reactUseCookie('id');
-  const [name, setName] = reactUseCookie('name');
+  const [id, setID] = reactUseCookie("id");
+  const [name, setName] = reactUseCookie("name");
 
   // no auth pages yet, so user is always signed in
   const [signedIn, setSignedIn] = useState(true);
@@ -35,7 +34,7 @@ export const AuthContextProvider = ({ children }: any) => {
   useEffect(() => {
     if (!id) {
       // TODO: backend not frontend should be giving ids
-      setID(uuidv4());
+      setID(crypto.randomUUID());
     } else {
       // keep cookie fresh
       setID(id);
@@ -68,7 +67,7 @@ export const AuthContextProvider = ({ children }: any) => {
               <div className="mt-8 max-w-xs">
                 <Emoji description="Question mark">❔</Emoji>
                 Enter a user name which other players can know you by. No need
-                to think too hard, you can always change it later!{' '}
+                to think too hard, you can always change it later!{" "}
                 <Emoji description="Smiley face">😃</Emoji>
               </div>
             </section>

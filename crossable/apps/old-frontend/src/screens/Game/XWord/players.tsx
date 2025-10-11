@@ -1,6 +1,6 @@
-import { PlayerInfo } from '@nx/api-interfaces';
-import Emoji from 'apps/client/src/components/emoji';
-import { useAuthContext } from 'apps/client/src/contexts/auth';
+import { PlayerInfo } from "shared";
+import Emoji from "apps/client/src/components/emoji";
+import { useAuthContext } from "apps/client/src/contexts/auth";
 
 interface Props {
   players: Array<PlayerInfo>;
@@ -26,7 +26,7 @@ const Players = ({ players, isGameOver }: Props) => {
   return (
     <ol className="font-mono text-lg">
       {players.map(({ id, name, score }, i) => (
-        <li key={id} className={`${id === user.id ? 'text-purple-400' : ''}`}>
+        <li key={id} className={`${id === user.id ? "text-purple-400" : ""}`}>
           {isGameOver && computeMedal(i)} {name}: {score}
         </li>
       ))}

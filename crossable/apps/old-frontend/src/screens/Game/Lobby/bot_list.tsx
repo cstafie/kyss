@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
-import { MdDeleteForever } from 'react-icons/md';
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { useMemo } from "react";
+import { MdDeleteForever } from "react-icons/md";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
-import { useAuthContext } from 'apps/client/src/contexts/auth';
-import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
-import BotDifficulty from 'apps/client/src/components/bot_difficulty';
-import { BotDifficulty as BotDifficultyType } from '@nx/api-interfaces';
+import { useAuthContext } from "apps/client/src/contexts/auth";
+import { GameInfo, useSocketContext } from "apps/client/src/contexts/socket";
+import BotDifficulty from "apps/client/src/components/bot_difficulty";
+import { BotDifficulty as BotDifficultyType } from "shared";
 
 interface Props {
   game: GameInfo;
@@ -44,7 +44,7 @@ function BotList({ game }: Props) {
                   setBotDifficulty(id, (difficulty - 1) as BotDifficultyType)
                 }
                 className={`btn btn-borderless flex items-center text-sm  ${
-                  difficulty === BotDifficultyType.easy ? 'btn-disabled' : ''
+                  difficulty === BotDifficultyType.easy ? "btn-disabled" : ""
                 }`}
               >
                 <BsChevronLeft />
@@ -60,7 +60,7 @@ function BotList({ game }: Props) {
                   setBotDifficulty(id, (difficulty + 1) as BotDifficultyType)
                 }
                 className={`btn btn-borderless flex items-center text-sm ${
-                  difficulty === BotDifficultyType.hard ? 'btn-disabled' : ''
+                  difficulty === BotDifficultyType.hard ? "btn-disabled" : ""
                 }`}
               >
                 <BsChevronRight />

@@ -5,14 +5,14 @@ import {
   getEntry,
   Cell,
   flipDirection,
-} from '@nx/api-interfaces';
+} from "shared";
 
 export const makePosString = (pos: [number, number]): string => {
   return `pos:${pos[0]},${pos[1]}`;
 };
 
 export const posStringToRowCol = (posString: string): [number, number] => {
-  const [rowString, colString] = posString.split(':')[1].split(',');
+  const [rowString, colString] = posString.split(":")[1].split(",");
   return [Number(rowString), Number(colString)];
 };
 
@@ -22,7 +22,7 @@ export const getFirstEmptyCell = (
 ): Cell | null => {
   const entryString = getEntry(xWord, entry);
 
-  const spaceIndex = entryString.indexOf(' ');
+  const spaceIndex = entryString.indexOf(" ");
 
   if (spaceIndex === -1) {
     return {
@@ -82,7 +82,7 @@ export const getNextEmptyCellInEntry = (
       ? currentCell.col - entry.cell.col + 1
       : currentCell.row - entry.cell.row + 1;
 
-  const spaceIndex = entryString.indexOf(' ', startIndex);
+  const spaceIndex = entryString.indexOf(" ", startIndex);
 
   if (spaceIndex === -1) {
     return null;

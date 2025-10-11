@@ -1,6 +1,6 @@
-import { Draggable } from '@hello-pangea/dnd';
-import { Tile as TileType } from '@nx/api-interfaces';
-import { MouseEventHandler } from 'react';
+import { Draggable } from "@hello-pangea/dnd";
+import { Tile as TileType } from "shared";
+import { MouseEventHandler } from "react";
 
 interface Props {
   tile: TileType;
@@ -36,13 +36,13 @@ const Tile = ({
           // className="bg-orange-200 hover:bg-orange-300 active:shadow-lg active:bg-orange-300 w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg"
           className={`${
             isHighlighted
-              ? 'bg-blue-400 hover:bg-blue-500  active:bg-blue-500'
-              : 'bg-purple-400 hover:bg-purple-500  active:bg-purple-500'
+              ? "bg-blue-400 hover:bg-blue-500  active:bg-blue-500"
+              : "bg-purple-400 hover:bg-purple-500  active:bg-purple-500"
           } 
           ${
             isCurrentCell
-              ? 'bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-500'
-              : ''
+              ? "bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-500"
+              : ""
           }
           active:shadow-lg w-12 h-12 flex justify-center items-center pt-2 font-bold text-lg ${className}`}
         >

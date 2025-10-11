@@ -2,52 +2,28 @@
 > backend@1.0.0 build C:\Users\stafi\repos\cristianstafie.ca\kyss\crossable\apps\backend
 > tsc
 
-src/api/feedback/send_email.ts(1,29): error TS2307: Cannot find module 'nodemailer' or its corresponding type declarations.
-src/api/feedback/send_email.ts(32,13): error TS7006: Parameter 'e' implicitly has an 'any' type.
-src/controllers/bot/bot.ts(1,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
-src/controllers/bot/bot.ts(9,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/bot/bot.ts(18,3): error TS2564: Property 'timeout' has no initializer and is not definitely assigned in the constructor.
-src/controllers/bot/bot.ts(49,35): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(56,9): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(78,25): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(83,31): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(84,33): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(85,26): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(88,13): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(101,25): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(106,31): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(107,33): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(108,26): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(109,26): error TS2532: Object is possibly 'undefined'.
-src/controllers/bot/bot.ts(112,13): error TS2532: Object is possibly 'undefined'.
-src/controllers/entity/entity.ts(1,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
-src/controllers/game/game.ts(13,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/game/game.ts(28,15): error TS7006: Parameter 'name' implicitly has an 'any' type.
-src/controllers/game/game.ts(28,21): error TS7006: Parameter 'player' implicitly has an 'any' type.
-src/controllers/game/game.ts(28,29): error TS7006: Parameter 'xWord' implicitly has an 'any' type.
-src/controllers/game/game.ts(42,33): error TS7006: Parameter 'tile' implicitly has an 'any' type.
-src/controllers/game/game.ts(81,59): error TS7006: Parameter 'tile' implicitly has an 'any' type.
-src/controllers/game/game.ts(138,8): error TS7006: Parameter 'map' implicitly has an 'any' type.
-src/controllers/game/game.ts(138,13): error TS7006: Parameter 'tile' implicitly has an 'any' type.
-src/controllers/game/game.ts(175,42): error TS7006: Parameter 'tile' implicitly has an 'any' type.
-src/controllers/game/game.ts(203,33): error TS7006: Parameter 'entry' implicitly has an 'any' type.
-src/controllers/game/tile_manager.ts(1,27): error TS2307: Cannot find module 'lodash' or its corresponding type declarations.
-src/controllers/game/tile_manager.ts(3,49): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/game_manager/game_manager.ts(11,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/game_manager/game_manager.ts(114,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ playTile: () => void; updateTileBar: () => void; setReady: () => void; startGame: () => void; addBot: () => void; removeBot: () => void; setBotDifficulty: () => void; }'.
-src/controllers/server_manager/server_manager.ts(11,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/server_manager/server_manager.ts(12,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
-src/controllers/server_manager/server_manager.ts(119,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ newGame: () => void; joinGame: () => void; leaveGame: () => void; }'.
-src/controllers/server_manager/server_manager.ts(210,15): error TS7006: Parameter 'gameId' implicitly has an 'any' type.
-src/controllers/user/user.ts(4,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
-src/controllers/user/user.ts(5,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
+src/controllers/game_manager/game_manager.ts(60,12): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(60,36): error TS2304: Cannot find name 'ClientToGameEvents'.
+src/controllers/game_manager/game_manager.ts(64,37): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(74,35): error TS2554: Expected 1 arguments, but got 2.
+src/controllers/game_manager/game_manager.ts(82,39): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(86,37): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(92,37): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(97,20): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(104,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ playTile: () => void; updateTileBar: () => void; setReady: () => void; startGame: () => void; addBot: () => void; removeBot: () => void; setBotDifficulty: () => void; }'.
+src/controllers/game_manager/game_manager.ts(120,14): error TS2304: Cannot find name 'ClientToGameEvent'.
+src/controllers/game_manager/game_manager.ts(120,38): error TS2304: Cannot find name 'ClientToGameEvents'.
+src/controllers/game_manager/game_manager.ts(164,37): error TS2554: Expected 1 arguments, but got 2.
+src/controllers/server_manager/server_manager.ts(38,18): error TS2554: Expected 3 arguments, but got 2.
+src/controllers/server_manager/server_manager.ts(141,18): error TS2304: Cannot find name 'ServerToClientEvent'.
+src/controllers/user/user.ts(1,10): error TS2724: '"shared"' has no exported member named 'SocketClientToServerEvents'. Did you mean 'ClientToServerEvents'?
+src/controllers/user/user.ts(1,38): error TS2724: '"shared"' has no exported member named 'SocketServerToClientEvents'. Did you mean 'ServerToClientEvents'?
 src/main.ts(1,25): error TS2307: Cannot find module 'dotenv' or its corresponding type declarations.
-src/main.ts(5,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
 src/main.ts(7,31): error TS2307: Cannot find module 'cookie-parser' or its corresponding type declarations.
-src/main.ts(13,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
+src/main.ts(11,3): error TS2724: '"shared"' has no exported member named 'SocketClientToServerEvents'. Did you mean 'ClientToServerEvents'?
+src/main.ts(12,3): error TS2724: '"shared"' has no exported member named 'SocketServerToClientEvents'. Did you mean 'ServerToClientEvents'?
 src/main.ts(19,13): error TS2349: This expression is not callable.
   Type 'typeof e' has no call signatures.
 src/main.ts(34,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
 src/main.ts(34,39): error TS7006: Parameter 'res' implicitly has an 'any' type.
-src/utils/index.ts(7,8): error TS2307: Cannot find module '@nx/api-interfaces' or its corresponding type declarations.
  ELIFECYCLE  Command failed with exit code 2.

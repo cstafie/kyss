@@ -1,6 +1,6 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
 
-import { get1Random, Tile, TILE_BAR_SIZE } from '@nx/api-interfaces';
+import { get1Random, Tile, TILE_BAR_SIZE } from "shared";
 
 export class TileManager {
   originalTiles: Array<Tile>;
@@ -10,6 +10,9 @@ export class TileManager {
     this.originalTiles = tiles;
     this.tiles = cloneDeep(tiles);
   }
+
+  // TODO: look at this boolean passed throughout the call chain, it's ugly,
+  // maybe throw instead and catch at a higher level
 
   fillTileBar(tileBar: Array<Tile>): boolean {
     while (tileBar.length < TILE_BAR_SIZE) {
@@ -43,8 +46,7 @@ export class TileManager {
   }
 
   emptyTileBar(tileBar: Array<Tile>) {
-    while (tileBar.length > 0) {
-      this.tiles.push(tileBar.pop());
-    }
+    this.tiles.push(...tileBar);
+    tileBar.length = 0;
   }
 }

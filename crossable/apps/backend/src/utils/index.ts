@@ -1,11 +1,5 @@
-import {
-  getNRandom,
-  mapGrid,
-  XWord,
-  XWordEntry,
-  Direction,
-} from '@nx/api-interfaces';
-import * as fs from 'fs';
+import { getNRandom, mapGrid, XWord, XWordEntry, Direction } from "shared";
+import * as fs from "fs";
 
 const mapEntries = (entries: any[]): Array<XWordEntry> => {
   return entries.map((entry) => ({
@@ -15,12 +9,12 @@ const mapEntries = (entries: any[]): Array<XWordEntry> => {
       col: entry.col,
     },
     isComplete: false,
-    direction: entry.direction === 'Across' ? Direction.across : Direction.down,
+    direction: entry.direction === "Across" ? Direction.across : Direction.down,
   }));
 };
 
 export const getRandomXWord = (): XWord => {
-  const path = __dirname + '/assets/generated_xWords/';
+  const path = __dirname + "/assets/generated_xWords/";
   const filePaths = fs.readdirSync(path);
   const randomFile = getNRandom(filePaths, 1)[0];
   const jsonXWord = JSON.parse(fs.readFileSync(path + randomFile).toString());

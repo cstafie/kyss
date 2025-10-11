@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { useMemo } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
-import { Direction, GameState } from '@nx/api-interfaces';
-import Clues from './clues';
-import Puzzle from './puzzle';
-import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
-import Players from './players';
-import { filterEntriesByDirection } from 'apps/client/src/utils';
-import useCurrentEntry from './hooks/use_current_entry';
-import Clue from './clue';
+import { Direction, GameState } from "shared";
+import Clues from "./clues";
+import Puzzle from "./puzzle";
+import { GameInfo, useSocketContext } from "apps/client/src/contexts/socket";
+import Players from "./players";
+import { filterEntriesByDirection } from "apps/client/src/utils";
+import useCurrentEntry from "./hooks/use_current_entry";
+import Clue from "./clue";
 
 interface Props {
   game: GameInfo;
@@ -16,8 +16,8 @@ interface Props {
 
 const ALPHABET = Array(26)
   .fill(0)
-  .map((_, i) => String.fromCharCode('a'.charCodeAt(0) + i))
-  .join(',');
+  .map((_, i) => String.fromCharCode("a".charCodeAt(0) + i))
+  .join(",");
 
 const XWord = ({ game }: Props) => {
   const { xWord } = game;
@@ -52,7 +52,7 @@ const XWord = ({ game }: Props) => {
 
       const { row, col } = currentCell;
 
-      if (letterIndex === -1 || game.xWord.grid[row][col].char !== ' ') {
+      if (letterIndex === -1 || game.xWord.grid[row][col].char !== " ") {
         // TODO: this should be a setting
         // could be goToNextEmptyCell instead
         goToNextCell();
@@ -69,7 +69,7 @@ const XWord = ({ game }: Props) => {
 
   const isGameOver = game.gameState === GameState.complete;
 
-  const cluesClass = 'm-2 hidden sm:block';
+  const cluesClass = "m-2 hidden sm:block";
 
   return (
     <>

@@ -1,21 +1,19 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import {
   BotDifficulty,
   countEmpty,
   GameState,
   random,
   randomInRange,
-} from '@nx/api-interfaces';
+} from "shared";
 
-import Entity from '../entity/entity';
-import { Game } from '../game/game';
+import Entity from "../entity/entity";
+import { Game } from "../game/game";
 
 class Bot extends Entity {
   name: string;
   difficulty: BotDifficulty;
   game?: Game;
-  timeout: NodeJS.Timeout;
+  timeout?: NodeJS.Timeout;
   updateGamePlayers: () => void;
 
   constructor(
@@ -23,7 +21,7 @@ class Bot extends Entity {
     difficulty: BotDifficulty = BotDifficulty.medium
   ) {
     super();
-    this.name = `🤖-${uuidv4().substring(0, 4)}`;
+    this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
     this.difficulty = difficulty;
     this.updateGamePlayers = updateGamePlayers;
   }
@@ -34,6 +32,8 @@ class Bot extends Entity {
   }
 
   playGame() {
+    if (!this.game) return;
+
     const difficultyTimeoutMap = {
       [BotDifficulty.easy]: 15,
       [BotDifficulty.medium]: 10,
@@ -75,7 +75,13 @@ class Bot extends Entity {
 
   // TODO: make these move functions dry
   makeDumbMove() {
-    const { tileBar } = this.game.players.get(this.id);
+    if (!this.game) return;
+
+    const playerInfo = this.game.players.get(this.id);
+
+    if (!playerInfo) return;
+
+    const { tileBar } = playerInfo;
 
     for (let i = 0; i < tileBar.length; i++) {
       const tile = tileBar[i];
@@ -84,7 +90,7 @@ class Bot extends Entity {
         for (let col = 0; col < this.game.xWord.grid[row].length; col++) {
           const played = this.game.xWord.grid[row][col];
 
-          if (played.char === ' ') {
+          if (played.char === " ") {
             this.game.playTile({
               playerId: this.id,
               tileId: tile.id,
@@ -98,7 +104,13 @@ class Bot extends Entity {
   }
 
   makeMove() {
-    const { tileBar } = this.game.players.get(this.id);
+    if (!this.game) return;
+
+    const playerInfo = this.game.players.get(this.id);
+
+    if (!playerInfo) return;
+
+    const { tileBar } = playerInfo;
 
     for (let i = 0; i < tileBar.length; i++) {
       const tile = tileBar[i];
@@ -108,7 +120,7 @@ class Bot extends Entity {
           const solved = this.game.solvedXWord.grid[row][col];
           const played = this.game.xWord.grid[row][col];
 
-          if (solved.char === tile.char && played.char === ' ') {
+          if (solved.char === tile.char && played.char === " ") {
             this.game.playTile({
               playerId: this.id,
               tileId: tile.id,

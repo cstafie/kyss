@@ -1,22 +1,17 @@
 import {
-  ClientToServerEvent,
-  ClientToServerEvents,
   GameMetaData,
   GameState,
-  GameToClientEvent,
-  GameToClientEvents,
-  ServerToClientEvent,
-  SocketClientToServerEvents,
-  SocketServerToClientEvents,
-} from '@nx/api-interfaces';
-import { Socket } from 'socket.io';
-import GameManager from '../game_manager/game_manager';
-import User from '../user/user';
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "shared";
+import { Socket } from "socket.io";
+import GameManager from "../game_manager/game_manager";
+import User from "../user/user";
 
 interface JoinServerParams {
   id: string;
   name: string;
-  socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>;
+  socket: Socket;
 }
 
 class ServerManager {
@@ -33,9 +28,9 @@ class ServerManager {
 
       // if the game corresponding to user.currentGameId doesn't exist
       // the user's currentGameId is invalid and should be cleared
-      user.currentGameId = '';
+      user.currentGameId = "";
     }
-    console.log('server manager: user has no current game id');
+    console.log("server manager: user has no current game id");
   }
 
   private tryRejoinGame(user: User) {
@@ -45,11 +40,7 @@ class ServerManager {
 
   private newGame(gameName: string, creator: User) {
     // the Game Manager will automatically add the creator to the game
-    const game = new GameManager(
-      gameName,
-      creator,
-      this.emitGameToClientEvent.bind(this)
-    );
+    const game = new GameManager(gameName, creator);
     this.games.set(game.id, game);
 
     creator.currentGameId = game.id;
@@ -65,8 +56,8 @@ class ServerManager {
     const game = this.games.get(gameId);
 
     if (game) {
-      game.userJoinGame(user);
       user.currentGameId = gameId;
+      game.userJoinGame(user);
     }
   }
 
@@ -74,7 +65,7 @@ class ServerManager {
     const game = this.tryGetUserGame(user);
 
     if (!game) {
-      console.log('server manager: could not find game to leave');
+      console.log("server manager: could not find game to leave");
       return;
     }
 
@@ -88,37 +79,14 @@ class ServerManager {
   }
 
   private disconnect(user: User) {
-    console.log('server manager: disconnect: ', user.name);
+    console.log("server manager: disconnect: ", user.name);
+    user.socket.removeAllListeners();
+    user.socket.disconnect();
 
     // TODO: handle game disconnect nicely?
     // should maybe clean up the socket listeners here
     // const game = this.tryGetUserGame(user);
     // game?.playerDisconnect(user.id);
-  }
-
-  private handleEvent(
-    user: User,
-    event: ClientToServerEvent<keyof ClientToServerEvents>
-  ) {
-    // TODO: this almost looks like we could do `this[event.type](user, event);`
-    const eventToHandlerMap = {
-      newGame: () => {
-        const { name } = (event as ClientToServerEvent<'newGame'>).data;
-        this.newGame(name, user);
-      },
-      joinGame: () => {
-        const { gameId } = (event as ClientToServerEvent<'joinGame'>).data;
-        this.joinGame(gameId, user);
-      },
-      leaveGame: () => {
-        this.leaveGame(user);
-      },
-    };
-
-    if (Object.prototype.hasOwnProperty.call(eventToHandlerMap, event.type)) {
-      eventToHandlerMap[event.type]();
-      this.updateGamesList();
-    }
   }
 
   private joinServer({ id, name, socket }: JoinServerParams) {
@@ -127,30 +95,30 @@ class ServerManager {
     user.name = name;
     user.socket = socket;
 
-    // TODO: if we store users by socket.id instead we could potentially treat joinServer event
-    // as we do all other events
     this.users.set(user.id, user);
 
     // hard socket reset as we are about to resubscribe to all relevant events
     socket.removeAllListeners();
 
-    this.tryRejoinGame(user);
-    this.updateGamesList();
-
-    socket.on(
-      'clientToServerEvent',
-      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
-        console.log('server manager: ', event.type);
-        this.handleEvent(user, event);
-      }
-    );
-
-    const disconnectHandler = () => {
+    socket.on("newGame", (name: string) => {
+      this.newGame(name, user);
+      this.updateGamesList();
+    });
+    socket.on("joinGame", (gameId: string) => {
+      this.joinGame(gameId, user);
+      this.updateGamesList();
+    });
+    socket.on("leaveGame", () => {
+      this.leaveGame(user);
+      this.updateGamesList();
+    });
+    socket.on("disconnect", () => {
       this.disconnect(user);
       this.updateGamesList();
-    };
+    });
 
-    socket.on('disconnect', disconnectHandler);
+    this.tryRejoinGame(user);
+    this.updateGamesList();
 
     console.log(`${name} joined server`);
   }
@@ -170,48 +138,19 @@ class ServerManager {
       return gameB.createdAt.getTime() - gameA.createdAt.getTime();
     });
 
-    const event: ServerToClientEvent<'updateGamesList'> = {
-      type: 'updateGamesList',
-      data: {
-        games: gamesList,
-      },
-    };
-
     // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
     for (const user of this.users.values()) {
       if (user.socket.connected) {
-        user.socket.emit('serverToClientEvent', event);
+        user.socket.emit("updateGamesList", gamesList);
       }
     }
   }
 
-  emitGameToClientEvent(
-    userId: string,
-    event: GameToClientEvent<keyof GameToClientEvents>
-  ) {
-    const user = this.users.get(userId);
-
-    if (!user || !user.socket.connected) {
-      return;
-    }
-
-    user.socket.emit('gameToClientEvent', event);
-
-    // destroy game if it's over
-    // TODO: this should be done explicitly instead of checking every event
-    if (event.type === 'updateGame') {
-      const { gameUpdate } = (event as GameToClientEvent<'updateGame'>).data;
-      if (gameUpdate.gameState === GameState.complete) {
-        this.destroyGame(gameUpdate.id);
-      }
-    }
-  }
-
-  destroyGame(gameId) {
+  destroyGame(gameId: string) {
     const game = this.games.get(gameId);
 
     if (!game) {
-      console.log('could not find game to destroy');
+      console.log("could not find game to destroy");
       return;
     }
 
@@ -222,6 +161,7 @@ class ServerManager {
         return;
       }
 
+      // TODO: call the unsubscribe function from game manager to clean up listeners
       this.resetAndRejoinUser(user);
     });
 
@@ -232,28 +172,17 @@ class ServerManager {
   }
 
   resetAndRejoinUser(user: User) {
-    user.currentGameId = '';
+    user.currentGameId = "";
     user.socket.offAny();
     this.joinServer(user);
   }
 
-  onSocketConnect(
-    socket: Socket<SocketClientToServerEvents, SocketServerToClientEvents>
-  ) {
+  onSocketConnect(socket: Socket<ClientToServerEvents, ClientToServerEvents>) {
     console.log(`user connected with socket id: ${socket.id}`);
 
-    socket.on(
-      'clientToServerEvent',
-      (event: ClientToServerEvent<keyof ClientToServerEvents>) => {
-        // the join server event is special as it gives us all the users info
-        // all other events require this info and are handled by `handleEvent`
-        if (event.type === 'joinServer') {
-          const { id, name } = (event as ClientToServerEvent<'joinServer'>)
-            .data;
-          this.joinServer({ id, name, socket });
-        }
-      }
-    );
+    socket.on("joinServer", (id, name) => {
+      this.joinServer({ id, name, socket });
+    });
   }
 }
 

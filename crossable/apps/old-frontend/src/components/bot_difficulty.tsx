@@ -1,4 +1,4 @@
-import { BotDifficulty as BotDifficultyType } from '@nx/api-interfaces';
+import { BotDifficulty as BotDifficultyType } from "shared";
 
 interface Props {
   difficulty: BotDifficultyType;
@@ -6,15 +6,15 @@ interface Props {
 
 function BotDifficulty({ difficulty }: Props) {
   const difficultyToClassMap = {
-    [BotDifficultyType.easy]: 'text-green-400',
-    [BotDifficultyType.medium]: 'text-yellow-400',
-    [BotDifficultyType.hard]: 'text-red-400',
+    [BotDifficultyType.easy]: "text-green-400",
+    [BotDifficultyType.medium]: "text-yellow-400",
+    [BotDifficultyType.hard]: "text-red-400",
   };
 
   const difficultyToDisplayMap = {
-    [BotDifficultyType.easy]: 'ROOKIE',
-    [BotDifficultyType.medium]: 'INTERMEDIATE',
-    [BotDifficultyType.hard]: 'EXPERT',
+    [BotDifficultyType.easy]: "ROOKIE",
+    [BotDifficultyType.medium]: "INTERMEDIATE",
+    [BotDifficultyType.hard]: "EXPERT",
   };
 
   return (

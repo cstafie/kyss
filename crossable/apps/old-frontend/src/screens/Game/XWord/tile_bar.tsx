@@ -1,7 +1,7 @@
-import { Droppable } from '@hello-pangea/dnd';
-import { Tile as TileType } from '@nx/api-interfaces';
-import { TILE_BAR_ID } from './constants';
-import Tile from './tile';
+import { Droppable } from "@hello-pangea/dnd";
+import { Tile as TileType } from "shared";
+import { TILE_BAR_ID } from "./constants";
+import Tile from "./tile";
 
 interface Props {
   tiles: Array<TileType>;
