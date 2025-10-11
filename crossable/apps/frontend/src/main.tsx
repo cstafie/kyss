@@ -1,10 +1,27 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+// import { StrictMode } from 'react';
+import { enableMapSet } from 'immer';
+import * as ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './app/app';
+import { AuthContextProvider } from './contexts/auth';
+import { SocketContextProvider } from './contexts/socket';
+import './main.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+enableMapSet();
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
+  // <StrictMode> // TODO: test with strict mode
+  <BrowserRouter>
+    <AuthContextProvider>
+      <SocketContextProvider>
+        <App />
+      </SocketContextProvider>
+    </AuthContextProvider>
+  </BrowserRouter>
+
+  // </StrictMode>
+);
