@@ -137,8 +137,8 @@ class ServerManager {
     }
     onSocketConnect(socket) {
         console.log(`user connected with socket id: ${socket.id}`);
-        socket.on("joinServer", (id, name) => {
-            this.joinServer({ id, name, socket });
+        socket.on("joinServer", (userInfo) => {
+            this.joinServer({ id: userInfo.id, name: userInfo.name, socket });
         });
     }
 }

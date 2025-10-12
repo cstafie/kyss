@@ -180,8 +180,8 @@ class ServerManager {
   onSocketConnect(socket: Socket<ClientToServerEvents, ClientToServerEvents>) {
     console.log(`user connected with socket id: ${socket.id}`);
 
-    socket.on("joinServer", (id, name) => {
-      this.joinServer({ id, name, socket });
+    socket.on("joinServer", (userInfo: { id: string; name: string }) => {
+      this.joinServer({ id: userInfo.id, name: userInfo.name, socket });
     });
   }
 }

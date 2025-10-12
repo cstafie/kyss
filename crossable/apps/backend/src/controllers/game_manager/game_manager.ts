@@ -41,14 +41,14 @@ export class GameManager extends Entity {
     this.bots.delete(botId);
   }
 
-  setBotDifficulty(botId: string, difficulty: BotDifficulty) {
-    const bot = this.bots.get(botId);
+  setBotDifficulty(botInfo: { id: string; difficulty: BotDifficulty }) {
+    const bot = this.bots.get(botInfo.id);
 
     if (!bot) {
       return;
     }
 
-    bot.difficulty = difficulty;
+    bot.difficulty = botInfo.difficulty;
   }
 
   private playerSetup(user: User) {

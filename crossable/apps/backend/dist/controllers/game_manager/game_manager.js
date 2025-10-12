@@ -31,12 +31,12 @@ class GameManager extends entity_1.default {
         this.game.removePlayer(botId);
         this.bots.delete(botId);
     }
-    setBotDifficulty(botId, difficulty) {
-        const bot = this.bots.get(botId);
+    setBotDifficulty(botInfo) {
+        const bot = this.bots.get(botInfo.id);
         if (!bot) {
             return;
         }
-        bot.difficulty = difficulty;
+        bot.difficulty = botInfo.difficulty;
     }
     playerSetup(user) {
         // setup socket listeners for the player
