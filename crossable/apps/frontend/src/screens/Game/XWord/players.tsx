@@ -1,6 +1,6 @@
 import { PlayerInfo } from "shared";
-import Emoji from "apps/client/src/components/emoji";
-import { useAuthContext } from "apps/client/src/contexts/auth";
+import Emoji from "@/components/emoji";
+import { useAuthContext } from "@/contexts/auth";
 
 interface Props {
   players: Array<PlayerInfo>;

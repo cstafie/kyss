@@ -9,7 +9,7 @@ import {
 } from "shared";
 import Block from "./block";
 import Cell from "./cell";
-import { makePosString } from "apps/client/src/utils";
+import { makePosString } from "@/utils";
 
 interface GridContainerProps {
   numCols: number;

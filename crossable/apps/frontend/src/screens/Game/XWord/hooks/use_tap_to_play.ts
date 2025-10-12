@@ -1,5 +1,5 @@
 import { Cell } from "shared";
-import { useSocketContext } from "apps/client/src/contexts/socket";
+import { useSocketContext } from "@/contexts/socket";
 import { useCallback } from "react";
 
 function useTapToPlay(currentCell: Cell) {

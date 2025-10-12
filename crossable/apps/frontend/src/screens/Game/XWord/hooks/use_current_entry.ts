@@ -11,7 +11,7 @@ import {
   getFirstEmptyCell,
   getNextCellInEntry,
   getNextEmptyCellInEntry,
-} from "apps/client/src/utils";
+} from "@/utils";
 import { useCallback, useMemo, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 

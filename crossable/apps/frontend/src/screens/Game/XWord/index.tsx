@@ -4,9 +4,9 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Direction, GameState } from "shared";
 import Clues from "./clues";
 import Puzzle from "./puzzle";
-import { GameInfo, useSocketContext } from "apps/client/src/contexts/socket";
+import { GameInfo, useSocketContext } from "@/contexts/socket";
 import Players from "./players";
-import { filterEntriesByDirection } from "apps/client/src/utils";
+import { filterEntriesByDirection } from "@/utils";
 import useCurrentEntry from "./hooks/use_current_entry";
 import Clue from "./clue";
 

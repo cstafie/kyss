@@ -3,7 +3,7 @@ import { Cell, XWordEntry } from "shared";
 
 import Grid from "./grid";
 import TileBar from "./tile_bar";
-import { GameInfo } from "apps/client/src/contexts/socket";
+import { GameInfo } from "@/contexts/socket";
 import useDragAndDrop from "./hooks/use_drag_and_drop";
 import useTapToPlay from "./hooks/use_tap_to_play";
 

@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { GameInfo, useSocketContext } from 'apps/client/src/contexts/socket';
-import { OnDragUpdateResponder } from '@hello-pangea/dnd';
-import { TILE_BAR_ID } from '../constants';
-import { posStringToRowCol } from 'apps/client/src/utils';
+import { GameInfo, useSocketContext } from "@/contexts/socket";
+import { OnDragUpdateResponder } from "@hello-pangea/dnd";
+import { TILE_BAR_ID } from "../constants";
+import { posStringToRowCol } from "@/utils";
 
 function useDragAndDrop(game: GameInfo) {
   const { playTile, updateTileBar } = useSocketContext();

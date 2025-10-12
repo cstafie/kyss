@@ -1,29 +1,17 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Emoji from '../components/emoji';
-import { Menu, MenuItem } from '../components/menu';
-import NavTitle from '../components/nav_title';
-import UserName from '../components/user_name/user_name';
+import { Link } from "react-router-dom";
+import Emoji from "@/components/emoji";
+import { Menu, MenuItem } from "@/components/menu";
+import NavTitle from "@/components/nav_title";
+import UserName from "@/components/user_name/user_name";
+import { useCallback, useState, type ReactNode } from "react";
+import { NavContext } from ".";
 
-interface Nav {
-  setNavLeft: (node: React.ReactNode) => void;
-  resetNavLeft: () => void;
-}
-
-const NavContext = createContext<Nav>({
-  setNavLeft: (node: React.ReactNode) =>
-    console.error('No matching provider for NavContext'),
-  resetNavLeft: () => console.error('No matching provider for NavContext'),
-});
-
-export const useNavContext = () => useContext(NavContext);
-
-interface Props {
-  children: React.ReactNode;
-}
-
-export const NavContextProvider = ({ children }: Props) => {
-  const [navLeft, setNavLeft] = useState<React.ReactNode>(<NavTitle />);
+export default function NavContextProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [navLeft, setNavLeft] = useState<ReactNode>(<NavTitle />);
 
   const resetNavLeft = useCallback(() => {
     setNavLeft(<NavTitle />);
@@ -73,4 +61,4 @@ export const NavContextProvider = ({ children }: Props) => {
       {children}
     </NavContext.Provider>
   );
-};
+}

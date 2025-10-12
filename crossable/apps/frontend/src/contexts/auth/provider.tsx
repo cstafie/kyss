@@ -1,34 +1,17 @@
-import { User } from "shared";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, type ReactNode } from "react";
 import reactUseCookie from "react-use-cookie";
-import Emoji from "../components/emoji";
-import NavTitle from "../components/nav_title";
-import UserNameForm from "../components/user_name/user_name_form";
+import Emoji from "@/components/emoji";
+import NavTitle from "@/components/nav_title";
+import UserNameForm from "@/components/user_name/user_name_form";
+import { AuthContext } from ".";
 
-interface Auth {
-  signedIn: boolean;
-  user: User;
-  setName: (name: string) => void;
-}
-
-const AuthContext = createContext<Auth>({
-  signedIn: false,
-  user: {
-    name: "",
-    id: "",
-  },
-  setName: (name: string) =>
-    console.error("No matching provider for AuthContext"),
-});
-
-export const useAuthContext = () => useContext(AuthContext);
-
-export const AuthContextProvider = ({ children }: any) => {
+export default function AuthContextProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [id, setID] = reactUseCookie("id");
   const [name, setName] = reactUseCookie("name");
-
-  // no auth pages yet, so user is always signed in
-  const [signedIn, setSignedIn] = useState(true);
 
   // user auto "signs in"
   useEffect(() => {
@@ -44,12 +27,12 @@ export const AuthContextProvider = ({ children }: any) => {
       // keep cookie fresh
       setName(name);
     }
-  }, []);
+  }); // empty dependency array so this only runs once
 
   return (
     <AuthContext.Provider
       value={{
-        signedIn,
+        signedIn: true,
         user: {
           id,
           name,
@@ -77,4 +60,4 @@ export const AuthContextProvider = ({ children }: any) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

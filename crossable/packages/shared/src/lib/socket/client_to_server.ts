@@ -2,16 +2,19 @@ import { BotDifficulty } from "../api-interfaces";
 
 export interface ClientToServerEvents {
   newGame: (name: string) => void;
-  joinServer: (id: string, name: string) => void;
+  joinServer: (userInfo: { userId: string; userName: string }) => void;
   joinGame: (gameId: string) => void;
   leaveGame: () => void;
   startGame: () => void;
-  playTile: (tileId: string, pos: [number, number]) => void;
+  playTile: (tileInfo: { tileId: string; pos: [number, number] }) => void;
   updateTileBar: (tileIds: Array<string>) => void;
   setReady: (ready: boolean) => void;
   addBot: () => void;
   removeBot: (botId: string) => void;
-  setBotDifficulty: (botId: string, difficulty: BotDifficulty) => void;
+  setBotDifficulty: (botInfo: {
+    botId: string;
+    difficulty: BotDifficulty;
+  }) => void;
 }
 
 // export type EventType =
