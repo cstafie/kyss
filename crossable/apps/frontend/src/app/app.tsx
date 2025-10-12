@@ -1,10 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
-import GamesList from '../screens/GamesList';
-import Game from '../screens/Game';
-import { NavContextProvider } from '../contexts/nav';
-import Instructions from '../screens/Instructions';
-import Feedback from '../screens/Feedback';
-import Coffee from '../screens/Coffee';
+import { Routes, Route } from "react-router-dom";
+import GamesList from "@/screens/GamesList";
+import Game from "@/screens/Game";
+import NavContextProvider from "@/contexts/nav/provider";
+import Instructions from "@/screens/Instructions";
+import Feedback from "@/screens/Feedback";
+import Coffee from "@/screens/Coffee";
 
 export const App = () => {
   return (
