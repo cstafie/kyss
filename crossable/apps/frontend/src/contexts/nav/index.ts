@@ -1,4 +1,5 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, type ReactNode } from "react";
+import { createSafeUseContext } from "../util";
 
 interface Nav {
   setNavLeft: (node: ReactNode) => void;
@@ -6,4 +7,4 @@ interface Nav {
 }
 
 export const NavContext = createContext<Nav | null>(null);
-export const useNavContext = () => useContext(NavContext);
+export const useNav = createSafeUseContext(NavContext, "useNav");

@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
-import { useAuthContext } from "@/contexts/auth";
-import { GameInfo, useSocketContext } from "@/contexts/socket";
+import { useAuth } from "@/contexts/auth";
+import { type GameInfo, useSocket } from "@/contexts/socket";
 import BotDifficulty from "@/components/bot_difficulty";
 import { BotDifficulty as BotDifficultyType } from "shared";
 
@@ -13,8 +13,8 @@ interface Props {
 
 function BotList({ game }: Props) {
   const { gameCreatorId, bots } = game;
-  const { user } = useAuthContext();
-  const { addBot, setBotDifficulty, removeBot } = useSocketContext();
+  const { user } = useAuth();
+  const { addBot, setBotDifficulty, removeBot } = useSocket();
 
   const isGameCreator = useMemo(
     () => user.id === gameCreatorId,

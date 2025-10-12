@@ -1,5 +1,6 @@
 import { type User } from "shared";
-import { createContext, useContext } from "react";
+import { createContext } from "react";
+import { createSafeUseContext } from "../util";
 
 interface Auth {
   signedIn: boolean;
@@ -8,5 +9,4 @@ interface Auth {
 }
 
 export const AuthContext = createContext<Auth | null>(null);
-
-export const useAuthContext = () => useContext(AuthContext);
+export const useAuth = createSafeUseContext(AuthContext, "useAuth");

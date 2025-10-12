@@ -1,10 +1,13 @@
-import { BOT_DIFFICULTY, type BotDifficulty } from "shared";
+import {
+  BOT_DIFFICULTY,
+  type BotDifficulty as BotDifficultyType,
+} from "shared";
 
 interface Props {
-  difficulty: BotDifficulty;
+  difficulty: BotDifficultyType;
 }
 
-function BotDifficulty({ difficulty }: Props) {
+export default function BotDifficulty({ difficulty }: Props) {
   const difficultyToClassMap = {
     [BOT_DIFFICULTY.EASY]: "text-green-400",
     [BOT_DIFFICULTY.MEDIUM]: "text-yellow-400",
@@ -23,5 +26,3 @@ function BotDifficulty({ difficulty }: Props) {
     </section>
   );
 }
-
-export default BotDifficulty;

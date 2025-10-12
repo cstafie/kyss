@@ -86,21 +86,22 @@ export interface GameMetaData {
 }
 
 export const GameState = {
-  waitingToStart: 'waiting-to-start',
-  inProgress: 'in-progress',
-  complete: 'complete',
+  waitingToStart: "waiting-to-start",
+  inProgress: "in-progress",
+  complete: "complete",
 } as const;
-export type GameState = typeof GameState[keyof typeof GameState];
+export type GameState = (typeof GameState)[keyof typeof GameState];
 
-export const BotDifficulty = {
-  easy: 0,
-  medium: 1,
-  hard: 2,
+export const BOT_DIFFICULTY = {
+  EASY: 0,
+  MEDIUM: 1,
+  HARD: 2,
 } as const;
-export type BotDifficulty = typeof BotDifficulty[keyof typeof BotDifficulty];
+export type BotDifficulty =
+  (typeof BOT_DIFFICULTY)[keyof typeof BOT_DIFFICULTY];
 
 export const Direction = {
-  across: 'across',
-  down: 'down',
+  across: "across",
+  down: "down",
 };
-export type Direction = typeof Direction[keyof typeof Direction];
+export type Direction = (typeof Direction)[keyof typeof Direction];

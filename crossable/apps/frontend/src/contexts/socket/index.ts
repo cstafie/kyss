@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 
 import {
   type GameMetaData,
@@ -9,6 +9,7 @@ import {
   type BotDifficulty,
   type BotInfo,
 } from "shared";
+import { createSafeUseContext } from "../util";
 
 export interface GameInfo {
   xWord: XWord;
@@ -37,5 +38,4 @@ interface SocketContextI {
 }
 
 export const SocketContext = createContext<SocketContextI | null>(null);
-
-export const useSocketContext = () => useContext(SocketContext);
+export const useSocket = createSafeUseContext(SocketContext, "useSocket");
