@@ -1,5 +1,10 @@
-import { FormEvent, SyntheticEvent, useCallback, useRef } from 'react';
-import { useAuthContext } from '../../contexts/auth';
+import {
+  type FormEvent,
+  type SyntheticEvent,
+  useCallback,
+  useRef,
+} from "react";
+import { useAuth } from "../../contexts/auth";
 
 const MAX_PLAYER_NAME_LENGTH = 12;
 
@@ -16,7 +21,7 @@ interface Props {
 }
 
 function UserNameForm({ className, onSubmit }: Props) {
-  const { setName } = useAuthContext();
+  const { setName } = useAuth();
 
   const userName = useRef<HTMLInputElement>(null);
 
@@ -27,11 +32,11 @@ function UserNameForm({ className, onSubmit }: Props) {
       const value = userName?.current?.value;
 
       // TODO: better validation
-      if (value && value.toLocaleLowerCase() !== 'you') {
+      if (value && value.toLocaleLowerCase() !== "you") {
         setName(value);
-        onSubmit && onSubmit();
+        onSubmit?.();
 
-        // TODO: this is a bit faux pas
+        // TODO: remove this hack
         window.location.reload();
       }
     },

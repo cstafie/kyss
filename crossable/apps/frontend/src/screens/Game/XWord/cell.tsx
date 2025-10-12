@@ -1,6 +1,7 @@
 import { Droppable } from "@hello-pangea/dnd";
-import { Tile as TileType } from "shared";
+import type { Tile as TileType } from "shared";
 import Tile from "./tile";
+import type { MouseEventHandler } from "react";
 
 interface Props {
   id: string;
@@ -9,7 +10,7 @@ interface Props {
   isHighlighted: boolean;
   isCurrentCell: boolean;
   showHover: boolean;
-  onClick: (e: any) => void;
+  onClick: MouseEventHandler<HTMLDivElement>;
   isError: boolean;
 }
 

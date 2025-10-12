@@ -1,9 +1,9 @@
 import { Cell } from "shared";
-import { useSocketContext } from "@/contexts/socket";
+import { useSocket } from "@/contexts/socket";
 import { useCallback } from "react";
 
 function useTapToPlay(currentCell: Cell) {
-  const { playTile } = useSocketContext();
+  const { playTile } = useSocket();
 
   const handleTapTile = useCallback(
     (tileId: string) => {

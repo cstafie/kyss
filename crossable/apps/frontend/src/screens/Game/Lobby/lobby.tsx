@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import { GameInfo, useSocketContext } from '../../../contexts/socket';
-import BotList from './bot_list';
-import PlayerList from './player_list';
+import { useMemo } from "react";
+import { type GameInfo, useSocket } from "../../../contexts/socket";
+import BotList from "./bot_list";
+import PlayerList from "./player_list";
 
 interface Props {
   game: GameInfo;
 }
 
 const Lobby = ({ game }: Props) => {
-  const { startGame, setReady } = useSocketContext();
+  const { startGame, setReady } = useSocket();
 
   const allPlayersReady = useMemo(() => {
     return Array.from(game.players.values()).every((player) => player.ready);
@@ -51,7 +51,7 @@ const Lobby = ({ game }: Props) => {
         </section>
         <button
           onClick={startGame}
-          className={`btn btn-blue ${allPlayersReady ? '' : 'btn-disabled'}`}
+          className={`btn btn-blue ${allPlayersReady ? "" : "btn-disabled"}`}
         >
           START
         </button>

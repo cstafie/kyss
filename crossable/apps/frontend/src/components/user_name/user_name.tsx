@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { useAuthContext } from '../../contexts/auth';
-import Emoji from '../emoji';
-import UserNameForm from './user_name_form';
+import { useState } from "react";
+import { useAuth } from "../../contexts/auth";
+import Emoji from "../emoji";
+import UserNameForm from "./user_name_form";
 
-const pencilEmoji = '✏️';
+const pencilEmoji = "✏️";
 
 const UserName = () => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [editing, setEditing] = useState(false);
 
-  const className = 'flex justify-end items-center gap-2';
+  const className = "flex justify-end items-center gap-2";
 
   return editing ? (
     <UserNameForm className={className} onSubmit={() => setEditing(false)} />

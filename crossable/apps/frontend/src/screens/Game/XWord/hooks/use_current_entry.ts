@@ -1,7 +1,7 @@
 import {
-  Cell,
-  XWord,
-  XWordEntry,
+  type Cell,
+  type XWord,
+  type XWordEntry,
   entryContainsCell,
   getCrossingEntryIndex,
 } from "shared";
@@ -54,9 +54,11 @@ const useCurrentEntry = (xWord: XWord): Result => {
       xWord.entries
     );
 
-    crossingEntryIndex === -1
-      ? setCurrentEntryIndex(0)
-      : setCurrentEntryIndex(crossingEntryIndex);
+    if (crossingEntryIndex === -1) {
+      setCurrentEntryIndex(0);
+    } else {
+      setCurrentEntryIndex(crossingEntryIndex);
+    }
   }, [currentEntry, currentCell, xWord.entries]);
 
   const updateCurrentCell = useCallback(

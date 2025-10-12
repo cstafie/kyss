@@ -1,6 +1,6 @@
 import { PlayerInfo } from "shared";
 import Emoji from "@/components/emoji";
-import { useAuthContext } from "@/contexts/auth";
+import { useAuth } from "@/contexts/auth";
 
 interface Props {
   players: Array<PlayerInfo>;
@@ -20,7 +20,7 @@ function computeMedal(spot: number) {
 }
 
 const Players = ({ players, isGameOver }: Props) => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   players.sort((playerA, playerB) => playerB.score - playerA.score);
 
   return (

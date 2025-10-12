@@ -1,8 +1,8 @@
-import { GameMetaData } from "shared";
+import { type GameMetaData } from "shared";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { useAuthContext } from "../../contexts/auth";
-import { useSocketContext } from "../../contexts/socket";
+import { useAuth } from "../../contexts/auth";
+import { useSocket } from "../../contexts/socket";
 
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
@@ -12,8 +12,8 @@ interface Props {
 }
 
 const GamesTable = ({ games }: Props) => {
-  const { user } = useAuthContext();
-  const { joinGame } = useSocketContext();
+  const { user } = useAuth();
+  const { joinGame } = useSocket();
 
   return (
     <table className="table-auto border-collapse w-full lg:w-1/2 rounded text-sm sm:text-lg">
@@ -28,14 +28,7 @@ const GamesTable = ({ games }: Props) => {
       </thead>
       <tbody className="">
         {games.map(
-          ({
-            id,
-            name,
-            createdAt,
-            numberOfPlayers,
-            creatorId,
-            creatorName,
-          }) => (
+          ({ id, createdAt, numberOfPlayers, creatorId, creatorName }) => (
             <tr
               key={id}
               onClick={() => joinGame(id)}

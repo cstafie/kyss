@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 
-import { GameInfo, useSocketContext } from "@/contexts/socket";
-import { OnDragUpdateResponder } from "@hello-pangea/dnd";
+import { type GameInfo, useSocket } from "@/contexts/socket";
+import { type OnDragUpdateResponder } from "@hello-pangea/dnd";
 import { TILE_BAR_ID } from "../constants";
 import { posStringToRowCol } from "@/utils";
 
 function useDragAndDrop(game: GameInfo) {
-  const { playTile, updateTileBar } = useSocketContext();
+  const { playTile, updateTileBar } = useSocket();
 
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {
@@ -18,13 +18,13 @@ function useDragAndDrop(game: GameInfo) {
   const onDragStart = useCallback(() => {
     /*...*/
   }, []);
-  const onDragUpdate: OnDragUpdateResponder = useCallback((update) => {
+  const onDragUpdate: OnDragUpdateResponder = useCallback(() => {
     /*...*/
   }, []);
   const onDragEnd: OnDragUpdateResponder = useCallback(
     // TODO: this should be a reducer
     (dropResult) => {
-      const { destination, source, draggableId } = dropResult;
+      const { destination, source } = dropResult;
 
       // user dropped outside of a droppable
       if (!destination) {

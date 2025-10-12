@@ -1,23 +1,23 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useNavContext } from '../../contexts/nav';
-import { useSocketContext } from '../../contexts/socket';
-import GamesTable from './games_table';
+import { useNav } from "../../contexts/nav";
+import { useSocket } from "../../contexts/socket";
+import GamesTable from "./games_table";
 
 const GamesList = () => {
-  const { games, game, createGame } = useSocketContext();
+  const { games, game, createGame } = useSocket();
   const navigate = useNavigate();
-  const { resetNavLeft } = useNavContext();
+  const { resetNavLeft } = useNav();
 
   useEffect(() => {
     // TODO: navigate should not be used in this way
     if (game !== null) {
-      navigate('/xword');
+      navigate("/xword");
     }
   }, [game, navigate]);
 
-  useEffect(resetNavLeft, []);
+  useEffect(resetNavLeft);
 
   return (
     <section className="flex flex-col items-center p-2">

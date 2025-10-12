@@ -2,6 +2,7 @@
 
 ## alpha release
 
+- remove turbo files and other unneeded files accidentally committed
 - fix no letters handed out bug
 
 ---

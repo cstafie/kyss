@@ -1,4 +1,5 @@
 import {
+  BOT_DIFFICULTY,
   BotDifficulty,
   countEmpty,
   GameState,
@@ -18,7 +19,7 @@ class Bot extends Entity {
 
   constructor(
     updateGamePlayers: () => void,
-    difficulty: BotDifficulty = BotDifficulty.medium
+    difficulty: BotDifficulty = BOT_DIFFICULTY.MEDIUM
   ) {
     super();
     this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
@@ -35,15 +36,15 @@ class Bot extends Entity {
     if (!this.game) return;
 
     const difficultyTimeoutMap = {
-      [BotDifficulty.easy]: 15,
-      [BotDifficulty.medium]: 10,
-      [BotDifficulty.hard]: 5,
+      [BOT_DIFFICULTY.EASY]: 15,
+      [BOT_DIFFICULTY.MEDIUM]: 10,
+      [BOT_DIFFICULTY.HARD]: 5,
     };
 
     const difficultyErrorFrequencyMap = {
-      [BotDifficulty.easy]: 3,
-      [BotDifficulty.medium]: 6,
-      [BotDifficulty.hard]: 10,
+      [BOT_DIFFICULTY.EASY]: 3,
+      [BOT_DIFFICULTY.MEDIUM]: 6,
+      [BOT_DIFFICULTY.HARD]: 10,
     };
 
     const emptyCount = countEmpty(this.game.xWord);

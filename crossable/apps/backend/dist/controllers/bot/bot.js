@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const shared_1 = require("shared");
 const entity_1 = __importDefault(require("../entity/entity"));
 class Bot extends entity_1.default {
-    constructor(updateGamePlayers, difficulty = shared_1.BotDifficulty.medium) {
+    constructor(updateGamePlayers, difficulty = shared_1.BOT_DIFFICULTY.MEDIUM) {
         super();
         this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
         this.difficulty = difficulty;
@@ -20,14 +20,14 @@ class Bot extends entity_1.default {
         if (!this.game)
             return;
         const difficultyTimeoutMap = {
-            [shared_1.BotDifficulty.easy]: 15,
-            [shared_1.BotDifficulty.medium]: 10,
-            [shared_1.BotDifficulty.hard]: 5,
+            [shared_1.BOT_DIFFICULTY.EASY]: 15,
+            [shared_1.BOT_DIFFICULTY.MEDIUM]: 10,
+            [shared_1.BOT_DIFFICULTY.HARD]: 5,
         };
         const difficultyErrorFrequencyMap = {
-            [shared_1.BotDifficulty.easy]: 3,
-            [shared_1.BotDifficulty.medium]: 6,
-            [shared_1.BotDifficulty.hard]: 10,
+            [shared_1.BOT_DIFFICULTY.EASY]: 3,
+            [shared_1.BOT_DIFFICULTY.MEDIUM]: 6,
+            [shared_1.BOT_DIFFICULTY.HARD]: 10,
         };
         const emptyCount = (0, shared_1.countEmpty)(this.game.xWord);
         const timeoutTime = (0, shared_1.randomInRange)(700, 1300) * difficultyTimeoutMap[this.difficulty] +

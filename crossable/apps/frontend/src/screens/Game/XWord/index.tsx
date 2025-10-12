@@ -4,7 +4,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Direction, GameState } from "shared";
 import Clues from "./clues";
 import Puzzle from "./puzzle";
-import { GameInfo, useSocketContext } from "@/contexts/socket";
+import { type GameInfo, useSocket } from "@/contexts/socket";
 import Players from "./players";
 import { filterEntriesByDirection } from "@/utils";
 import useCurrentEntry from "./hooks/use_current_entry";
@@ -21,7 +21,7 @@ const ALPHABET = Array(26)
 
 const XWord = ({ game }: Props) => {
   const { xWord } = game;
-  const { playTile, createGame, incorrectPosStrings } = useSocketContext();
+  const { playTile, createGame, incorrectPosStrings } = useSocket();
 
   const {
     currentCell,

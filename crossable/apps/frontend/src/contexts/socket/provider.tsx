@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ReactNode, use } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { produce } from "immer";
 import { SocketContext } from ".";
@@ -8,10 +8,11 @@ import type {
   ServerToClientEvents,
   ClientToServerEvents,
   BotDifficulty,
+  ServerGameUpdate,
 } from "shared";
-import { useAuthContext } from "@/contexts/auth";
+import { useAuth } from "@/contexts/auth";
 import { makePosString } from "@/utils";
-import { GameInfo } from "@/contexts/socket";
+import { type GameInfo } from "@/contexts/socket";
 import { io, Socket } from "socket.io-client";
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
@@ -31,7 +32,7 @@ const startGame = () => {
   socket.emit("startGame");
 };
 
-const joinServer = (userInfo: { userId: string; userName: string }) => {
+const joinServer = (userInfo: { id: string; name: string }) => {
   socket.emit("joinServer", userInfo);
 };
 
@@ -43,8 +44,8 @@ const removeBot = (botId: string) => {
   socket.emit("removeBot", botId);
 };
 
-const setBotDifficulty = (botId: string, difficulty: BotDifficulty) => {
-  socket.emit("setBotDifficulty", { botId, difficulty });
+const setBotDifficulty = (id: string, difficulty: BotDifficulty) => {
+  socket.emit("setBotDifficulty", { id, difficulty });
 };
 
 export default function SocketContextProvider({
@@ -55,7 +56,7 @@ export default function SocketContextProvider({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [games, setGames] = useState<Array<GameMetaData>>([]);
   const [game, setGame] = useState<GameInfo | null>(null);
@@ -75,11 +76,11 @@ export default function SocketContextProvider({
   useEffect(() => {
     // TODO: should this run on `socket.on('connect', () => {...})`
     if (user.name && user.id) {
-      joinServer({ userId: user.id, userName: user.name });
+      joinServer({ id: user.id, name: user.name });
     }
   }, [user.name, user.id]);
 
-  const handleUpdateGame = useCallback((gameUpdate: GameInfo) => {
+  const handleUpdateGame = useCallback((gameUpdate: ServerGameUpdate) => {
     const { serializedPlayersMap, serializedBotsMap, ...rest } = gameUpdate;
     setGame({
       players: new Map(JSON.parse(serializedPlayersMap)),
@@ -126,7 +127,7 @@ export default function SocketContextProvider({
         return;
       }
 
-      socket.emit("playTile", { tileId, pos: [row, col] });
+      socket.emit("playTile", { id: tileId, pos: [row, col] });
 
       const tileIndex = game.tileBar.findIndex((tile) => tile.id === tileId);
       if (tileIndex === -1) {
