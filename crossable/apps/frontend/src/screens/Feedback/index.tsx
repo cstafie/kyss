@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { FormEvent, useCallback, useRef, useState } from 'react';
-import Emoji from '../../components/emoji';
+import axios from "axios";
+import { type FormEvent, useCallback, useRef, useState } from "react";
+import Emoji from "../../components/emoji";
 
 function Feedback() {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -13,16 +13,16 @@ function Feedback() {
     e.preventDefault();
 
     axios
-      .post('/api/feedback', {
-        email: emailRef?.current?.value || '',
-        content: contentRef?.current?.value || '',
+      .post("/api/feedback", {
+        email: emailRef?.current?.value || "",
+        content: contentRef?.current?.value || "",
       })
       .then(() => {
         setSent(true);
         setSending(false);
       })
       .catch(() => {
-        alert('There was an error sending your feedback');
+        alert("There was an error sending your feedback");
         setSent(false);
         setSending(false);
       });
@@ -39,8 +39,8 @@ function Feedback() {
         </p>
 
         <div className="flex text-2xl justify-center font-extrabold">
-          {sending && 'Sending...'}
-          {sent && 'Feedback sent!'}
+          {sending && "Sending..."}
+          {sent && "Feedback sent!"}
         </div>
 
         {!sending && !sent && (

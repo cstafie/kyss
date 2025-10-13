@@ -5,7 +5,10 @@ import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { useAuth } from "@/contexts/auth";
 import { type GameInfo, useSocket } from "@/contexts/socket";
 import BotDifficulty from "@/components/bot_difficulty";
-import { BotDifficulty as BotDifficultyType } from "shared";
+import {
+  BOT_DIFFICULTY,
+  type BotDifficulty as BotDifficultyType,
+} from "shared";
 
 interface Props {
   game: GameInfo;
@@ -39,12 +42,12 @@ function BotList({ game }: Props) {
           <div className="flex justify-between w-64">
             {isGameCreator && (
               <button
-                disabled={difficulty === BotDifficultyType.easy}
+                disabled={difficulty === BOT_DIFFICULTY.EASY}
                 onClick={() =>
                   setBotDifficulty(id, (difficulty - 1) as BotDifficultyType)
                 }
                 className={`btn btn-borderless flex items-center text-sm  ${
-                  difficulty === BotDifficultyType.easy ? "btn-disabled" : ""
+                  difficulty === BOT_DIFFICULTY.EASY ? "btn-disabled" : ""
                 }`}
               >
                 <BsChevronLeft />
@@ -55,12 +58,12 @@ function BotList({ game }: Props) {
 
             {isGameCreator && (
               <button
-                disabled={difficulty === BotDifficultyType.hard}
+                disabled={difficulty === BOT_DIFFICULTY.HARD}
                 onClick={() =>
                   setBotDifficulty(id, (difficulty + 1) as BotDifficultyType)
                 }
                 className={`btn btn-borderless flex items-center text-sm ${
-                  difficulty === BotDifficultyType.hard ? "btn-disabled" : ""
+                  difficulty === BOT_DIFFICULTY.HARD ? "btn-disabled" : ""
                 }`}
               >
                 <BsChevronRight />

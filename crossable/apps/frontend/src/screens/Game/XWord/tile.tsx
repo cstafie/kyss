@@ -1,6 +1,6 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { Tile as TileType } from "shared";
-import { MouseEventHandler } from "react";
+import type { Tile as TileType } from "shared";
+import type { MouseEventHandler } from "react";
 
 interface Props {
   tile: TileType;

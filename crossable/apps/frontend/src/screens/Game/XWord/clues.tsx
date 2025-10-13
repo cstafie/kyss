@@ -1,4 +1,4 @@
-import { XWordEntry } from "shared";
+import type { XWordEntry } from "shared";
 import Clue from "./clue";
 
 interface Props {

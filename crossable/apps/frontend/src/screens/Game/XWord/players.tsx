@@ -1,4 +1,4 @@
-import { PlayerInfo } from "shared";
+import type { PlayerInfo } from "shared";
 import Emoji from "@/components/emoji";
 import { useAuth } from "@/contexts/auth";
 

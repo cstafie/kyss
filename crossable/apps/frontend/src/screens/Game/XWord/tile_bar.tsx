@@ -1,5 +1,5 @@
 import { Droppable } from "@hello-pangea/dnd";
-import { Tile as TileType } from "shared";
+import type { Tile as TileType } from "shared";
 import { TILE_BAR_ID } from "./constants";
 import Tile from "./tile";
 

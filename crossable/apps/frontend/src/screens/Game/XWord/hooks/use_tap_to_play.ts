@@ -1,4 +1,4 @@
-import { Cell } from "shared";
+import type { Cell } from "shared";
 import { useSocket } from "@/contexts/socket";
 import { useCallback } from "react";
 

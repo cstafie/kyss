@@ -1,9 +1,9 @@
 import {
-  XWord,
+  type XWord,
   Direction,
-  XWordEntry,
+  type XWordEntry,
   getEntry,
-  Cell,
+  type Cell,
   flipDirection,
 } from "shared";
 

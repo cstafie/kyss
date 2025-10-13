@@ -3,9 +3,9 @@ import styled from "styled-components";
 import {
   Direction,
   GameState,
-  Cell as CellType,
-  XWord,
-  XWordEntry,
+  type Cell as CellType,
+  type XWord,
+  type XWordEntry,
 } from "shared";
 import Block from "./block";
 import Cell from "./cell";
@@ -17,7 +17,7 @@ interface GridContainerProps {
 }
 
 // TODO: look into solving this using tailwind only
-const GridContainer = styled.section`
+const GridContainer = styled.section<GridContainerProps>`
   display: inline-grid;
   padding: 2px;
   gap: 2px;
