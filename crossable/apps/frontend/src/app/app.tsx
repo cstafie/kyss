@@ -11,7 +11,7 @@ export const App = () => {
     <NavContextProvider>
       <main className="overflow-auto pt-4 flex-1">
         <Routes>
-          <Route path="/" element={<GamesList />} />
+          <Route index element={<GamesList />} />
           <Route path="/xword" element={<Game />} />
           <Route path="/instructions" element={<Instructions />} />
           <Route path="/feedback" element={<Feedback />} />

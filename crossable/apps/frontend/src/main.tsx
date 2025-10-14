@@ -1,4 +1,4 @@
-// import { StrictMode } from 'react';
+import { StrictMode } from "react";
 import { enableMapSet } from "immer";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -14,14 +14,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  // <StrictMode> // TODO: test with strict mode
-  <BrowserRouter>
-    <AuthContextProvider>
-      <SocketContextProvider>
-        <App />
-      </SocketContextProvider>
-    </AuthContextProvider>
-  </BrowserRouter>
-
-  // </StrictMode>
+  <StrictMode>
+    <BrowserRouter>
+      <AuthContextProvider>
+        <SocketContextProvider>
+          <App />
+        </SocketContextProvider>
+      </AuthContextProvider>
+    </BrowserRouter>
+  </StrictMode>
 );

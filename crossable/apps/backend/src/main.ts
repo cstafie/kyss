@@ -19,7 +19,12 @@ import sendEmail from "./api/feedback/send_email";
 const app = express();
 
 const httpServer = http.createServer(app);
-const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer);
+const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer, {
+  cors: {
+    // TODO: double check once everything is dockerized
+    origin: "http://localhost:5137", // frontend origin
+  },
+});
 io.listen(4444);
 
 app.use(cookieParser());

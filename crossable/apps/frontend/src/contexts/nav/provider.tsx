@@ -14,6 +14,7 @@ export default function NavContextProvider({
   const [navLeft, setNavLeft] = useState<ReactNode>(<NavTitle />);
 
   const resetNavLeft = useCallback(() => {
+    console.log("resetting nav left");
     setNavLeft(<NavTitle />);
   }, []);
 

@@ -17,7 +17,7 @@ const GamesList = () => {
     }
   }, [game, navigate]);
 
-  useEffect(resetNavLeft);
+  useEffect(resetNavLeft, [resetNavLeft]);
 
   return (
     <section className="flex flex-col items-center p-2">
