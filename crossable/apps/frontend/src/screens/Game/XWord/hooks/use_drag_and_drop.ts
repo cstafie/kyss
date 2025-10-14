@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 
-import { type GameInfo, useSocket } from "@/contexts/socket";
+import { type GameInfo, useGame } from "@/contexts/game";
 import { type OnDragUpdateResponder } from "@hello-pangea/dnd";
 import { TILE_BAR_ID } from "../constants";
 import { posStringToRowCol } from "@/utils";
 
 function useDragAndDrop(game: GameInfo) {
-  const { playTile, updateTileBar } = useSocket();
+  const { playTile, updateTileBar } = useGame();
 
   // using useCallback is optional
   const onBeforeCapture = useCallback(() => {

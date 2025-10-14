@@ -1,5 +1,5 @@
 import { TILE_BAR_SIZE, SCORE_INCREASE, SCORE_DECREASE } from "shared";
-import Emoji from "../../components/emoji";
+import Emoji from "@/components/emoji";
 
 function Instructions() {
   return (

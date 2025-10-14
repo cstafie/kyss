@@ -1,16 +1,16 @@
 import { GameState } from "shared";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import Emoji from "../../components/emoji";
-import { useNav } from "../../contexts/nav";
-import { useSocket } from "../../contexts/socket";
+import Emoji from "@/components/emoji";
+import { useNav } from "@/contexts/nav";
+import { useGame } from "@/contexts/game";
 import Lobby from "./Lobby/lobby";
 import XWord from "./XWord";
 
 const BACK_ARROW_EMOJI = "⬅️";
 
 const Game = () => {
-  const { game, leaveGame } = useSocket();
+  const { game, leaveGame } = useGame();
   const { setNavLeft } = useNav();
 
   useEffect(() => {

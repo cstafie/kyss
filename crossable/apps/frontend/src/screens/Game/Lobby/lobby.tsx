@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { type GameInfo, useSocket } from "../../../contexts/socket";
+import { type GameInfo, useGame } from "@/contexts/game";
 import BotList from "./bot_list";
 import PlayerList from "./player_list";
 
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const Lobby = ({ game }: Props) => {
-  const { startGame, setReady } = useSocket();
+  const { startGame, setReady } = useGame();
 
   const allPlayersReady = useMemo(() => {
     return Array.from(game.players.values()).every((player) => player.ready);

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import type { GameInfo } from "@/contexts/socket";
+import type { GameInfo } from "@/contexts/game";
 
 // TODO: cleanup double definition
 export const ROUTES = {

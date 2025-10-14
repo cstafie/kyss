@@ -4,7 +4,7 @@ import {
   useCallback,
   useRef,
 } from "react";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@/contexts/auth";
 
 const MAX_PLAYER_NAME_LENGTH = 12;
 

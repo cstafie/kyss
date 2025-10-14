@@ -16,6 +16,7 @@ interface SocketState {
 }
 
 export function useSocket(options: UseSocketOptions) {
+  console.log("useSocket called");
   const { url, autoConnect = true, onConnect, onDisconnect, onError } = options;
 
   const socketRef = useRef<Socket<
@@ -34,7 +35,7 @@ export function useSocket(options: UseSocketOptions) {
     const socket = io(url, {
       autoConnect: true,
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 1,
       reconnectionDelay: 1000,
     });
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@/contexts/auth";
 import Emoji from "../emoji";
 import UserNameForm from "./user_name_form";
 

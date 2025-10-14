@@ -1,6 +1,6 @@
 import Emoji from "@/components/emoji";
 import { useAuth } from "@/contexts/auth";
-import { type GameInfo } from "@/contexts/socket";
+import { type GameInfo } from "@/contexts/game";
 import { useMemo } from "react";
 
 interface Props {

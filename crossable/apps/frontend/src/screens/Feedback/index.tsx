@@ -1,6 +1,6 @@
 import axios from "axios";
 import { type FormEvent, useCallback, useRef, useState } from "react";
-import Emoji from "../../components/emoji";
+import Emoji from "@/components/emoji";
 
 function Feedback() {
   const emailRef = useRef<HTMLInputElement>(null);

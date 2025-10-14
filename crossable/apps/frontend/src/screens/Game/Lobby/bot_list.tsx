@@ -3,7 +3,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 import { useAuth } from "@/contexts/auth";
-import { type GameInfo, useSocket } from "@/contexts/socket";
+import { type GameInfo, useGame } from "@/contexts/game";
 import BotDifficulty from "@/components/bot_difficulty";
 import {
   BOT_DIFFICULTY,
@@ -17,7 +17,7 @@ interface Props {
 function BotList({ game }: Props) {
   const { gameCreatorId, bots } = game;
   const { user } = useAuth();
-  const { addBot, setBotDifficulty, removeBot } = useSocket();
+  const { addBot, setBotDifficulty, removeBot } = useGame();
 
   const isGameCreator = useMemo(
     () => user.id === gameCreatorId,

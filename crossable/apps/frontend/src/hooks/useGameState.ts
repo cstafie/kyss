@@ -8,7 +8,7 @@ import type {
   ServerGameUpdate,
 } from "shared";
 import { makePosString } from "@/utils";
-import type { GameInfo } from "@/contexts/socket";
+import type { GameInfo } from "@/contexts/game";
 
 type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 

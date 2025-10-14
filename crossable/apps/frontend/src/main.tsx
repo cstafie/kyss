@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./app/app";
 import AuthContextProvider from "@/contexts/auth/provider";
-import SocketContextProvider from "@/contexts/socket/provider";
+import GameContextProvider from "@/contexts/game/provider";
 import "./main.css";
 
 enableMapSet();
@@ -17,9 +17,9 @@ root.render(
   <StrictMode>
     <BrowserRouter>
       <AuthContextProvider>
-        <SocketContextProvider>
+        <GameContextProvider>
           <App />
-        </SocketContextProvider>
+        </GameContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   </StrictMode>

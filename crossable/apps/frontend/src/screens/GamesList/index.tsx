@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useNav } from "../../contexts/nav";
-import { useSocket } from "../../contexts/socket";
+import { useNav } from "@/contexts/nav";
+import { useGame } from "@/contexts/game";
 import GamesTable from "./games_table";
 
 const GamesList = () => {
-  const { games, game, createGame } = useSocket();
+  const { games, game, createGame } = useGame();
   const navigate = useNavigate();
   const { resetNavLeft } = useNav();
 

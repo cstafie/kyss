@@ -37,5 +37,5 @@ interface SocketContextI {
   setBotDifficulty: (botId: string, difficulty: BotDifficulty) => void;
 }
 
-export const SocketContext = createContext<SocketContextI | null>(null);
-export const useSocket = createSafeUseContext(SocketContext, "useSocket");
+export const GameContext = createContext<SocketContextI | null>(null);
+export const useGame = createSafeUseContext(GameContext, "useGame");

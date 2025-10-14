@@ -6,41 +6,47 @@ import {
   type ReactNode,
 } from "react";
 import { produce } from "immer";
-import { type GameInfo, SocketContext } from ".";
+import { GameContext, type GameInfo } from ".";
 import type { Tile, BotDifficulty } from "shared";
-import { useAuth } from "@/contexts/auth";
+// import { useAuth } from "@/contexts/auth";
 import { useSocket } from "@/hooks/useSocket";
 import { useGameState } from "@/hooks/useGameState";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
 import { SocketActions } from "@/services/socketActions";
 // import { config } from "@/config";
 
-export default function SocketContextProvider({
+export default function GameContextProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
+  const user = { id: "test-user", name: "Test User" }; // TODO: replace with real auth
   const [game, setGame] = useState<GameInfo | null>(null);
 
-  // Socket connection with error handling
+  const onConnect = useCallback(() => console.log("Socket connected"), []);
+  const onDisconnect = useCallback(
+    () => console.log("Socket disconnected"),
+    []
+  );
+  const onError = useCallback(
+    (error: Error) => console.error("Socket error:", error),
+    []
+  );
+
+  // Socket connection with basic error handling
   const {
     socket,
     isConnected,
     error: socketError,
   } = useSocket({
-    url: "http://localhost:4444",
-    autoConnect: true,
-    onConnect: () => {
-      console.log("Socket connected");
-    },
-    onDisconnect: () => {
-      console.log("Socket disconnected");
-    },
-    onError: (error) => {
-      console.error("Socket error:", error);
-    },
+    url: "http://localhost:3333",
+    onConnect,
+    onDisconnect,
+    onError,
   });
+
+  console.error("Socket error:", socketError);
 
   // Game state management
   const {
@@ -52,6 +58,7 @@ export default function SocketContextProvider({
 
   // Sync server game state with local state
   useEffect(() => {
+    console.log("Server game state updated:", serverGame);
     if (serverGame) {
       setGame(serverGame);
     } else {
@@ -251,8 +258,6 @@ export default function SocketContextProvider({
   );
 
   return (
-    <SocketContext.Provider value={contextValue}>
-      {children}
-    </SocketContext.Provider>
+    <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );
 }
