@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp -r src/assets dist/assets",
     "start": "node dist/main.js",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist"

@@ -8,20 +8,18 @@ import {
 import { produce } from "immer";
 import { GameContext, type GameInfo } from ".";
 import type { Tile, BotDifficulty } from "shared";
-// import { useAuth } from "@/contexts/auth";
+import { useAuth } from "@/contexts/auth";
 import { useSocket } from "@/hooks/useSocket";
 import { useGameState } from "@/hooks/useGameState";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
 import { SocketActions } from "@/services/socketActions";
-// import { config } from "@/config";
 
 export default function GameContextProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  // const { user } = useAuth();
-  const user = { id: "test-user", name: "Test User" }; // TODO: replace with real auth
+  const { user } = useAuth();
   const [game, setGame] = useState<GameInfo | null>(null);
 
   const onConnect = useCallback(() => console.log("Socket connected"), []);

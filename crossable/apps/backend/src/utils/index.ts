@@ -1,5 +1,11 @@
 import { getNRandom, mapGrid, XWord, XWordEntry, Direction } from "shared";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import * as fs from "fs";
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const mapEntries = (entries: any[]): Array<XWordEntry> => {
   return entries.map((entry) => ({
@@ -14,10 +20,12 @@ const mapEntries = (entries: any[]): Array<XWordEntry> => {
 };
 
 export const getRandomXWord = (): XWord => {
-  const path = __dirname + "/assets/generated_xWords/";
+  const path = join(__dirname, "../assets/generated_xWords/");
   const filePaths = fs.readdirSync(path);
   const randomFile = getNRandom(filePaths, 1)[0];
-  const jsonXWord = JSON.parse(fs.readFileSync(path + randomFile).toString());
+  const jsonXWord = JSON.parse(
+    fs.readFileSync(join(path, randomFile)).toString()
+  );
 
   return {
     ...jsonXWord,
