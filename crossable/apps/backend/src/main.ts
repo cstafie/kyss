@@ -12,7 +12,7 @@ import {
   ClientToServerEvents,
 } from "shared";
 
-import serverManager from "./controllers/server_manager/server_manager";
+import serverManager from "./controllers/server/server_manager";
 import sendEmail from "./api/feedback/send_email";
 
 const app = express();

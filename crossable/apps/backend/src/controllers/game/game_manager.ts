@@ -25,23 +25,25 @@ export class GameManager extends Entity {
     // add the creator of the game to their own game
     this.userJoinGame(user);
 
-    this.updateGameForAllPlayers();
-
     console.log(`${user.name} created a new game`);
   }
 
-  addBot() {
+  private addBot() {
     const bot = new Bot(this.updateGameForAllPlayers.bind(this));
     this.game.addPlayer(bot.id, bot.name, true);
     this.bots.set(bot.id, bot);
+
+    this.updateGameForAllPlayers();
   }
 
-  removeBot(botId: string) {
+  private removeBot(botId: string) {
     this.game.removePlayer(botId);
     this.bots.delete(botId);
+
+    this.updateGameForAllPlayers();
   }
 
-  setBotDifficulty(botInfo: { id: string; difficulty: BotDifficulty }) {
+  private setBotDifficulty(botInfo: { id: string; difficulty: BotDifficulty }) {
     const bot = this.bots.get(botInfo.id);
 
     if (!bot) {
@@ -49,11 +51,12 @@ export class GameManager extends Entity {
     }
 
     bot.difficulty = botInfo.difficulty;
+    this.updateGameForAllPlayers();
   }
 
   private playerSetup(user: User) {
     // setup socket listeners for the player
-    const addBot = this.addBot.bind(this);
+    const addBot = () => this.addBot();
     const removeBot = this.removeBot.bind(this);
     const setBotDifficulty = this.setBotDifficulty.bind(this);
     const startGame = this.startGame.bind(this);
@@ -99,7 +102,10 @@ export class GameManager extends Entity {
     this.updateGameForAllPlayers();
   }
 
-  makeServerGameUpdate(playerInfo: PlayerInfo, game: Game): ServerGameUpdate {
+  private makeServerGameUpdate(
+    playerInfo: PlayerInfo,
+    game: Game
+  ): ServerGameUpdate {
     const { tileBar, score, ready } = playerInfo;
 
     const botInfos: Map<string, BotInfo> = new Map();
@@ -127,40 +133,46 @@ export class GameManager extends Entity {
   }
 
   updateGameForAllPlayers() {
-    Array.from(this.game.players.entries()).forEach(
-      ([playerId, playerInfo]) => {
-        console.log("game manager: updating: ", playerInfo.name);
+    const playerIds = Array.from(this.game.players.keys());
 
-        const updateFn = this.userUpdates.get(playerId);
-        updateFn && updateFn();
-      }
-    );
+    playerIds.forEach((playerId) => {
+      const updateFn = this.userUpdates.get(playerId);
+      updateFn?.();
+    });
   }
 
-  startGame() {
+  private startGame() {
     // can only start games that are not started
     if (this.game.gameState !== GameState.waitingToStart) {
       return;
     }
 
-    // game.start returns true if started successfully
-    if (this.game.start()) {
-      for (const bot of this.bots.values()) {
-        bot.start(this.game);
-      }
+    try {
+      this.game.start();
+    } catch (e) {
+      console.error("game manager: failed to start game: ", e);
+      return;
     }
+
+    for (const bot of this.bots.values()) {
+      bot.start(this.game);
+    }
+
+    this.updateGameForAllPlayers();
   }
 
   playerLeaveGame(playerId: string) {
     console.log("game manager: player leave game");
 
     const playerUnsubscribe = this.userUnsubscribes.get(playerId);
+
     if (playerUnsubscribe) {
       playerUnsubscribe();
       this.userUnsubscribes.delete(playerId);
     }
 
     this.game.removePlayer(playerId);
+
     this.updateGameForAllPlayers();
   }
 

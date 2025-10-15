@@ -51,12 +51,11 @@ export class Game extends Entity {
 
     const allPlayersReady = players.every((player) => player.ready);
 
-    if (allPlayersReady) {
-      this.gameState = GameState.inProgress;
-      return true;
+    if (!allPlayersReady) {
+      throw new Error("Not all players are ready");
     }
 
-    return false;
+    this.gameState = GameState.inProgress;
   }
 
   fillPlayerTileBar(playerId: string) {

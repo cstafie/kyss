@@ -1,9 +1,4 @@
-import {
-  GameMetaData,
-  GameState,
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "shared";
+import { GameMetaData, GameState, ClientToServerEvents } from "shared";
 import { Socket } from "socket.io";
 import GameManager from "../game_manager/game_manager";
 import User from "../user/user";

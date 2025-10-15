@@ -44,7 +44,9 @@ export default function GameContextProvider({
     onError,
   });
 
-  console.error("Socket error:", socketError);
+  if (socketError) {
+    console.error("Socket error:", socketError);
+  }
 
   // Game state management
   const {
@@ -208,6 +210,7 @@ export default function GameContextProvider({
   const setReady = useCallback(
     (ready: boolean) => {
       try {
+        console.log("Setting ready status to:", ready);
         actions.setReady(ready);
       } catch (error) {
         console.error("Failed to set ready status:", error);
