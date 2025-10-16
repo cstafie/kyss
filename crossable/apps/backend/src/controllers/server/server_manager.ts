@@ -1,6 +1,6 @@
 import { GameMetaData, GameState, ClientToServerEvents } from "shared";
 import { Socket } from "socket.io";
-import GameManager from "../game_manager/game_manager";
+import GameManager from "../game/game_manager";
 import User from "../user/user";
 
 interface JoinServerParams {

@@ -1,18 +1,21 @@
 import { BotDifficulty } from "../api-interfaces";
 
-export interface ClientToServerEvents {
-  newGame: (name: string) => void;
-  joinServer: (userInfo: { id: string; name: string }) => void;
-  joinGame: (gameId: string) => void;
+export interface InGameClientToServerEvents {
   leaveGame: () => void;
   startGame: () => void;
-  playTile: (tileInfo: { id: string; pos: [number, number] }) => void;
+  playTile: (params: { tileId: string; pos: [number, number] }) => void;
   updateTileBar: (tileIds: Array<string>) => void;
   setReady: (ready: boolean) => void;
   addBot: () => void;
   removeBot: (botId: string) => void;
-  setBotDifficulty: (botInfo: {
-    id: string;
+  setBotDifficulty: (params: {
+    botId: string;
     difficulty: BotDifficulty;
   }) => void;
 }
+
+export type ClientToServerEvents = {
+  joinGame: (gameId: string) => void;
+  newGame: (name: string) => void;
+  joinServer: (userInfo: { id: string; name: string }) => void;
+} & InGameClientToServerEvents;

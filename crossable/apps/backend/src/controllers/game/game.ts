@@ -27,7 +27,15 @@ export class Game extends Entity {
   // log: Array<string>;
   gameState: GameState;
 
-  constructor(name: string, player: User, xWord: XWord) {
+  constructor({
+    name,
+    player,
+    xWord,
+  }: {
+    name: string;
+    player: User;
+    xWord: XWord;
+  }) {
     super();
 
     this.name = name;
@@ -97,7 +105,15 @@ export class Game extends Entity {
     }
   }
 
-  addPlayer(id: string, name: string, ready = false) {
+  addPlayer({
+    id,
+    name,
+    ready = false,
+  }: {
+    id: string;
+    name: string;
+    ready?: boolean;
+  }) {
     const existingPlayer = this.players.get(id);
 
     if (!existingPlayer) {
@@ -131,7 +147,13 @@ export class Game extends Entity {
     otherPlayers.forEach((player) => this.fillPlayerTileBar(player.id));
   }
 
-  updateTileBar(playerId: string, tileBarIds: Array<string>) {
+  updateTileBar({
+    playerId,
+    tileBarIds,
+  }: {
+    playerId: string;
+    tileBarIds: Array<string>;
+  }) {
     const playerInfo = this.players.get(playerId);
 
     if (!playerInfo || tileBarIds.length !== playerInfo.tileBar.length) {
@@ -223,7 +245,7 @@ export class Game extends Entity {
     }
   }
 
-  setReady(playerId: string, ready: boolean) {
+  setReady({ playerId, ready }: { playerId: string; ready: boolean }) {
     const playerInfo = this.players.get(playerId);
 
     if (!playerInfo) {

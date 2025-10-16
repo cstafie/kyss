@@ -1,6 +1,7 @@
 import {
   BotDifficulty,
   BotInfo,
+  ClientToServerEvents,
   GameState,
   PlayerInfo,
   ServerGameUpdate,
@@ -10,6 +11,7 @@ import { Game } from "../game/game";
 import User from "../user/user";
 import Bot from "../bot/bot";
 import Entity from "../entity/entity";
+import { InGameClientToServerEvents } from "shared";
 
 export class GameManager extends Entity {
   bots: Map<string, Bot> = new Map();
@@ -20,7 +22,7 @@ export class GameManager extends Entity {
   constructor(gameName: string, user: User) {
     super();
     const randomXWord = getRandomXWord();
-    this.game = new Game(gameName, user, randomXWord);
+    this.game = new Game({ name: gameName, player: user, xWord: randomXWord });
 
     // add the creator of the game to their own game
     this.userJoinGame(user);
@@ -30,7 +32,7 @@ export class GameManager extends Entity {
 
   private addBot() {
     const bot = new Bot(this.updateGameForAllPlayers.bind(this));
-    this.game.addPlayer(bot.id, bot.name, true);
+    this.game.addPlayer({ id: bot.id, name: bot.name });
     this.bots.set(bot.id, bot);
 
     this.updateGameForAllPlayers();
@@ -43,8 +45,11 @@ export class GameManager extends Entity {
     this.updateGameForAllPlayers();
   }
 
-  private setBotDifficulty(botInfo: { id: string; difficulty: BotDifficulty }) {
-    const bot = this.bots.get(botInfo.id);
+  private setBotDifficulty(botInfo: {
+    botId: string;
+    difficulty: BotDifficulty;
+  }) {
+    const bot = this.bots.get(botInfo.botId);
 
     if (!bot) {
       return;
@@ -54,24 +59,76 @@ export class GameManager extends Entity {
     this.updateGameForAllPlayers();
   }
 
-  private playerSetup(user: User) {
-    // setup socket listeners for the player
-    const addBot = () => this.addBot();
-    const removeBot = this.removeBot.bind(this);
-    const setBotDifficulty = this.setBotDifficulty.bind(this);
-    const startGame = this.startGame.bind(this);
+  private setReady({ userId, ready }: { userId: string; ready: boolean }) {
+    const playerInfo = this.game.players.get(userId);
+    if (!playerInfo) {
+      return;
+    }
 
-    user.socket.on("addBot", addBot);
-    user.socket.on("removeBot", removeBot);
-    user.socket.on("setBotDifficulty", setBotDifficulty);
-    user.socket.on("startGame", startGame);
+    playerInfo.ready = ready;
+    this.updateGameForAllPlayers();
+  }
+
+  private playTile(params: {
+    playerId: string;
+    tileId: string;
+    pos: [number, number];
+  }) {
+    this.game.playTile(params);
+    this.updateGameForAllPlayers();
+  }
+
+  private updateTileBar({
+    playerId,
+    tileIds,
+  }: {
+    playerId: string;
+    tileIds: Array<string>;
+  }) {
+    this.game.updateTileBar({ playerId: playerId, tileBarIds: tileIds });
+    this.updateGameForAllPlayers();
+  }
+
+  private playerSetup(user: User) {
+    console.log("game manager: setting up player:", user.name);
+
+    type SocketHandlers = {
+      [K in keyof InGameClientToServerEvents]: (
+        ...args: Parameters<InGameClientToServerEvents[K]>
+      ) => void;
+    };
+
+    // Define all handlers and userId when needed
+    const handlers: SocketHandlers = {
+      playTile: (tileInfo: { tileId: string; pos: [number, number] }) =>
+        this.playTile({ playerId: user.id, ...tileInfo }),
+      updateTileBar: (tileIds: Array<string>) =>
+        this.updateTileBar({ playerId: user.id, tileIds }),
+      setReady: (ready: boolean) => this.setReady({ userId: user.id, ready }),
+      addBot: () => this.addBot(),
+      removeBot: this.removeBot.bind(this),
+      setBotDifficulty: (params) => this.setBotDifficulty(params),
+      startGame: () => this.startGame(),
+      leaveGame: () => {
+        this.playerLeaveGame(user.id);
+      },
+    };
+
+    const eventNames = Object.keys(handlers) as Array<
+      keyof InGameClientToServerEvents
+    >;
+
+    // Register all handlers
+    eventNames.forEach((event) => {
+      user.socket.on(event, handlers[event]);
+    });
 
     const playerUnsubscribe = () => {
-      user.socket.off("addBot", addBot);
-      user.socket.off("removeBot", removeBot);
-      user.socket.off("setBotDifficulty", setBotDifficulty);
-      user.socket.off("startGame", startGame);
+      eventNames.forEach((event) => {
+        user.socket.off(event, handlers[event]);
+      });
     };
+
     this.userUnsubscribes.set(user.id, playerUnsubscribe);
 
     // setup game update emitter for the player
@@ -96,7 +153,7 @@ export class GameManager extends Entity {
       return;
     }
 
-    this.game.addPlayer(user.id, user.name);
+    this.game.addPlayer({ id: user.id, name: user.name });
     this.playerSetup(user);
 
     this.updateGameForAllPlayers();
