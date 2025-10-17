@@ -149,7 +149,7 @@ class ServerManager {
       return;
     }
 
-    Array.from(game.game.players.values()).forEach((player) => {
+    game.getPlayerValues().forEach((player) => {
       const user = this.users.get(player.id);
 
       if (!user) {

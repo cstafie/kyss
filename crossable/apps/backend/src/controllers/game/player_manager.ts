@@ -8,7 +8,7 @@ type GamePlayer = PlayerInfo & {
 };
 
 export class PlayerManager extends Entity {
-  public players: Map<string, GamePlayer> = new Map();
+  private players: Map<string, GamePlayer> = new Map();
   private gameManager: GameManager;
 
   constructor(gameManager: GameManager) {
@@ -18,15 +18,70 @@ export class PlayerManager extends Entity {
 
   // used by both us and the game manager
   public updateAllPlayers() {
-    this.players.forEach(({ update }) => update?.());
+    this.players.forEach(({ name, update, ready }) => {
+      console.log("player manager: updating player:", name, ready);
+      update?.();
+    });
   }
 
-  public setReady({ userId, ready }: { userId: string; ready: boolean }) {
-    const playerInfo = this.players.get(userId);
-    if (!playerInfo) {
-      return;
-    }
+  public getPlayerEntries(): Array<[string, PlayerInfo]> {
+    return Array.from(this.players.entries());
+  }
 
+  public getPlayerValues(): Array<PlayerInfo> {
+    return Array.from(this.players.values());
+  }
+
+  public addPlayer(playerInfo: PlayerInfo) {
+    this.players.set(playerInfo.id, {
+      ...playerInfo,
+      unsubscribe: () => console.log("no unsubscribe set"),
+      update: () => console.log("no update set"),
+    });
+  }
+
+  public updatePlayer({
+    playerId,
+    playerInfo,
+  }: {
+    playerId: string;
+    playerInfo: PlayerInfo;
+  }) {
+    const gamePlayer = this.players.get(playerId);
+
+    if (gamePlayer) {
+      this.players.set(playerId, {
+        ...gamePlayer,
+        ...playerInfo,
+      });
+    }
+  }
+
+  public getPlayerInfo(playerId: string): PlayerInfo {
+    const player = this.players.get(playerId);
+
+    if (!player) {
+      throw new Error("Player not found");
+    }
+    return player;
+  }
+
+  public setUnsubscribe(playerId: string, unsubscribe: () => void) {
+    const player = this.players.get(playerId);
+    if (player) {
+      player.unsubscribe = unsubscribe;
+    }
+  }
+
+  public setUpdate(playerId: string, update: () => void) {
+    const player = this.players.get(playerId);
+    if (player) {
+      player.update = update;
+    }
+  }
+
+  public setReady({ playerId, ready }: { playerId: string; ready: boolean }) {
+    const playerInfo = this.getPlayerInfo(playerId);
     playerInfo.ready = ready;
     this.updateAllPlayers();
   }
@@ -66,6 +121,10 @@ export class PlayerManager extends Entity {
     this.gameManager.game.removePlayer(playerId);
 
     this.updateAllPlayers();
+  }
+
+  public deletePlayer(playerId: string) {
+    this.players.delete(playerId);
   }
 
   public getPlayerCount(): number {

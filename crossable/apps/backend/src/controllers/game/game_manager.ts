@@ -21,9 +21,15 @@ export class GameManager extends Entity {
     super();
 
     const randomXWord = getRandomXWord();
-    this.game = new Game({ name: gameName, player: user, xWord: randomXWord });
-    this.botManager = new BotManager(this);
     this.playerManager = new PlayerManager(this);
+    this.botManager = new BotManager(this);
+
+    this.game = new Game({
+      name: gameName,
+      player: user,
+      xWord: randomXWord,
+      playerManager: this.playerManager,
+    });
 
     this.userJoinGame(user);
 
@@ -36,6 +42,7 @@ export class GameManager extends Entity {
     if (inProgress && !wasDisconnected) {
       throw new Error("Cannot join a game in progress");
     }
+
     // Have the game creator join the game
     this.game.addPlayer({ id: user.id, name: user.name });
     this.setupPlayerSocketHandlers(user);
@@ -58,7 +65,7 @@ export class GameManager extends Entity {
       updateTileBar: (tileIds: Array<string>) =>
         this.playerManager.updateTileBar({ playerId: user.id, tileIds }),
       setReady: (ready: boolean) =>
-        this.playerManager.setReady({ userId: user.id, ready }),
+        this.playerManager.setReady({ playerId: user.id, ready }),
       addBot: () => this.botManager.addBot(),
       removeBot: () => this.botManager.removeBot(user.id),
       setBotDifficulty: (params) => this.botManager.setBotDifficulty(params),
@@ -83,7 +90,7 @@ export class GameManager extends Entity {
 
     // setup game update emitter for the player
     const updatePlayer = () => {
-      const playerInfo = this.game.players.get(user.id);
+      const playerInfo = this.playerManager.getPlayerInfo(user.id);
       if (!playerInfo) {
         return;
       }
@@ -94,11 +101,25 @@ export class GameManager extends Entity {
       );
     };
 
-    this.playerManager.players.set(user.id, {
-      ...this.game.players.get(user.id)!,
-      unsubscribe: unsubscribePlayer,
-      update: updatePlayer,
-    });
+    this.playerManager.setUnsubscribe(user.id, unsubscribePlayer);
+    this.playerManager.setUpdate(user.id, updatePlayer);
+  }
+
+  public startGame() {
+    // can only start games that are not started
+    if (this.game.gameState !== GameState.waitingToStart) {
+      return;
+    }
+
+    try {
+      this.game.start();
+    } catch (e) {
+      console.error("game manager: failed to start game: ", e);
+      return;
+    }
+
+    this.botManager.startTheBots();
+    this.updateAllPlayers();
   }
 
   public makeServerGameUpdate(
@@ -121,8 +142,10 @@ export class GameManager extends Entity {
       id: this.id,
       xWord: game.xWord,
       gameState: game.gameState,
-      serializedPlayersMap: JSON.stringify(Array.from(game.players.entries())),
-      serializedBotsMap: JSON.stringify(Array.from(botInfos.entries())),
+      serializedPlayersMap: JSON.stringify(
+        this.playerManager.getPlayerEntries()
+      ),
+      serializedBotsMap: JSON.stringify(this.botManager.getBotEntries()),
       ready,
       score,
       tileBar,
@@ -132,32 +155,14 @@ export class GameManager extends Entity {
     return gameUpdate;
   }
 
-  public startGame() {
-    // can only start games that are not started
-    if (this.game.gameState !== GameState.waitingToStart) {
-      return;
-    }
-
-    try {
-      this.game.start();
-    } catch (e) {
-      console.error("game manager: failed to start game: ", e);
-      return;
-    }
-
-    this.botManager.startTheBots();
-    this.updateAllPlayers();
-  }
-
   getMetaData() {
-    const { name, createdAt, players, creatorId, creatorName, gameState } =
-      this.game;
+    const { name, createdAt, creatorId, creatorName, gameState } = this.game;
 
     return {
       id: this.id,
       name: name,
       createdAt: createdAt,
-      numberOfPlayers: players.size,
+      numberOfPlayers: this.playerManager.getPlayerCount(),
       creatorId: creatorId,
       creatorName: creatorName,
       gameState: gameState,
@@ -178,8 +183,16 @@ export class GameManager extends Entity {
     this.playerManager.playerLeaveGame(playerId);
   }
 
+  public getPlayerInfo(playerId: string): PlayerInfo {
+    return this.playerManager.getPlayerInfo(playerId);
+  }
+
   public getPlayerCount(): number {
     return this.playerManager.getPlayerCount();
+  }
+
+  public getPlayerValues(): Array<PlayerInfo> {
+    return this.playerManager.getPlayerValues();
   }
 
   onDestroy() {

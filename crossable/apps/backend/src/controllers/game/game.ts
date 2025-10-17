@@ -15,6 +15,7 @@ import {
 } from "shared";
 import Entity from "../entity/entity";
 import { TileManager } from "./tile_manager";
+import { PlayerManager } from "./player_manager";
 
 export class Game extends Entity {
   name: string;
@@ -22,7 +23,7 @@ export class Game extends Entity {
   creatorId: string;
   solvedXWord: XWord;
   xWord: XWord;
-  players: Map<string, PlayerInfo>;
+  playerManager: PlayerManager;
   tileManager: TileManager;
   // log: Array<string>;
   gameState: GameState;
@@ -31,10 +32,12 @@ export class Game extends Entity {
     name,
     player,
     xWord,
+    playerManager,
   }: {
     name: string;
     player: User;
     xWord: XWord;
+    playerManager: PlayerManager;
   }) {
     super();
 
@@ -44,7 +47,7 @@ export class Game extends Entity {
       ...xWord,
       grid: emptyGrid(xWord.grid),
     };
-    this.players = new Map();
+    this.playerManager = playerManager;
     // this.log = [];
     this.creatorId = player.id;
     this.creatorName = player.name;
@@ -55,7 +58,7 @@ export class Game extends Entity {
   }
 
   start() {
-    const players = Array.from(this.players.values());
+    const players = Array.from(this.playerManager.getPlayerValues());
 
     const allPlayersReady = players.every((player) => player.ready);
 
@@ -67,7 +70,7 @@ export class Game extends Entity {
   }
 
   fillPlayerTileBar(playerId: string) {
-    const player = this.players.get(playerId);
+    const player = this.playerManager.getPlayerInfo(playerId);
 
     // TODO: error management and consistency
     if (!player) throw new Error("Player not found");
@@ -105,40 +108,40 @@ export class Game extends Entity {
     }
   }
 
-  addPlayer({
-    id,
-    name,
-    ready = false,
-  }: {
-    id: string;
-    name: string;
-    ready?: boolean;
-  }) {
-    const existingPlayer = this.players.get(id);
+  addPlayer({ id, name }: { id: string; name: string }) {
+    let existingPlayer: PlayerInfo | null = null;
+
+    try {
+      existingPlayer = this.playerManager.getPlayerInfo(id);
+    } catch (e) {
+      // player does not exist
+      // do nothing
+    }
 
     if (!existingPlayer) {
-      this.players.set(id, {
+      this.playerManager.addPlayer({
         id,
-        tileBar: [],
-        score: 0,
-        ready,
         name,
+        score: 0,
+        tileBar: [],
+        ready: false,
       });
+
       this.fillPlayerTileBar(id);
     }
   }
 
   removePlayer(playerId: string) {
-    const playerInfo = this.players.get(playerId);
+    const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
     if (!playerInfo) {
       return;
     }
 
     this.tileManager.emptyTileBar(playerInfo.tileBar);
-    this.players.delete(playerId);
+    this.playerManager.deletePlayer(playerId);
 
-    const otherPlayers = Array.from(this.players.values());
+    const otherPlayers = this.playerManager.getPlayerValues();
 
     otherPlayers.sort(
       (playerA, playerB) => playerA.tileBar.length - playerB.tileBar.length
@@ -154,7 +157,7 @@ export class Game extends Entity {
     playerId: string;
     tileBarIds: Array<string>;
   }) {
-    const playerInfo = this.players.get(playerId);
+    const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
     if (!playerInfo || tileBarIds.length !== playerInfo.tileBar.length) {
       return;
@@ -190,7 +193,7 @@ export class Game extends Entity {
     pos: [number, number];
   }): boolean {
     const [row, col] = pos;
-    const playerInfo = this.players.get(playerId);
+    const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
     // this might happen in a race condition
     if (!playerInfo || this.xWord.grid[row][col].char !== " ") {
@@ -246,12 +249,7 @@ export class Game extends Entity {
   }
 
   setReady({ playerId, ready }: { playerId: string; ready: boolean }) {
-    const playerInfo = this.players.get(playerId);
-
-    if (!playerInfo) {
-      return;
-    }
-
+    const playerInfo = this.playerManager.getPlayerInfo(playerId);
     playerInfo.ready = ready;
   }
 }

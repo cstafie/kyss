@@ -82,7 +82,7 @@ class Bot extends Entity {
   makeDumbMove() {
     if (!this.game) return;
 
-    const playerInfo = this.game.players.get(this.id);
+    const playerInfo = this.gameManager.getPlayerInfo(this.id);
 
     if (!playerInfo) return;
 
@@ -111,7 +111,7 @@ class Bot extends Entity {
   makeMove() {
     if (!this.game) return;
 
-    const playerInfo = this.game.players.get(this.id);
+    const playerInfo = this.gameManager.getPlayerInfo(this.id);
 
     if (!playerInfo) return;
 

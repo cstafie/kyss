@@ -1,4 +1,4 @@
-import { BotDifficulty } from "shared";
+import { BotDifficulty, PlayerInfo } from "shared";
 import GameManager from "../game/game_manager";
 import Bot from "./bot";
 
@@ -8,6 +8,10 @@ export class BotManager {
 
   constructor(gameManager: GameManager) {
     this.gameManager = gameManager;
+  }
+
+  public getBotEntries(): Array<[string, Bot]> {
+    return Array.from(this.bots.entries());
   }
 
   public addBot() {
