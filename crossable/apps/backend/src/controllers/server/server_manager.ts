@@ -68,7 +68,7 @@ class ServerManager {
     this.resetAndRejoinUser(user);
 
     // destroy the game if it has no players left
-    if (game.game.players.size - game.bots.size === 0) {
+    if (game.getPlayerCount() === 0) {
       this.destroyGame(game.id);
     }
   }

@@ -1,4 +1,10 @@
-import { BotInfo, GameState, PlayerInfo, ServerGameUpdate } from "shared";
+import {
+  BotInfo,
+  GameState,
+  PlayerInfo,
+  ServerGameUpdate,
+  InGameClientToServerEvents,
+} from "shared";
 import { getRandomXWord } from "../../utils";
 import { Game } from "../game/game";
 import User from "../user/user";
@@ -7,9 +13,9 @@ import { BotManager } from "../bot/bot_manager";
 import { PlayerManager } from "./player_manager";
 
 export class GameManager extends Entity {
-  botManager: BotManager;
-  game: Game;
-  playerManager: PlayerManager;
+  private botManager: BotManager;
+  public game: Game;
+  private playerManager: PlayerManager;
 
   constructor(gameName: string, user: User) {
     super();
@@ -19,33 +25,83 @@ export class GameManager extends Entity {
     this.botManager = new BotManager(this);
     this.playerManager = new PlayerManager(this);
 
-    // Have the game creator join the game
-    this.playerManager.userJoinGame(user);
+    this.userJoinGame(user);
 
     console.log(`${user.name} created a new game`);
   }
 
-  public playTile(params: {
-    playerId: string;
-    tileId: string;
-    pos: [number, number];
-  }) {
-    this.game.playTile(params);
-    this.updateGameForAllPlayers();
+  public userJoinGame(user: User, wasDisconnected = false) {
+    const inProgress = this.game.gameState === GameState.inProgress;
+
+    if (inProgress && !wasDisconnected) {
+      throw new Error("Cannot join a game in progress");
+    }
+    // Have the game creator join the game
+    this.game.addPlayer({ id: user.id, name: user.name });
+    this.setupPlayerSocketHandlers(user);
+    this.updateAllPlayers();
   }
 
-  public updateTileBar({
-    playerId,
-    tileIds,
-  }: {
-    playerId: string;
-    tileIds: Array<string>;
-  }) {
-    this.game.updateTileBar({ playerId: playerId, tileBarIds: tileIds });
-    this.updateGameForAllPlayers();
+  public setupPlayerSocketHandlers(user: User) {
+    console.log("game manager: setting up player:", user.name);
+
+    type SocketHandlers = {
+      [K in keyof InGameClientToServerEvents]: (
+        ...args: Parameters<InGameClientToServerEvents[K]>
+      ) => void;
+    };
+
+    // Define all handlers and userId when needed
+    const handlers: SocketHandlers = {
+      playTile: (tileInfo: { tileId: string; pos: [number, number] }) =>
+        this.playerManager.playTile({ playerId: user.id, ...tileInfo }),
+      updateTileBar: (tileIds: Array<string>) =>
+        this.playerManager.updateTileBar({ playerId: user.id, tileIds }),
+      setReady: (ready: boolean) =>
+        this.playerManager.setReady({ userId: user.id, ready }),
+      addBot: () => this.botManager.addBot(),
+      removeBot: () => this.botManager.removeBot(user.id),
+      setBotDifficulty: (params) => this.botManager.setBotDifficulty(params),
+      startGame: () => this.startGame(),
+      leaveGame: () => this.playerManager.playerLeaveGame(user.id),
+    };
+
+    const eventNames = Object.keys(handlers) as Array<
+      keyof InGameClientToServerEvents
+    >;
+
+    // Register all handlers
+    eventNames.forEach((event) => {
+      user.socket.on(event, handlers[event]);
+    });
+
+    const unsubscribePlayer = () => {
+      eventNames.forEach((event) => {
+        user.socket.off(event, handlers[event]);
+      });
+    };
+
+    // setup game update emitter for the player
+    const updatePlayer = () => {
+      const playerInfo = this.game.players.get(user.id);
+      if (!playerInfo) {
+        return;
+      }
+
+      user.socket.emit(
+        "updateGame",
+        this.makeServerGameUpdate(playerInfo, this.game)
+      );
+    };
+
+    this.playerManager.players.set(user.id, {
+      ...this.game.players.get(user.id)!,
+      unsubscribe: unsubscribePlayer,
+      update: updatePlayer,
+    });
   }
 
-  private makeServerGameUpdate(
+  public makeServerGameUpdate(
     playerInfo: PlayerInfo,
     game: Game
   ): ServerGameUpdate {
@@ -76,11 +132,7 @@ export class GameManager extends Entity {
     return gameUpdate;
   }
 
-  updateGameForAllPlayers() {
-    this.userUpdates.forEach((updateFn) => updateFn?.());
-  }
-
-  private startGame() {
+  public startGame() {
     // can only start games that are not started
     if (this.game.gameState !== GameState.waitingToStart) {
       return;
@@ -93,26 +145,8 @@ export class GameManager extends Entity {
       return;
     }
 
-    for (const bot of this.bots.values()) {
-      bot.start(this.game);
-    }
-
-    this.updateGameForAllPlayers();
-  }
-
-  playerLeaveGame(playerId: string) {
-    console.log("game manager: player leave game");
-
-    const playerUnsubscribe = this.userUnsubscribes.get(playerId);
-
-    if (playerUnsubscribe) {
-      playerUnsubscribe();
-      this.userUnsubscribes.delete(playerId);
-    }
-
-    this.game.removePlayer(playerId);
-
-    this.updateGameForAllPlayers();
+    this.botManager.startTheBots();
+    this.updateAllPlayers();
   }
 
   getMetaData() {
@@ -130,9 +164,27 @@ export class GameManager extends Entity {
     };
   }
 
+  // NOTE:
+  // These last functions are just delegates to other managers.
+  // The idea is for the player_manager, bot_manager and server_manager
+  // not to know about each other,
+  // but only about the game manager, which coordinates between them.
+
+  public updateAllPlayers() {
+    this.playerManager.updateAllPlayers();
+  }
+
+  public playerLeaveGame(playerId: string) {
+    this.playerManager.playerLeaveGame(playerId);
+  }
+
+  public getPlayerCount(): number {
+    return this.playerManager.getPlayerCount();
+  }
+
   onDestroy() {
-    Array.from(this.bots.values()).forEach((bot) => bot.onDestroy());
-    this.bots.clear();
+    this.botManager.onDestroy();
+    this.playerManager.onDestroy();
   }
 }
 

@@ -1,5 +1,4 @@
-import { BOT_DIFFICULTY, BotDifficulty } from "shared";
-import { Game } from "../game/game";
+import { BotDifficulty } from "shared";
 import GameManager from "../game/game_manager";
 import Bot from "./bot";
 
@@ -17,14 +16,12 @@ export class BotManager {
     });
     this.bots.set(bot.id, bot);
 
-    this.gameManager.updateGameForAllPlayers();
+    this.gameManager.updateAllPlayers();
   }
 
   public removeBot(botId: string) {
-    this.gameManager.playerLeaveGame(botId);
     this.bots.delete(botId);
-
-    this.gameManager.updateGameForAllPlayers();
+    this.gameManager.updateAllPlayers();
   }
 
   public setBotDifficulty(botInfo: {
@@ -34,10 +31,30 @@ export class BotManager {
     const bot = this.bots.get(botInfo.botId);
 
     if (!bot) {
-      return;
+      throw new Error(
+        "No bot found with the given ID to set the difficulty for."
+      );
     }
 
     bot.difficulty = botInfo.difficulty;
-    this.gameManager.updateGameForAllPlayers();
+    this.gameManager.updateAllPlayers();
+  }
+
+  public startTheBots() {
+    for (const bot of this.bots.values()) {
+      bot.start(this.gameManager.game);
+    }
+  }
+
+  private killTheBots() {
+    for (const bot of this.bots.values()) {
+      bot.onDestroy();
+    }
+
+    this.bots.clear();
+  }
+
+  onDestroy() {
+    this.killTheBots();
   }
 }

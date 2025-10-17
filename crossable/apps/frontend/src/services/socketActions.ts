@@ -65,12 +65,12 @@ export class SocketActions {
     socket.emit("removeBot", botId);
   }
 
-  setBotDifficulty(id: string, difficulty: BotDifficulty): void {
-    if (!id) {
+  setBotDifficulty(botId: string, difficulty: BotDifficulty): void {
+    if (!botId) {
       throw new Error("Invalid bot ID");
     }
     const socket = this.ensureConnected();
-    socket.emit("setBotDifficulty", { id, difficulty });
+    socket.emit("setBotDifficulty", { botId, difficulty });
   }
 
   playTile(tileId: string, pos: [number, number]): void {
@@ -78,7 +78,7 @@ export class SocketActions {
       throw new Error("Invalid tile ID");
     }
     const socket = this.ensureConnected();
-    socket.emit("playTile", { id: tileId, pos });
+    socket.emit("playTile", { tileId, pos });
   }
 
   leaveGame(): void {

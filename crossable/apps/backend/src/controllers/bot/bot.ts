@@ -69,7 +69,7 @@ class Bot extends Entity {
         this.makeMove();
       }
 
-      this.gameManager.updateGameForAllPlayers();
+      this.gameManager.updateAllPlayers();
       this.playGame();
     }, timeoutTime);
   }
