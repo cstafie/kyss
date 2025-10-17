@@ -9,22 +9,26 @@ import {
 
 import Entity from "../entity/entity";
 import { Game } from "../game/game";
+import GameManager from "../game/game_manager";
 
 class Bot extends Entity {
   name: string;
   difficulty: BotDifficulty;
   game?: Game;
   timeout?: NodeJS.Timeout;
-  updateGamePlayers: () => void;
+  gameManager: GameManager;
 
-  constructor(
-    updateGamePlayers: () => void,
-    difficulty: BotDifficulty = BOT_DIFFICULTY.MEDIUM
-  ) {
+  constructor({
+    gameManager,
+    botDifficulty = BOT_DIFFICULTY.MEDIUM,
+  }: {
+    gameManager: GameManager;
+    botDifficulty?: BotDifficulty;
+  }) {
     super();
     this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
-    this.difficulty = difficulty;
-    this.updateGamePlayers = updateGamePlayers;
+    this.difficulty = botDifficulty;
+    this.gameManager = gameManager;
   }
 
   start(game: Game) {
@@ -65,7 +69,7 @@ class Bot extends Entity {
         this.makeMove();
       }
 
-      this.updateGamePlayers();
+      this.gameManager.updateGameForAllPlayers();
       this.playGame();
     }, timeoutTime);
   }
