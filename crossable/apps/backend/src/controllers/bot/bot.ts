@@ -9,26 +9,26 @@ import {
 
 import Entity from "../entity/entity";
 import { Game } from "../game/game";
-import GameManager from "../game/game_manager";
+import { type BotManager } from "./bot_manager";
 
 class Bot extends Entity {
   name: string;
   difficulty: BotDifficulty;
   game?: Game;
   timeout?: NodeJS.Timeout;
-  gameManager: GameManager;
+  botManager: BotManager;
 
   constructor({
-    gameManager,
+    botManager,
     botDifficulty = BOT_DIFFICULTY.MEDIUM,
   }: {
-    gameManager: GameManager;
+    botManager: BotManager;
     botDifficulty?: BotDifficulty;
   }) {
     super();
     this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
     this.difficulty = botDifficulty;
-    this.gameManager = gameManager;
+    this.botManager = botManager;
   }
 
   start(game: Game) {
@@ -69,7 +69,7 @@ class Bot extends Entity {
         this.makeMove();
       }
 
-      this.gameManager.updateAllPlayers();
+      this.botManager.updateAllPlayers();
       this.playGame();
     }, timeoutTime);
   }
@@ -82,7 +82,7 @@ class Bot extends Entity {
   makeDumbMove() {
     if (!this.game) return;
 
-    const playerInfo = this.gameManager.getPlayerInfo(this.id);
+    const playerInfo = this.botManager.getPlayerInfo(this.id);
 
     if (!playerInfo) return;
 
@@ -111,7 +111,7 @@ class Bot extends Entity {
   makeMove() {
     if (!this.game) return;
 
-    const playerInfo = this.gameManager.getPlayerInfo(this.id);
+    const playerInfo = this.botManager.getPlayerInfo(this.id);
 
     if (!playerInfo) return;
 
@@ -136,6 +136,14 @@ class Bot extends Entity {
         }
       }
     }
+  }
+
+  public toJSON(): { id: string; name: string; difficulty: BotDifficulty } {
+    return {
+      id: this.id,
+      name: this.name,
+      difficulty: this.difficulty,
+    };
   }
 }
 

@@ -138,4 +138,8 @@ export class PlayerManager extends Entity {
     });
     this.players.clear();
   }
+
+  public toJSON(): Array<[string, PlayerInfo]> {
+    return this.getPlayerEntries();
+  }
 }

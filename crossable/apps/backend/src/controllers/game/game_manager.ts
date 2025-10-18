@@ -142,10 +142,8 @@ export class GameManager extends Entity {
       id: this.id,
       xWord: game.xWord,
       gameState: game.gameState,
-      serializedPlayersMap: JSON.stringify(
-        this.playerManager.getPlayerEntries()
-      ),
-      serializedBotsMap: JSON.stringify(this.botManager.getBotEntries()),
+      serializedPlayersMap: JSON.stringify(this.playerManager.toJSON()),
+      serializedBotsMap: JSON.stringify(this.botManager.toJSON()),
       ready,
       score,
       tileBar,

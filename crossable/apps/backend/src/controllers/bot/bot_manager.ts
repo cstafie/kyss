@@ -16,7 +16,7 @@ export class BotManager {
 
   public addBot() {
     const bot = new Bot({
-      gameManager: this.gameManager,
+      botManager: this,
     });
     this.bots.set(bot.id, bot);
 
@@ -60,5 +60,18 @@ export class BotManager {
 
   onDestroy() {
     this.killTheBots();
+  }
+
+  // delegate to game manager
+  public updateAllPlayers() {
+    this.gameManager.updateAllPlayers();
+  }
+
+  public getPlayerInfo(userId: string): PlayerInfo {
+    return this.gameManager.getPlayerInfo(userId);
+  }
+
+  public toJSON(): Array<[string, Bot]> {
+    return this.getBotEntries();
   }
 }
