@@ -9,6 +9,7 @@ import {
   BOT_DIFFICULTY,
   type BotDifficulty as BotDifficultyType,
 } from "shared";
+import Button from "@/components/button";
 
 interface Props {
   game: GameInfo;
@@ -41,7 +42,7 @@ function BotList({ game }: Props) {
 
           <div className="flex justify-between w-64">
             {isGameCreator && (
-              <button
+              <Button
                 disabled={difficulty === BOT_DIFFICULTY.EASY}
                 onClick={() =>
                   setBotDifficulty(id, (difficulty - 1) as BotDifficultyType)
@@ -51,7 +52,7 @@ function BotList({ game }: Props) {
                 }`}
               >
                 <BsChevronLeft />
-              </button>
+              </Button>
             )}
 
             <BotDifficulty difficulty={difficulty} />

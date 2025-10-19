@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'react';
-import { GiHamburgerMenu } from 'react-icons/gi';
+import { useCallback, useState } from "react";
+import { GiHamburgerMenu } from "react-icons/gi";
+import Button from "@/components/button";
 
 interface Props {
   children: React.ReactNode;
@@ -11,9 +12,9 @@ function Menu({ children }: Props) {
 
   return (
     <div className="relative" onClick={toggleOpen}>
-      <button className="btn btn-borderless">
+      <Button>
         <GiHamburgerMenu />
-      </button>
+      </Button>
       {isOpen && (
         <ul className="absolute bg-slate-600 py-4 rounded-lg right-4 top-10 w-60">
           {children}

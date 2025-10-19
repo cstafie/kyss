@@ -5,6 +5,7 @@ import {
   useRef,
 } from "react";
 import { useAuth } from "@/contexts/auth";
+import Button from "../button";
 
 const MAX_PLAYER_NAME_LENGTH = 12;
 
@@ -51,15 +52,15 @@ function UserNameForm({ className, onSubmit }: Props) {
     <form onSubmit={handleSubmit} className={className}>
       <input
         ref={userName}
-        className="text-black p-1 h-6 w-36 rounded-md text-sm"
+        className="text-white p-2 h-6 w-36 rounded-md text-sm bg-black border border-white focus:border-blue-500 focus:outline-none"
         autoFocus
         placeholder="Enter user name..."
         onFocus={handleFocus}
         maxLength={MAX_PLAYER_NAME_LENGTH}
       />
-      <button type="submit" className="btn btn-blue btn-sm">
+      <Button type="submit" className="btn-sm btn-blue">
         OK
-      </button>
+      </Button>
     </form>
   );
 }

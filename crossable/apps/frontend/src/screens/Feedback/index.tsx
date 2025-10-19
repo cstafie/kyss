@@ -1,6 +1,7 @@
 import axios from "axios";
 import { type FormEvent, useCallback, useRef, useState } from "react";
 import Emoji from "@/components/emoji";
+import Button from "@/components/button";
 
 function Feedback() {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -64,9 +65,9 @@ function Feedback() {
               name="content"
             />
 
-            <button type="submit" className="btn btn-blue">
+            <Button type="submit">
               <Emoji description="Letter">✉️</Emoji> SEND
-            </button>
+            </Button>
           </form>
         )}
       </div>

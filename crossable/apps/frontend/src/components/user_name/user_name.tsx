@@ -2,28 +2,24 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/auth";
 import Emoji from "../emoji";
 import UserNameForm from "./user_name_form";
+import Button from "../button";
 
 const pencilEmoji = "✏️";
 
 const UserName = () => {
   const { user } = useAuth();
-
   const [editing, setEditing] = useState(false);
 
-  const className = "flex justify-end items-center gap-2";
-
   return editing ? (
-    <UserNameForm className={className} onSubmit={() => setEditing(false)} />
+    <UserNameForm
+      className="flex justify-end items-center gap-2"
+      onSubmit={() => setEditing(false)}
+    />
   ) : (
-    <section className={className}>
-      <button
-        onClick={() => setEditing(true)}
-        className="btn btn-borderless flex gap-2 whitespace-nowrap"
-      >
-        <Emoji description="Pencil">{pencilEmoji}</Emoji>
-        <div>{user.name}</div>
-      </button>
-    </section>
+    <Button onClick={() => setEditing(true)} className="flex gap-2 btn-blue">
+      <Emoji description="Pencil">{pencilEmoji}</Emoji>
+      <div>{user.name}</div>
+    </Button>
   );
 };
 

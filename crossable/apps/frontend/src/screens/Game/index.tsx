@@ -6,6 +6,7 @@ import { useNav } from "@/contexts/nav";
 import { useGame } from "@/contexts/game";
 import Lobby from "./Lobby/lobby";
 import XWord from "./XWord";
+import Button from "@/components/button";
 
 const BACK_ARROW_EMOJI = "⬅️";
 
@@ -15,11 +16,11 @@ const Game = () => {
 
   useEffect(() => {
     setNavLeft(
-      <button className="btn btn-borderless">
+      <Button className="btn-borderless">
         <Link to="/" onClick={leaveGame}>
           <Emoji description="Back arrow">{BACK_ARROW_EMOJI}</Emoji> LEAVE
         </Link>
-      </button>
+      </Button>
     );
   }, [leaveGame, setNavLeft]);
 

@@ -46,7 +46,7 @@ export default function NavContextProvider({
                   <Emoji description="Megaphone">📣</Emoji> Feedback
                 </MenuItem>
               </Link>
-              <a
+              {/* <a
                 href="https://www.buymeacoffee.com/crossable"
                 target="_blank"
                 rel="noreferrer"
@@ -54,7 +54,7 @@ export default function NavContextProvider({
                 <MenuItem>
                   <Emoji description="Heart">💜</Emoji> Donate
                 </MenuItem>
-              </a>
+              </a> */}
             </Menu>
           </li>
         </ul>

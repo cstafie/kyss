@@ -9,6 +9,7 @@ import Players from "./players";
 import { filterEntriesByDirection } from "@/utils";
 import useCurrentEntry from "./hooks/use_current_entry";
 import Clue from "./clue";
+import Button from "@/components/button";
 
 interface Props {
   game: GameInfo;
@@ -75,9 +76,9 @@ const XWord = ({ game }: Props) => {
     <>
       {isGameOver && (
         <section className="flex flex-col gap-8 justify-center items-center">
-          <button onClick={createGame} className="btn btn-blue">
+          <Button onClick={createGame} className="btn-blue">
             START A NEW GAME!
-          </button>
+          </Button>
         </section>
       )}
       <section className="flex flex-col sm:flex-row justify-start sm:justify-center items-center sm:items-start sm:mt-12 gap-4">
