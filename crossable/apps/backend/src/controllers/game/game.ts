@@ -108,7 +108,15 @@ export class Game extends Entity {
     }
   }
 
-  addPlayer({ id, name }: { id: string; name: string }) {
+  addPlayer({
+    id,
+    name,
+    ready,
+  }: {
+    id: string;
+    name: string;
+    ready?: boolean;
+  }) {
     let existingPlayer: PlayerInfo | null = null;
 
     try {
@@ -124,7 +132,7 @@ export class Game extends Entity {
         name,
         score: 0,
         tileBar: [],
-        ready: false,
+        ready: ready ?? false,
       });
 
       this.fillPlayerTileBar(id);

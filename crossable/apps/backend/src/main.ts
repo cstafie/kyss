@@ -35,6 +35,7 @@ app.use(express.json());
 httpServer.on("clientError", console.error);
 httpServer.on("error", console.error);
 
+// TODO: double check this works with docker setup
 app.post("/api/feedback", async (req, res) => {
   const { email, content } = req.body as FeedbackInfo;
   const { id, name } = req.cookies;

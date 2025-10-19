@@ -19,6 +19,7 @@ export class BotManager {
       botManager: this,
     });
     this.bots.set(bot.id, bot);
+    this.gameManager.addPlayer({ id: bot.id, name: bot.name, ready: true });
 
     this.gameManager.updateAllPlayers();
   }

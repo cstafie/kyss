@@ -193,6 +193,10 @@ export class GameManager extends Entity {
     return this.playerManager.getPlayerValues();
   }
 
+  public addPlayer(playerInfo: { id: string; name: string; ready?: boolean }) {
+    this.game.addPlayer(playerInfo);
+  }
+
   onDestroy() {
     this.botManager.onDestroy();
     this.playerManager.onDestroy();

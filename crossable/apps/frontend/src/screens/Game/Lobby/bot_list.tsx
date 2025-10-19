@@ -47,7 +47,7 @@ function BotList({ game }: Props) {
                 onClick={() =>
                   setBotDifficulty(id, (difficulty - 1) as BotDifficultyType)
                 }
-                className={`btn btn-borderless flex items-center text-sm  ${
+                className={`btn-borderless flex items-center text-sm  ${
                   difficulty === BOT_DIFFICULTY.EASY ? "btn-disabled" : ""
                 }`}
               >

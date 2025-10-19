@@ -24,7 +24,7 @@ answers=[]
 clues=[]
 
 for json_path in json_paths:
-    #cristian says has to add long proper names
+    # cristian says has to add long proper names
     f = open(json_path)
     crossword_data = json.load(f) 
 
@@ -33,7 +33,7 @@ for json_path in json_paths:
     
     f.close()
 
-#remove the clues numbers "01. cristian is bad" -> "cristian is bad"
+# remove the clues numbers "01. cristian is bad" -> "cristian is bad"
 clues = list(map(lambda x: x.split(". ", 1)[1], clues))
 
 df = pd.DataFrame()
