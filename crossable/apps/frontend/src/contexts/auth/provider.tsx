@@ -13,21 +13,11 @@ export default function AuthContextProvider({
   const [id, setID] = reactUseCookie("id");
   const [name, setName] = reactUseCookie("name");
 
-  // user auto "signs in"
   useEffect(() => {
-    if (!id) {
-      // TODO: backend not frontend should be giving ids
-      setID(crypto.randomUUID());
-    } else {
-      // keep cookie fresh
-      setID(id);
-    }
-
-    if (!name) {
-      // keep cookie fresh
-      setName(name);
-    }
-  }); // empty dependency array so this only runs once
+    // keep cookies in sync
+    if (id) setID(id);
+    if (name) setName(name);
+  });
 
   return (
     <AuthContext.Provider
@@ -37,7 +27,7 @@ export default function AuthContextProvider({
           id,
           name,
         },
-        setName: setName as (name: string) => void,
+        setName,
       }}
     >
       {!name && (

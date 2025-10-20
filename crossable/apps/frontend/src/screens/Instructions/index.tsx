@@ -1,4 +1,4 @@
-import { TILE_BAR_SIZE, SCORE_INCREASE, SCORE_DECREASE } from "shared";
+import { TILE_BAR, SCORING } from "shared";
 import Emoji from "@/components/emoji";
 
 function Instructions() {
@@ -8,13 +8,14 @@ function Instructions() {
         <h2 className="py-4">INSTRUCTIONS</h2>
         <p>
           The goal of the game is to fill out the crossword, but there's a
-          catch! You can only use the {TILE_BAR_SIZE} letters provided to you in
-          your tile bar. Every{" "}
+          catch! You can only use the {TILE_BAR.NUMBER_OF_TILES} letters
+          provided to you in your tile bar. Every{" "}
           <strong className="text-green-600">correctly</strong> placed letter is{" "}
-          <strong className="text-green-600">+{SCORE_INCREASE}</strong> points,
-          and every <strong className="text-red-500">incorrectly</strong> placed
-          letter is <strong className="text-red-500"> {SCORE_DECREASE}</strong>{" "}
-          points. You can play by yourself, with friends, or with bots!
+          <strong className="text-green-600">+{SCORING.INCREASE}</strong>{" "}
+          points, and every{" "}
+          <strong className="text-red-500">incorrectly</strong> placed letter is{" "}
+          <strong className="text-red-500"> {SCORING.DECREASE}</strong> points.
+          You can play by yourself, with friends, or with bots!
         </p>
         <h3 className="py-4">CONTROLS</h3>
         <ul>

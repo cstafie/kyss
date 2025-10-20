@@ -1,6 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
 
-import { get1Random, Tile, TILE_BAR_SIZE } from "shared";
+import { get1Random, Tile, TILE_BAR } from "shared";
 
 export class TileManager {
   originalTiles: Array<Tile>;
@@ -15,7 +15,7 @@ export class TileManager {
   // maybe throw instead and catch at a higher level
 
   fillTileBar(tileBar: Array<Tile>): boolean {
-    while (tileBar.length < TILE_BAR_SIZE) {
+    while (tileBar.length < TILE_BAR.NUMBER_OF_TILES) {
       if (!this.addTile(tileBar)) {
         return false;
       }

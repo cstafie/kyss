@@ -74,7 +74,8 @@ export default function GameContextProvider({
 
   // Join server when user info is available
   useEffect(() => {
-    if (user.name && user.id && isConnected) {
+    console.log("Joining server with user:", user.name);
+    if (user.name && isConnected) {
       try {
         actions.joinServer({ id: user.id, name: user.name });
       } catch (error) {

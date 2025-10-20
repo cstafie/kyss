@@ -4,7 +4,7 @@ export const TILE_BAR = Object.freeze({
 
 export const SCORING = Object.freeze({
   INCREASE: 11,
-  SCORE_DECREASE: -4,
+  DECREASE: -4,
 });
 
 // BOTS

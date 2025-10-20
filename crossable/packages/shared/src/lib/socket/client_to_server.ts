@@ -17,5 +17,5 @@ export interface InGameClientToServerEvents {
 export type ClientToServerEvents = {
   joinGame: (gameId: string) => void;
   newGame: (name: string) => void;
-  joinServer: (userInfo: { id: string; name: string }) => void;
+  joinServer: (userInfo: { id?: string; name: string }) => void;
 } & InGameClientToServerEvents;

@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import GameManager from "../game/game_manager";
 import User from "../user/user";
 import UserManager from "../user/user_manager";
-import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
+import subscribeUserToServerEvents from "./subscribeSocketToServerEvents";
 
 interface JoinServerParams {
   id?: string;
@@ -17,10 +17,6 @@ class ServerManager {
 
   constructor(userManager: UserManager) {
     this.userManager = userManager;
-  }
-
-  private log(message: string) {
-    console.log(`server manager: ${message}`);
   }
 
   public newGame(gameName: string, creator: User) {
@@ -58,7 +54,7 @@ class ServerManager {
   }
 
   public disconnect(user: User) {
-    this.log(`${user.name} disconnected from server`);
+    console.log(`${user.name} disconnected from server`);
     user.socket.removeAllListeners();
     user.socket.disconnect();
 
@@ -83,18 +79,29 @@ class ServerManager {
   }
 
   private joinServer({ id, name, socket }: JoinServerParams) {
-    const user = id
-      ? this.userManager.updateUser(id, { name, socket })
-      : this.userManager.addNewUser({ name, socket });
+    let user: User;
+    try {
+      if (id) {
+        user = this.userManager.updateUser(id, { name, socket });
+      } else {
+        user = this.userManager.addNewUser({ name, socket });
+      }
+    } catch (error) {
+      console.error(`error joining server: ${error}`);
+      return;
+    }
 
     // TODO: double check if this is needed
     // hard socket reset as we are about to resubscribe to all relevant events
     socket.removeAllListeners();
-    subscribeSocketToServerEvents(socket, user);
+    subscribeUserToServerEvents(user);
 
-    this.joinGame(user.currentGameId, user);
+    try {
+      this.joinGame(user.currentGameId, user);
+    } catch (error) {
+      console.error(`failed to rejoin the game because: ${error}`);
+    }
 
-    console.log(`server_manager: ${name} joined server`);
     this.updateGamesList();
   }
 

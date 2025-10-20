@@ -44,10 +44,7 @@ export class SocketActions {
     socket.emit("startGame");
   }
 
-  joinServer(userInfo: { id: string; name: string }): void {
-    if (!userInfo.id || !userInfo.name) {
-      throw new Error("Invalid user info");
-    }
+  joinServer(userInfo: { id?: string; name: string }): void {
     const socket = this.ensureConnected();
     socket.emit("joinServer", userInfo);
   }
