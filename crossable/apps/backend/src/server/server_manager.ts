@@ -3,6 +3,7 @@ import { Socket } from "socket.io";
 import GameManager from "../game/game_manager";
 import User from "../user/user";
 import UserManager from "../user/user_manager";
+import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
 
 interface JoinServerParams {
   id?: string;
@@ -16,60 +17,37 @@ class ServerManager {
 
   constructor(userManager: UserManager) {
     this.userManager = userManager;
-    console.log("server manager: initialized");
   }
 
-  private tryGetUserGame(user: User) {
-    if (user.currentGameId) {
-      const game = this.games.get(user.currentGameId);
-
-      if (game) {
-        return game;
-      }
-
-      // if the game corresponding to user.currentGameId doesn't exist
-      // the user's currentGameId is invalid and should be cleared
-      user.currentGameId = "";
-    }
-    console.log("server manager: user has no current game id");
+  private log(message: string) {
+    console.log(`server manager: ${message}`);
   }
 
-  private tryRejoinGame(user: User) {
-    const game = this.tryGetUserGame(user);
-    game?.userJoinGame(user, true);
-  }
+  public newGame(gameName: string, creator: User) {
+    // destroy the game after 30min
+    const destroyTimeoutCallback = setTimeout(() => {
+      this.destroyGame(game.id);
+    }, 30 * 60 * 1000);
 
-  private newGame(gameName: string, creator: User) {
     // the Game Manager will automatically add the creator to the game
-    const game = new GameManager(gameName, creator);
+    const game = new GameManager({ gameName, creator, destroyTimeoutCallback });
     this.games.set(game.id, game);
 
-    creator.currentGameId = game.id;
-
-    // games get destroyed after 30min
-    const gameId = game.id;
-    setTimeout(() => {
-      this.destroyGame(gameId);
-    }, 30 * 60 * 1000);
+    game.userJoinGame(creator);
   }
 
-  private joinGame(gameId: string, user: User) {
-    const game = this.games.get(gameId);
+  public joinGame(gameId: string, user: User) {
+    const game = this.getGameById(gameId);
 
-    if (game) {
-      user.currentGameId = gameId;
-      game.userJoinGame(user);
-    }
+    // XXX: important: set the users currentGameId
+    user.currentGameId = game.id;
+    game.userJoinGame(user);
   }
 
-  private leaveGame(user: User) {
-    const game = this.tryGetUserGame(user);
+  public leaveGame(user: User) {
+    const game = this.getGameById(user.currentGameId);
 
-    if (!game) {
-      console.log("server manager: could not find game to leave");
-      return;
-    }
-
+    // XXX: important: clear the users currentGameId
     user.currentGameId = "";
     game.playerLeaveGame(user.id);
 
@@ -77,13 +55,10 @@ class ServerManager {
     if (game.getPlayerCount() === 0) {
       this.destroyGame(game.id);
     }
-
-    // TODO: fix this complete reset and rejoin
-    // this.resetAndRejoinUser(user);
   }
 
-  private disconnect(user: User) {
-    console.log("server manager: disconnect: ", user.name);
+  public disconnect(user: User) {
+    this.log(`${user.name} disconnected from server`);
     user.socket.removeAllListeners();
     user.socket.disconnect();
 
@@ -93,48 +68,37 @@ class ServerManager {
     // game?.playerDisconnect(user.id);
   }
 
-  private joinServer({ id, name, socket }: ) {
-    let user: User;
-
-    if (!id) {
-      user = new User({ name, socket });
-    } else {
-      try {
-        user = this.userManager.getUserById(id);
-      } catch {
-        user = new User({ name, socket });
-      }
+  private getGameById(gameId: string): GameManager {
+    if (!gameId) {
+      throw new Error("Game ID is required");
     }
 
-    this.userManager.setUser(user);
+    const game = this.games.get(gameId);
 
-    // hard socket reset as we are about to resubscribe to all relevant events
-    socket.removeAllListeners();
+    if (!game) {
+      throw new Error(`Game with id ${gameId} not found`);
+    }
 
-    socket.on("newGame", (name: string) => {
-      this.newGame(name, user);
-      this.updateGamesList();
-    });
-    socket.on("joinGame", (gameId: string) => {
-      this.joinGame(gameId, user);
-      this.updateGamesList();
-    });
-    socket.on("leaveGame", () => {
-      this.leaveGame(user);
-      this.updateGamesList();
-    });
-    socket.on("disconnect", () => {
-      this.disconnect(user);
-      this.updateGamesList();
-    });
-
-    this.tryRejoinGame(user);
-    this.updateGamesList();
-
-    console.log(`${name} joined server`);
+    return game;
   }
 
-  private updateGamesList() {
+  private joinServer({ id, name, socket }: JoinServerParams) {
+    const user = id
+      ? this.userManager.updateUser(id, { name, socket })
+      : this.userManager.addNewUser({ name, socket });
+
+    // TODO: double check if this is needed
+    // hard socket reset as we are about to resubscribe to all relevant events
+    socket.removeAllListeners();
+    subscribeSocketToServerEvents(socket, user);
+
+    this.joinGame(user.currentGameId, user);
+
+    console.log(`server_manager: ${name} joined server`);
+    this.updateGamesList();
+  }
+
+  public updateGamesList() {
     const gamesList: Array<GameMetaData> = [];
 
     for (const game of this.games.values()) {
@@ -149,44 +113,17 @@ class ServerManager {
       return gameB.createdAt.getTime() - gameA.createdAt.getTime();
     });
 
-    // TODO: this is a bit inefficient, maybe we should have a set of connected user ids
-    for (const user of this.users.values()) {
-      if (user.socket.connected) {
-        user.socket.emit("updateGamesList", gamesList);
-      }
-    }
+    this.userManager.updateAllUsers(gamesList);
   }
 
   destroyGame(gameId: string) {
-    const game = this.games.get(gameId);
-
-    if (!game) {
-      console.log("could not find game to destroy");
-      return;
-    }
-
-    // game.getPlayerValues().forEach((player) => {
-    //   const user = this.users.get(player.id);
-
-    //   if (!user) {
-    //     return;
-    //   }
-
-    //   // TODO: call the unsubscribe function from game manager to clean up listeners
-    //   // this.resetAndRejoinUser(user);
-    // });
+    const game = this.getGameById(gameId);
 
     game.onDestroy();
     this.games.delete(gameId);
 
     this.updateGamesList();
   }
-
-  // resetAndRejoinUser(user: User) {
-  //   user.currentGameId = "";
-  //   user.socket.offAny();
-  //   this.joinServer(user);
-  // }
 
   onSocketConnect(socket: Socket<ClientToServerEvents, ClientToServerEvents>) {
     console.log(`user connected with socket id: ${socket.id}`);

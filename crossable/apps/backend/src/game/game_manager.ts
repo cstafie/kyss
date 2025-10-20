@@ -5,35 +5,45 @@ import {
   ServerGameUpdate,
   InGameClientToServerEvents,
 } from "shared";
-import { getRandomXWord } from "../../utils";
+import { getRandomXWord } from "../utils";
 import { Game } from "../game/game";
-import User from "../../user/user";
-import Entity from "../../entity/entity";
+import User from "../user/user";
 import { BotManager } from "../bot/bot_manager";
 import { PlayerManager } from "./player_manager";
 
-export class GameManager extends Entity {
-  private botManager: BotManager;
+interface GameManagerParams {
+  gameName: string;
+  creator: User;
+  destroyTimeoutCallback: NodeJS.Timeout;
+}
+
+export class GameManager {
+  public id = crypto.randomUUID();
   public game: Game;
+  private botManager: BotManager;
   private playerManager: PlayerManager;
+  private destroyTimeoutCallback: NodeJS.Timeout;
 
-  constructor(gameName: string, user: User) {
-    super();
-
+  constructor({
+    gameName,
+    creator,
+    destroyTimeoutCallback,
+  }: GameManagerParams) {
     const randomXWord = getRandomXWord();
     this.playerManager = new PlayerManager(this);
     this.botManager = new BotManager(this);
+    this.destroyTimeoutCallback = destroyTimeoutCallback;
 
     this.game = new Game({
       name: gameName,
-      player: user,
+      player: creator,
       xWord: randomXWord,
       playerManager: this.playerManager,
     });
 
-    this.userJoinGame(user);
+    this.userJoinGame(creator);
 
-    console.log(`${user.name} created a new game`);
+    console.log(`${creator.name} created a new game`);
   }
 
   public userJoinGame(user: User, wasDisconnected = false) {
@@ -70,7 +80,7 @@ export class GameManager extends Entity {
       removeBot: () => this.botManager.removeBot(user.id),
       setBotDifficulty: (params) => this.botManager.setBotDifficulty(params),
       startGame: () => this.startGame(),
-      // leaveGame: () => this.playerManager.playerLeaveGame(user.id),
+      leaveGame: () => this.playerManager.playerLeaveGame(user.id),
     };
 
     const eventNames = Object.keys(handlers) as Array<
@@ -198,6 +208,7 @@ export class GameManager extends Entity {
   }
 
   onDestroy() {
+    clearTimeout(this.destroyTimeoutCallback);
     this.botManager.onDestroy();
     this.playerManager.onDestroy();
   }

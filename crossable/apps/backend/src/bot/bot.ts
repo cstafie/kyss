@@ -40,15 +40,15 @@ class Bot {
     if (!this.game) return;
 
     const difficultyTimeoutMap = {
-      [BOT_DIFFICULTY.EASY]: 15,
-      [BOT_DIFFICULTY.MEDIUM]: 10,
-      [BOT_DIFFICULTY.HARD]: 5,
+      [BOTS.DIFFICULTIES.EASY]: 15,
+      [BOTS.DIFFICULTIES.MEDIUM]: 10,
+      [BOTS.DIFFICULTIES.HARD]: 5,
     };
 
     const difficultyErrorFrequencyMap = {
-      [BOT_DIFFICULTY.EASY]: 3,
-      [BOT_DIFFICULTY.MEDIUM]: 6,
-      [BOT_DIFFICULTY.HARD]: 10,
+      [BOTS.DIFFICULTIES.EASY]: 3,
+      [BOTS.DIFFICULTIES.MEDIUM]: 6,
+      [BOTS.DIFFICULTIES.HARD]: 10,
     };
 
     const emptyCount = countEmpty(this.game.xWord);

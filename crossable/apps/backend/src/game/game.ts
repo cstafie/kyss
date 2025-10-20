@@ -4,20 +4,20 @@ import {
   PlayerInfo,
   emptyGrid,
   get1Random,
-  TILE_BAR_SIZE,
-  SCORE_INCREASE,
-  SCORE_DECREASE,
+  TILE_BAR,
+  SCORING,
   charToTile,
   countEmpty,
   isEntryComplete,
   Tile,
   User,
 } from "shared";
-import Entity from "../../entity/entity";
 import { TileManager } from "./tile_manager";
 import { PlayerManager } from "./player_manager";
 
-export class Game extends Entity {
+export class Game {
+  id: string = crypto.randomUUID();
+  createdAt: Date = new Date();
   name: string;
   creatorName: string;
   creatorId: string;
@@ -39,8 +39,6 @@ export class Game extends Entity {
     xWord: XWord;
     playerManager: PlayerManager;
   }) {
-    super();
-
     this.name = name;
     this.solvedXWord = xWord;
     this.xWord = {
@@ -92,7 +90,7 @@ export class Game extends Entity {
       }
     }
 
-    while (player.tileBar.length < TILE_BAR_SIZE) {
+    while (player.tileBar.length < TILE_BAR.NUMBER_OF_TILES) {
       const playerTileChars = new Set(player.tileBar.map((tile) => tile.char));
       const filteredChars = Array.from(unplayedChars).filter(
         (char) => !playerTileChars.has(char)
@@ -220,7 +218,7 @@ export class Game extends Entity {
 
     // -- incorrect play --
     if (this.solvedXWord.grid[row][col].char !== tile.char) {
-      playerInfo.score += SCORE_DECREASE;
+      playerInfo.score += SCORING.DECREASE;
       return false;
     }
 
@@ -230,7 +228,7 @@ export class Game extends Entity {
     this.xWord.grid[row][col] = tile;
 
     // update player score
-    playerInfo.score += SCORE_INCREASE;
+    playerInfo.score += SCORING.INCREASE;
 
     // update tile bar
     tileBar.splice(tileIndex, 1);

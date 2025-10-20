@@ -1,6 +1,16 @@
-import { type ClientToServerEvents, type ServerToClientEvents } from "shared";
+import {
+  GameMetaData,
+  type ClientToServerEvents,
+  type ServerToClientEvents,
+} from "shared";
 import User from "./user";
 import { type Socket } from "socket.io";
+
+interface UserInfo {
+  name?: string;
+  socket?: Socket<ClientToServerEvents, ServerToClientEvents>;
+  currentGameId?: string;
+}
 
 export default class UserManager {
   private users: Map<string, User> = new Map();
@@ -19,18 +29,37 @@ export default class UserManager {
     return user;
   }
 
-  setUser({
-    id,
+  addNewUser({
     name,
     socket,
-    currentGameId = "",
   }: {
-    id?: string;
     name: string;
     socket: Socket<ClientToServerEvents, ServerToClientEvents>;
-    currentGameId?: string;
-  }) {
+  }): User {
+    const user = new User({ name, socket });
     this.users.set(user.id, user);
-    user.socket.emit("updateUser", { id: user.id, name: user.name });
+
+    return user;
+  }
+
+  updateUser(id: string, userInfo: UserInfo): User {
+    const { name, socket, currentGameId } = userInfo;
+
+    const user = this.getUserById(id);
+
+    user.name = name || user.name;
+    user.socket = socket || user.socket;
+    user.currentGameId =
+      currentGameId !== undefined ? currentGameId : user.currentGameId;
+
+    return user;
+  }
+
+  updateAllUsers(gamesList: Array<GameMetaData>) {
+    for (const user of this.users.values()) {
+      if (user.socket.connected) {
+        user.socket.emit("updateGamesList", gamesList);
+      }
+    }
   }
 }

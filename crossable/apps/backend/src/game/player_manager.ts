@@ -1,5 +1,4 @@
 import { PlayerInfo } from "shared";
-import Entity from "../../entity/entity";
 import GameManager from "./game_manager";
 
 type GamePlayer = PlayerInfo & {
@@ -7,12 +6,11 @@ type GamePlayer = PlayerInfo & {
   update: () => void;
 };
 
-export class PlayerManager extends Entity {
+export class PlayerManager {
   private players: Map<string, GamePlayer> = new Map();
   private gameManager: GameManager;
 
   constructor(gameManager: GameManager) {
-    super();
     this.gameManager = gameManager;
   }
 
