@@ -12,7 +12,7 @@ import {
   ClientToServerEvents,
 } from "shared";
 
-import serverManager from "./controllers/server/server_manager";
+import theServerManager from "./server/server_manager";
 import sendEmail from "./api/feedback/send_email";
 
 const app = express();
@@ -56,7 +56,7 @@ app.post("/api/feedback", async (req, res) => {
   res.send("Success!");
 });
 
-io.on("connection", serverManager.onSocketConnect.bind(serverManager));
+io.on("connection", (socket) => theServerManager.onSocketConnect(socket));
 
 const port = process.env.port || 3333;
 

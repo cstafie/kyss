@@ -7,8 +7,8 @@ import {
 } from "shared";
 import { getRandomXWord } from "../../utils";
 import { Game } from "../game/game";
-import User from "../user/user";
-import Entity from "../entity/entity";
+import User from "../../user/user";
+import Entity from "../../entity/entity";
 import { BotManager } from "../bot/bot_manager";
 import { PlayerManager } from "./player_manager";
 

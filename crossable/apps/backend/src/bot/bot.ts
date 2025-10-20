@@ -1,5 +1,5 @@
 import {
-  BOT_DIFFICULTY,
+  BOTS,
   BotDifficulty,
   countEmpty,
   GameState,
@@ -7,11 +7,11 @@ import {
   randomInRange,
 } from "shared";
 
-import Entity from "../entity/entity";
 import { Game } from "../game/game";
 import { type BotManager } from "./bot_manager";
 
-class Bot extends Entity {
+class Bot {
+  id: string;
   name: string;
   difficulty: BotDifficulty;
   game?: Game;
@@ -20,13 +20,13 @@ class Bot extends Entity {
 
   constructor({
     botManager,
-    botDifficulty = BOT_DIFFICULTY.MEDIUM,
+    botDifficulty = BOTS.DIFFICULTIES.MEDIUM,
   }: {
     botManager: BotManager;
     botDifficulty?: BotDifficulty;
   }) {
-    super();
-    this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
+    this.id = crypto.randomUUID();
+    this.name = `🤖-${this.id.substring(0, 4)}`;
     this.difficulty = botDifficulty;
     this.botManager = botManager;
   }

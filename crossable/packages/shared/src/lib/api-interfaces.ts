@@ -1,3 +1,5 @@
+import { BOTS } from "./constants";
+
 export interface XWord {
   grid: Array<Array<Tile>>;
   width: number;
@@ -92,13 +94,8 @@ export const GameState = {
 } as const;
 export type GameState = (typeof GameState)[keyof typeof GameState];
 
-export const BOT_DIFFICULTY = {
-  EASY: 0,
-  MEDIUM: 1,
-  HARD: 2,
-} as const;
 export type BotDifficulty =
-  (typeof BOT_DIFFICULTY)[keyof typeof BOT_DIFFICULTY];
+  (typeof BOTS.DIFFICULTIES)[keyof typeof BOTS.DIFFICULTIES];
 
 export const Direction = {
   across: "across",

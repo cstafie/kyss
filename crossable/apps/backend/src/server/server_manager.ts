@@ -2,16 +2,22 @@ import { GameMetaData, GameState, ClientToServerEvents } from "shared";
 import { Socket } from "socket.io";
 import GameManager from "../game/game_manager";
 import User from "../user/user";
+import UserManager from "../user/user_manager";
 
 interface JoinServerParams {
-  id: string;
+  id?: string;
   name: string;
   socket: Socket;
 }
 
 class ServerManager {
-  users: Map<string, User> = new Map();
+  userManager: UserManager;
   games: Map<string, GameManager> = new Map();
+
+  constructor(userManager: UserManager) {
+    this.userManager = userManager;
+    console.log("server manager: initialized");
+  }
 
   private tryGetUserGame(user: User) {
     if (user.currentGameId) {
@@ -64,6 +70,7 @@ class ServerManager {
       return;
     }
 
+    user.currentGameId = "";
     game.playerLeaveGame(user.id);
 
     // destroy the game if it has no players left
@@ -86,13 +93,20 @@ class ServerManager {
     // game?.playerDisconnect(user.id);
   }
 
-  private joinServer({ id, name, socket }: JoinServerParams) {
-    const user = this.users.get(id) || new User({ id, name, socket });
+  private joinServer({ id, name, socket }: ) {
+    let user: User;
 
-    user.name = name;
-    user.socket = socket;
+    if (!id) {
+      user = new User({ name, socket });
+    } else {
+      try {
+        user = this.userManager.getUserById(id);
+      } catch {
+        user = new User({ name, socket });
+      }
+    }
 
-    this.users.set(user.id, user);
+    this.userManager.setUser(user);
 
     // hard socket reset as we are about to resubscribe to all relevant events
     socket.removeAllListeners();
@@ -168,20 +182,21 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  resetAndRejoinUser(user: User) {
-    user.currentGameId = "";
-    user.socket.offAny();
-    this.joinServer(user);
-  }
+  // resetAndRejoinUser(user: User) {
+  //   user.currentGameId = "";
+  //   user.socket.offAny();
+  //   this.joinServer(user);
+  // }
 
   onSocketConnect(socket: Socket<ClientToServerEvents, ClientToServerEvents>) {
     console.log(`user connected with socket id: ${socket.id}`);
 
-    socket.on("joinServer", (userInfo: { id: string; name: string }) => {
+    socket.on("joinServer", (userInfo: { id?: string; name: string }) => {
       this.joinServer({ id: userInfo.id, name: userInfo.name, socket });
     });
   }
 }
 
-const serverManager = new ServerManager();
+const userManager = new UserManager();
+const serverManager = new ServerManager(userManager);
 export default serverManager;

@@ -13,7 +13,7 @@ import {
   Tile,
   User,
 } from "shared";
-import Entity from "../entity/entity";
+import Entity from "../../entity/entity";
 import { TileManager } from "./tile_manager";
 import { PlayerManager } from "./player_manager";
 

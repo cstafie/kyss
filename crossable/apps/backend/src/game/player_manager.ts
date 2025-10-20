@@ -1,5 +1,5 @@
 import { PlayerInfo } from "shared";
-import Entity from "../entity/entity";
+import Entity from "../../entity/entity";
 import GameManager from "./game_manager";
 
 type GamePlayer = PlayerInfo & {

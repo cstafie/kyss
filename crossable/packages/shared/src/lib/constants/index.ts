@@ -1,4 +1,21 @@
-export const TILE_BAR_SIZE = 5;
+export const TILE_BAR = Object.freeze({
+  NUMBER_OF_TILES: 5,
+});
 
-export const SCORE_INCREASE = 9;
-export const SCORE_DECREASE = -5;
+export const SCORING = Object.freeze({
+  INCREASE: 11,
+  SCORE_DECREASE: -4,
+});
+
+// BOTS
+
+const BOT_DIFFICULTIES = Object.freeze({
+  EASY: 0,
+  MEDIUM: 1,
+  HARD: 2,
+});
+
+export const BOTS = Object.freeze({
+  DIFFICULTIES: BOT_DIFFICULTIES,
+  MAX_BOTS_PER_GAME: 3,
+});
