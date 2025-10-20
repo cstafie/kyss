@@ -119,6 +119,7 @@ export class PlayerManager extends Entity {
     }
 
     this.gameManager.game.removePlayer(playerId);
+    this.players.delete(playerId);
 
     this.updateAllPlayers();
   }

@@ -65,12 +65,14 @@ class ServerManager {
     }
 
     game.playerLeaveGame(user.id);
-    this.resetAndRejoinUser(user);
 
     // destroy the game if it has no players left
     if (game.getPlayerCount() === 0) {
       this.destroyGame(game.id);
     }
+
+    // TODO: fix this complete reset and rejoin
+    // this.resetAndRejoinUser(user);
   }
 
   private disconnect(user: User) {
@@ -149,16 +151,16 @@ class ServerManager {
       return;
     }
 
-    game.getPlayerValues().forEach((player) => {
-      const user = this.users.get(player.id);
+    // game.getPlayerValues().forEach((player) => {
+    //   const user = this.users.get(player.id);
 
-      if (!user) {
-        return;
-      }
+    //   if (!user) {
+    //     return;
+    //   }
 
-      // TODO: call the unsubscribe function from game manager to clean up listeners
-      this.resetAndRejoinUser(user);
-    });
+    //   // TODO: call the unsubscribe function from game manager to clean up listeners
+    //   // this.resetAndRejoinUser(user);
+    // });
 
     game.onDestroy();
     this.games.delete(gameId);

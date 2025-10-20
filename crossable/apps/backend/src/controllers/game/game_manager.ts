@@ -70,7 +70,7 @@ export class GameManager extends Entity {
       removeBot: () => this.botManager.removeBot(user.id),
       setBotDifficulty: (params) => this.botManager.setBotDifficulty(params),
       startGame: () => this.startGame(),
-      leaveGame: () => this.playerManager.playerLeaveGame(user.id),
+      // leaveGame: () => this.playerManager.playerLeaveGame(user.id),
     };
 
     const eventNames = Object.keys(handlers) as Array<
