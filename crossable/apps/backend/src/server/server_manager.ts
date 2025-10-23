@@ -28,8 +28,6 @@ class ServerManager {
     // the Game Manager will automatically add the creator to the game
     const game = new GameManager({ gameName, creator, destroyTimeoutCallback });
     this.games.set(game.id, game);
-
-    game.userJoinGame(creator);
   }
 
   public joinGame(gameId: string, user: User) {
@@ -41,11 +39,19 @@ class ServerManager {
   }
 
   public leaveGame(user: User) {
-    const game = this.getGameById(user.currentGameId);
+    let game: GameManager;
 
-    // XXX: important: clear the users currentGameId
-    user.currentGameId = "";
-    game.playerLeaveGame(user.id);
+    try {
+      game = this.getGameById(user.currentGameId);
+      game.playerLeaveGame(user.id);
+
+      // XXX: important: clear the users currentGameId
+      // must be done after game.playerLeaveGame
+      user.currentGameId = "";
+    } catch (error) {
+      console.error(`failed to leave game because: ${error}`);
+      return;
+    }
 
     // destroy the game if it has no players left
     if (game.getPlayerCount() === 0) {
@@ -91,8 +97,6 @@ class ServerManager {
       return;
     }
 
-    // TODO: double check if this is needed
-    // hard socket reset as we are about to resubscribe to all relevant events
     socket.removeAllListeners();
     subscribeUserToServerEvents(user);
 

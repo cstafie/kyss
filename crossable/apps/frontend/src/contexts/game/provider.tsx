@@ -8,8 +8,7 @@ import {
 import { produce } from "immer";
 import { GameContext, type GameInfo } from ".";
 import type { Tile, BotDifficulty } from "shared";
-import { useAuth } from "@/contexts/auth";
-import { useSocket } from "@/hooks/useSocket";
+import { useUser } from "@/contexts/user";
 import { useGameState } from "@/hooks/useGameState";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
 import { SocketActions } from "@/services/socketActions";
@@ -19,34 +18,8 @@ export default function GameContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, socket, isConnected } = useUser();
   const [game, setGame] = useState<GameInfo | null>(null);
-
-  const onConnect = useCallback(() => console.log("Socket connected"), []);
-  const onDisconnect = useCallback(
-    () => console.log("Socket disconnected"),
-    []
-  );
-  const onError = useCallback(
-    (error: Error) => console.error("Socket error:", error),
-    []
-  );
-
-  // Socket connection with basic error handling
-  const {
-    socket,
-    isConnected,
-    error: socketError,
-  } = useSocket({
-    url: "http://localhost:3333",
-    onConnect,
-    onDisconnect,
-    onError,
-  });
-
-  if (socketError) {
-    console.error("Socket error:", socketError);
-  }
 
   // Game state management
   const {
@@ -237,7 +210,7 @@ export default function GameContextProvider({
       removeBot,
       setBotDifficulty,
       isConnected,
-      error: socketError || gameError,
+      error: gameError,
     }),
     [
       setReady,
@@ -254,7 +227,6 @@ export default function GameContextProvider({
       removeBot,
       setBotDifficulty,
       isConnected,
-      socketError,
       gameError,
     ]
   );

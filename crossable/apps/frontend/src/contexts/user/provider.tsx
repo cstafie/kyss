@@ -1,26 +1,53 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, useCallback } from "react";
 import reactUseCookie from "react-use-cookie";
 import Emoji from "@/components/emoji";
 import NavTitle from "@/components/nav_title";
 import UserNameForm from "@/components/user_name/user_name_form";
-import { AuthContext } from ".";
+import { UserContext } from ".";
+import { useSocket } from "./useSocket";
 
-export default function AuthContextProvider({
+export default function UserContextProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const onConnect = useCallback(() => console.log("Socket connected"), []);
+  const onDisconnect = useCallback(
+    () => console.log("Socket disconnected"),
+    []
+  );
+  const onError = useCallback(
+    (error: Error) => console.error("Socket error:", error),
+    []
+  );
+
   const [id, setID] = reactUseCookie("id");
   const [name, setName] = reactUseCookie("name");
+  const { socket, isConnected, error } = useSocket({
+    url: "http://localhost:3333",
+    onConnect,
+    onDisconnect,
+    onError,
+  });
 
+  // keep cookies in sync with state
+  // only run once
   useEffect(() => {
     // keep cookies in sync
     if (id) setID(id);
     if (name) setName(name);
   });
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("updateUser", (user) => {
+      setID(user.id);
+    });
+  }, [socket, setID]);
+
   return (
-    <AuthContext.Provider
+    <UserContext.Provider
       value={{
         signedIn: true,
         user: {
@@ -28,6 +55,9 @@ export default function AuthContextProvider({
           name,
         },
         setName,
+        socket,
+        isConnected,
+        error,
       }}
     >
       {!name && (
@@ -48,6 +78,6 @@ export default function AuthContextProvider({
         </section>
       )}
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   );
 }

@@ -4,7 +4,7 @@ import {
   useCallback,
   useRef,
 } from "react";
-import { useAuth } from "@/contexts/auth";
+import { useUser } from "@/contexts/user";
 import Button from "../button";
 
 const MAX_PLAYER_NAME_LENGTH = 12;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 function UserNameForm({ className, onSubmit }: Props) {
-  const { setName } = useAuth();
+  const { setName } = useUser();
 
   const userName = useRef<HTMLInputElement>(null);
 

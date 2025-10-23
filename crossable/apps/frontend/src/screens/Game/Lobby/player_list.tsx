@@ -1,5 +1,5 @@
 import Emoji from "@/components/emoji";
-import { useAuth } from "@/contexts/auth";
+import { useUser } from "@/contexts/user";
 import { type GameInfo } from "@/contexts/game";
 import { useMemo } from "react";
 
@@ -9,7 +9,7 @@ interface Props {
 
 function PlayerList({ game }: Props) {
   const { gameCreatorId, bots } = game;
-  const { user } = useAuth();
+  const { user } = useUser();
 
   const players = useMemo(() => {
     return Array.from(game.players.values()).filter(

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "@/contexts/auth";
+import { useUser } from "@/contexts/user";
 import Emoji from "../emoji";
 import UserNameForm from "./user_name_form";
 import Button from "../button";
@@ -7,7 +7,7 @@ import Button from "../button";
 const pencilEmoji = "✏️";
 
 const UserName = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const [editing, setEditing] = useState(false);
 
   return editing ? (

@@ -33,26 +33,50 @@ export default class UserManager {
     name,
     socket,
   }: {
-    name: string;
-    socket: Socket<ClientToServerEvents, ServerToClientEvents>;
+    name?: string;
+    socket?: Socket<ClientToServerEvents, ServerToClientEvents>;
   }): User {
+    if (!name) {
+      throw new Error("Name is required to add a new user");
+    }
+
+    if (!socket) {
+      throw new Error("Socket is required to add a new user");
+    }
+
     const user = new User({ name, socket });
     this.users.set(user.id, user);
 
+    this.emitUpdateUser(user.id);
     return user;
   }
 
   updateUser(id: string, userInfo: UserInfo): User {
     const { name, socket, currentGameId } = userInfo;
 
-    const user = this.getUserById(id);
+    let user: User;
+
+    try {
+      user = this.getUserById(id);
+    } catch (error) {
+      return this.addNewUser({
+        name,
+        socket: socket,
+      });
+    }
 
     user.name = name || user.name;
     user.socket = socket || user.socket;
     user.currentGameId =
       currentGameId !== undefined ? currentGameId : user.currentGameId;
 
+    this.emitUpdateUser(user.id);
     return user;
+  }
+
+  emitUpdateUser(id: string): void {
+    const user = this.getUserById(id);
+    user.socket.emit("updateUser", { id, name: user.name });
   }
 
   updateAllUsers(gamesList: Array<GameMetaData>) {

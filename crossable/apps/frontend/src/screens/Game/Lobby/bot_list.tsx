@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
-import { useAuth } from "@/contexts/auth";
+import { useUser } from "@/contexts/user";
 import { type GameInfo, useGame } from "@/contexts/game";
 import BotDifficulty from "@/components/bot_difficulty";
 import { BOTS, type BotDifficulty as BotDifficultyType } from "shared";
@@ -14,13 +14,15 @@ interface Props {
 
 function BotList({ game }: Props) {
   const { gameCreatorId, bots } = game;
-  const { user } = useAuth();
+  const { user } = useUser();
   const { addBot, setBotDifficulty, removeBot } = useGame();
 
   const isGameCreator = useMemo(
     () => user.id === gameCreatorId,
     [user, gameCreatorId]
   );
+
+  console.log(isGameCreator, user.id, gameCreatorId);
 
   if (bots.size === 0 && !isGameCreator) {
     return null;

@@ -40,27 +40,28 @@ export class PlayerManager {
 
   public updatePlayer({
     playerId,
-    playerInfo,
+    gamePlayer,
   }: {
     playerId: string;
-    playerInfo: PlayerInfo;
+    gamePlayer: GamePlayer;
   }) {
-    const gamePlayer = this.players.get(playerId);
+    const existingPlayer = this.getPlayerInfo(playerId);
 
     if (gamePlayer) {
       this.players.set(playerId, {
+        ...existingPlayer,
         ...gamePlayer,
-        ...playerInfo,
       });
     }
   }
 
-  public getPlayerInfo(playerId: string): PlayerInfo {
+  public getPlayerInfo(playerId: string): GamePlayer {
     const player = this.players.get(playerId);
 
     if (!player) {
       throw new Error("Player not found");
     }
+
     return player;
   }
 
@@ -108,9 +109,9 @@ export class PlayerManager {
   }
 
   public playerLeaveGame(playerId: string) {
-    console.log("game manager: player leave game");
+    console.log("player manager: player leave game");
 
-    const playerUnsubscribe = this.players.get(playerId)?.unsubscribe;
+    const playerUnsubscribe = this.getPlayerInfo(playerId).unsubscribe;
 
     if (playerUnsubscribe) {
       playerUnsubscribe();
