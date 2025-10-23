@@ -48,15 +48,11 @@ export class GameManager {
       throw new Error("Cannot join a game in progress");
     }
 
-    // Have the game creator join the game
-    this.game.addPlayer({ id: user.id, name: user.name });
-    this.setupPlayer(user);
+    this.addPlayerFromUser(user);
     this.updateAllPlayers();
   }
 
-  private setupPlayer(user: User) {
-    console.log("game manager: setting up player:", user.name);
-
+  public addPlayerFromUser(user: User) {
     const [updatePlayer, unsubscribePlayer] = subscribeUserToGameEvents(
       user,
       this,
@@ -64,8 +60,21 @@ export class GameManager {
       this.botManager
     );
 
-    this.playerManager.setUnsubscribe(user.id, unsubscribePlayer);
-    this.playerManager.setUpdate(user.id, updatePlayer);
+    this.playerManager.addPlayer({
+      id: user.id,
+      name: user.name,
+      ready: false,
+      update: updatePlayer,
+      unsubscribe: unsubscribePlayer,
+    });
+  }
+
+  public addPlayerFromBot(bot: BotInfo) {
+    this.playerManager.addPlayer({
+      id: bot.id,
+      name: bot.name,
+      ready: true,
+    });
   }
 
   public startGame() {
@@ -153,10 +162,6 @@ export class GameManager {
 
   public getPlayerValues(): Array<PlayerInfo> {
     return this.playerManager.getPlayerValues();
-  }
-
-  public addPlayer(playerInfo: { id: string; name: string; ready?: boolean }) {
-    this.game.addPlayer(playerInfo);
   }
 
   onDestroy() {

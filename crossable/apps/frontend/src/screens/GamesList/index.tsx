@@ -5,6 +5,7 @@ import { useNav } from "@/contexts/nav";
 import { useGame } from "@/contexts/game";
 import GamesTable from "./games_table";
 import Button from "@/components/button";
+import * as Shared from "shared";
 
 const GamesList = () => {
   const { games, game, createGame } = useGame();
@@ -20,10 +21,13 @@ const GamesList = () => {
 
   useEffect(resetNavLeft, [resetNavLeft]);
 
+  console.log({ Shared });
+
   return (
     <section className="flex flex-col items-center p-2">
       <div className="flex flex-row justify-between items-center w-full sm:w-1/2 m-4 mb-12">
         <h2> GAMES </h2>
+        <div> {Shared.BOTS.DIFFICULTIES.EASY} </div>
         <Button onClick={createGame} className="btn-blue">
           NEW GAME
         </Button>

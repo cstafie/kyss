@@ -30,11 +30,20 @@ export class PlayerManager {
     return Array.from(this.players.values());
   }
 
-  public addPlayer(playerInfo: PlayerInfo) {
+  public addPlayer(playerInfo: Partial<GamePlayer>) {
+    if (!playerInfo.id || !playerInfo.name) {
+      throw new Error("Player ID and name are required to add a player.");
+    }
+
     this.players.set(playerInfo.id, {
-      ...playerInfo,
+      id: playerInfo.id,
+      name: playerInfo.name,
+      tileBar: [],
+      score: 0,
+      ready: false,
       unsubscribe: () => console.log("no unsubscribe set"),
       update: () => console.log("no update set"),
+      ...playerInfo,
     });
   }
 
@@ -63,20 +72,6 @@ export class PlayerManager {
     }
 
     return player;
-  }
-
-  public setUnsubscribe(playerId: string, unsubscribe: () => void) {
-    const player = this.players.get(playerId);
-    if (player) {
-      player.unsubscribe = unsubscribe;
-    }
-  }
-
-  public setUpdate(playerId: string, update: () => void) {
-    const player = this.players.get(playerId);
-    if (player) {
-      player.update = update;
-    }
   }
 
   public setReady({ playerId, ready }: { playerId: string; ready: boolean }) {
@@ -111,14 +106,18 @@ export class PlayerManager {
   public playerLeaveGame(playerId: string) {
     console.log("player manager: player leave game");
 
-    const playerUnsubscribe = this.getPlayerInfo(playerId).unsubscribe;
+    try {
+      const playerUnsubscribe = this.getPlayerInfo(playerId).unsubscribe;
 
-    if (playerUnsubscribe) {
-      playerUnsubscribe();
+      if (playerUnsubscribe) {
+        playerUnsubscribe();
+      }
+
+      this.gameManager.game.removePlayer(playerId);
+      this.players.delete(playerId);
+    } catch (error) {
+      console.error("player manager: error leaving game:", error);
     }
-
-    this.gameManager.game.removePlayer(playerId);
-    this.players.delete(playerId);
 
     this.updateAllPlayers();
   }

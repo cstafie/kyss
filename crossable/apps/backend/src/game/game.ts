@@ -106,37 +106,6 @@ export class Game {
     }
   }
 
-  addPlayer({
-    id,
-    name,
-    ready,
-  }: {
-    id: string;
-    name: string;
-    ready?: boolean;
-  }) {
-    let existingPlayer: PlayerInfo | null = null;
-
-    try {
-      existingPlayer = this.playerManager.getPlayerInfo(id);
-    } catch (e) {
-      // player does not exist
-      // do nothing
-    }
-
-    if (!existingPlayer) {
-      this.playerManager.addPlayer({
-        id,
-        name,
-        score: 0,
-        tileBar: [],
-        ready: ready ?? false,
-      });
-
-      this.fillPlayerTileBar(id);
-    }
-  }
-
   removePlayer(playerId: string) {
     const playerInfo = this.playerManager.getPlayerInfo(playerId);
 

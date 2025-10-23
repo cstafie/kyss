@@ -28,6 +28,8 @@ function BotList({ game }: Props) {
     return null;
   }
 
+  console.log({ BOTS });
+
   return (
     <section className="text-xl">
       <h3 className="mb-3"> BOTS </h3>
