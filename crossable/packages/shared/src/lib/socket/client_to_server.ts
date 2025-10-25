@@ -1,7 +1,6 @@
 import { BotDifficulty } from "../api-interfaces";
 
 export interface InGameClientToServerEvents {
-  leaveGame: () => void;
   startGame: () => void;
   playTile: (params: { tileId: string; pos: [number, number] }) => void;
   updateTileBar: (tileIds: Array<string>) => void;
@@ -15,6 +14,7 @@ export interface InGameClientToServerEvents {
 }
 
 export type ClientToServerEvents = {
+  leaveGame: () => void;
   joinGame: (gameId: string) => void;
   newGame: (name: string) => void;
   joinServer: (userInfo: { id?: string; name: string }) => void;

@@ -94,20 +94,19 @@ export class GameManager {
 
   public makeServerGameUpdate(userId: string): ServerGameUpdate {
     const playerInfo = this.playerManager.getPlayerInfo(userId);
-
     const { tileBar, score, ready } = playerInfo;
 
-    const botInfos: Map<string, BotInfo> = new Map();
+    // const botInfos: Map<string, BotInfo> = new Map();
 
-    for (const bot of this.botManager.bots.values()) {
-      botInfos.set(bot.id, {
-        id: bot.id,
-        name: bot.name,
-        difficulty: bot.difficulty,
-      });
-    }
+    // for (const bot of this.botManager.bots.values()) {
+    //   botInfos.set(bot.id, {
+    //     id: bot.id,
+    //     name: bot.name,
+    //     difficulty: bot.difficulty,
+    //   });
+    // }
 
-    const gameUpdate: ServerGameUpdate = {
+    return {
       id: this.id,
       xWord: this.game.xWord,
       gameState: this.game.gameState,
@@ -118,8 +117,6 @@ export class GameManager {
       tileBar,
       gameCreatorId: this.game.creatorId,
     };
-
-    return gameUpdate;
   }
 
   getMetaData() {
@@ -136,18 +133,12 @@ export class GameManager {
     };
   }
 
-  // NOTE:
-  // These last functions are just delegates to other managers.
-  // The idea is for the player_manager, bot_manager and server_manager
-  // not to know about each other,
-  // but only about the game manager, which coordinates between them.
+  public playerLeaveGame(playerId: string) {
+    this.game.removePlayer(playerId);
+  }
 
   public updateAllPlayers() {
     this.playerManager.updateAllPlayers();
-  }
-
-  public playerLeaveGame(playerId: string) {
-    this.playerManager.playerLeaveGame(playerId);
   }
 
   public getPlayerInfo(playerId: string): PlayerInfo {

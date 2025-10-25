@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useUser } from "@/contexts/user";
 import Emoji from "../emoji";
 import UserNameForm from "./user_name_form";
 import Button from "../button";
+import { useLocation } from "react-router-dom";
 
 const pencilEmoji = "✏️";
 
 const UserName = () => {
   const { user } = useUser();
   const [editing, setEditing] = useState(false);
+  const location = useLocation();
+
+  const disabled = useMemo(() => {
+    return location.pathname.split("/").includes("xword");
+  }, [location.pathname]);
 
   return editing ? (
     <UserNameForm
@@ -16,7 +22,11 @@ const UserName = () => {
       onSubmit={() => setEditing(false)}
     />
   ) : (
-    <Button onClick={() => setEditing(true)} className="flex gap-2 btn-blue">
+    <Button
+      onClick={() => setEditing(true)}
+      className="flex gap-2 btn-blue"
+      disabled={disabled}
+    >
       <Emoji description="Pencil">{pencilEmoji}</Emoji>
       <div>{user.name}</div>
     </Button>

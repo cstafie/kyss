@@ -68,6 +68,11 @@ export function useSocket(options: UseSocketOptions) {
     socket.on("error", handleError);
     socket.on("connect_error", handleConnectError);
 
+    // Frontend
+    socket.onAny((event, ...args) => {
+      console.log("Emitting:", event, args);
+    });
+
     // Cleanup on unmount
     return () => {
       socket.off("connect", handleConnect);

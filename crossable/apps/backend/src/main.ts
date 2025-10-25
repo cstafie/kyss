@@ -75,4 +75,4 @@ setInterval(() => {
     heapUsed: `${Math.round(used.heapUsed / 1024 / 1024)} MB`,
     heapTotal: `${Math.round(used.heapTotal / 1024 / 1024)} MB`,
   });
-}, 10 * 60 * 1000);
+}, 2 * 60 * 1000);

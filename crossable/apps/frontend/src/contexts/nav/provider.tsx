@@ -6,6 +6,8 @@ import UserName from "@/components/user_name/user_name";
 import { useCallback, useState, type ReactNode } from "react";
 import { NavContext } from ".";
 
+// TODO: this is a bad pattern/solution, the nav should be part of a layout component
+// or should be set based on route (kind of the same thing)
 export default function NavContextProvider({
   children,
 }: {

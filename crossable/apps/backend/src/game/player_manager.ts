@@ -106,13 +106,7 @@ export class PlayerManager {
     console.log("player manager: player leave game");
 
     try {
-      const playerUnsubscribe = this.getPlayerInfo(playerId).unsubscribe;
-
-      if (playerUnsubscribe) {
-        playerUnsubscribe();
-      }
-
-      this.gameManager.game.removePlayer(playerId);
+      this.getPlayerInfo(playerId).unsubscribe?.();
       this.players.delete(playerId);
     } catch (error) {
       console.error("player manager: error leaving game:", error);

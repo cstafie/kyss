@@ -30,7 +30,6 @@ export function subscribeUserToGameEvents(
     removeBot: (botId: string) => botManager.removeBot(botId),
     setBotDifficulty: (params) => botManager.setBotDifficulty(params),
     startGame: () => gameManager.startGame(),
-    leaveGame: () => playerManager.playerLeaveGame(user.id),
   };
 
   const eventNames = Object.keys(handlers) as Array<

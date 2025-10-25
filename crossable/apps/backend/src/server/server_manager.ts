@@ -1,9 +1,15 @@
-import { GameMetaData, GameState, ClientToServerEvents } from "shared";
+import {
+  GameMetaData,
+  GameState,
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "shared";
 import { Socket } from "socket.io";
 import GameManager from "../game/game_manager";
 import User from "../user/user";
 import UserManager from "../user/user_manager";
 import subscribeUserToServerEvents from "./subscribeSocketToServerEvents";
+import { Server } from "http";
 
 interface JoinServerParams {
   id?: string;
@@ -38,6 +44,7 @@ class ServerManager {
     // XXX: important: set the users currentGameId
     user.currentGameId = game.id;
     game.userJoinGame(user);
+    this.updateGamesList();
   }
 
   public leaveGame(user: User) {
@@ -55,19 +62,20 @@ class ServerManager {
       return;
     }
 
+    // TODO:
     // destroy the game if it has no players left
     if (game.getPlayerCount() === 0) {
       this.destroyGame(game.id);
     }
+
+    this.updateGamesList();
   }
 
   public disconnect(user: User) {
     console.log(`${user.name} disconnected from server`);
-    user.socket.removeAllListeners();
-    user.socket.disconnect();
+    user.socket.disconnect(true);
 
     // TODO: handle game disconnect nicely?
-    // should maybe clean up the socket listeners here
     // const game = this.tryGetUserGame(user);
     // game?.playerDisconnect(user.id);
   }
@@ -88,10 +96,15 @@ class ServerManager {
 
   private joinServer({ id, name, socket }: JoinServerParams) {
     let user: User;
+
+    console.log(`user joining server with name: ${name}`);
+
     try {
       if (id) {
+        console.log(`existing user ${name} joining server with id ${id}`);
         user = this.userManager.updateUser(id, { name, socket });
       } else {
+        console.log(`new user ${name} joining server`);
         user = this.userManager.addNewUser({ name, socket });
       }
     } catch (error) {
@@ -99,7 +112,6 @@ class ServerManager {
       return;
     }
 
-    socket.removeAllListeners();
     subscribeUserToServerEvents(user);
 
     try {
@@ -126,7 +138,7 @@ class ServerManager {
       return gameB.createdAt.getTime() - gameA.createdAt.getTime();
     });
 
-    this.userManager.updateAllUsers(gamesList);
+    this.userManager.updateGamesListForAllUsers(gamesList);
   }
 
   destroyGame(gameId: string) {
@@ -138,8 +150,16 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  onSocketConnect(socket: Socket<ClientToServerEvents, ClientToServerEvents>) {
+  onSocketConnect(socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
     console.log(`user connected with socket id: ${socket.id}`);
+
+    // we are about to setup the socket for a user, so first clear any existing listeners
+    socket.removeAllListeners();
+
+    // debug: log all received events
+    socket.onAny((event, ...args) => {
+      console.log("Received:", socket.id, event, args);
+    });
 
     socket.on("joinServer", (userInfo: { id?: string; name: string }) => {
       this.joinServer({ id: userInfo.id, name: userInfo.name, socket });

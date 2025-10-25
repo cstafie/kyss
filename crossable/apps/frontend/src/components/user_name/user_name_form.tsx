@@ -36,9 +36,6 @@ function UserNameForm({ className, onSubmit }: Props) {
       if (value && value.toLocaleLowerCase() !== "you") {
         setName(value);
         onSubmit?.();
-
-        // TODO: remove this hack
-        window.location.reload();
       }
     },
     [setName, onSubmit]

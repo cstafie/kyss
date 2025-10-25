@@ -11,16 +11,16 @@ import type { Tile, BotDifficulty } from "shared";
 import { useUser } from "@/contexts/user";
 import { useGameState } from "@/hooks/useGameState";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
-import { SocketActions } from "@/services/socketActions";
 
 export default function GameContextProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user, socket, isConnected } = useUser();
+  const { user, isConnected, socketActions, socket } = useUser();
   const [game, setGame] = useState<GameInfo | null>(null);
 
+  //
   // Game state management
   const {
     games,
@@ -42,83 +42,80 @@ export default function GameContextProvider({
   // Navigation based on game state
   useGameNavigation({ game });
 
-  // Socket actions
-  const actions = useMemo(() => new SocketActions(socket), [socket]);
-
   // Join server when user info is available
   useEffect(() => {
-    console.log("Joining server with user:", user.name);
     if (user.name && isConnected) {
       try {
-        actions.joinServer({ id: user.id, name: user.name });
+        console.log("Joining server with user:", user.name);
+        socketActions.joinServer({ id: user.id, name: user.name });
       } catch (error) {
         console.error("Failed to join server:", error);
       }
     }
-  }, [user.name, user.id, isConnected, actions]);
+  }, [user.name, user.id, isConnected, socketActions]);
 
   // Context methods
   const createGame = useCallback(() => {
     try {
-      return actions.createGame();
+      return socketActions.createGame();
     } catch (error) {
       console.error("Failed to create game:", error);
       throw error;
     }
-  }, [actions]);
+  }, [socketActions]);
 
   const joinGame = useCallback(
     (gameId: string) => {
       try {
-        actions.joinGame(gameId);
+        socketActions.joinGame(gameId);
       } catch (error) {
         console.error("Failed to join game:", error);
         throw error;
       }
     },
-    [actions]
+    [socketActions]
   );
 
   const startGame = useCallback(() => {
     try {
-      actions.startGame();
+      socketActions.startGame();
     } catch (error) {
       console.error("Failed to start game:", error);
       throw error;
     }
-  }, [actions]);
+  }, [socketActions]);
 
   const addBot = useCallback(() => {
     try {
-      actions.addBot();
+      socketActions.addBot();
     } catch (error) {
       console.error("Failed to add bot:", error);
       throw error;
     }
-  }, [actions]);
+  }, [socketActions]);
 
   const removeBot = useCallback(
     (botId: string) => {
       try {
-        actions.removeBot(botId);
+        socketActions.removeBot(botId);
       } catch (error) {
         console.error("Failed to remove bot:", error);
         throw error;
       }
     },
-    [actions]
+    [socketActions]
   );
 
   const setBotDifficulty = useCallback(
     (id: string, difficulty: BotDifficulty) => {
       try {
-        actions.setBotDifficulty(id, difficulty);
+        socketActions.setBotDifficulty(id, difficulty);
       } catch (error) {
         console.error("Failed to set bot difficulty:", error);
         throw error;
       }
     },
-    [actions]
+    [socketActions]
   );
 
   const playTile = useCallback(
@@ -134,7 +131,7 @@ export default function GameContextProvider({
 
       try {
         // Send to server
-        actions.playTile(tileId, pos);
+        socketActions.playTile(tileId, pos);
 
         // Optimistic update
         const tile = game.tileBar[tileIndex];
@@ -149,18 +146,18 @@ export default function GameContextProvider({
         // Note: Server will send correct state via updateGame event
       }
     },
-    [game, actions]
+    [game, socketActions]
   );
 
   const leaveGame = useCallback(() => {
     try {
-      actions.leaveGame();
+      socketActions.leaveGame();
       setGame(null);
     } catch (error) {
       console.error("Failed to leave game:", error);
       throw error;
     }
-  }, [actions]);
+  }, [socketActions]);
 
   const updateTileBar = useCallback(
     (tileBar: Tile[]) => {
@@ -173,24 +170,24 @@ export default function GameContextProvider({
       );
 
       try {
-        actions.updateTileBar(tileBar.map((tile) => tile.id));
+        socketActions.updateTileBar(tileBar.map((tile) => tile.id));
       } catch (error) {
         console.error("Failed to update tile bar:", error);
       }
     },
-    [actions]
+    [socketActions]
   );
 
   const setReady = useCallback(
     (ready: boolean) => {
       try {
-        actions.setReady(ready);
+        socketActions.setReady(ready);
       } catch (error) {
         console.error("Failed to set ready status:", error);
         throw error;
       }
     },
-    [actions]
+    [socketActions]
   );
 
   const contextValue = useMemo(

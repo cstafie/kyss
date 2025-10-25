@@ -5,15 +5,17 @@ import {
 } from "shared";
 import { createContext } from "react";
 import { createSafeUseContext } from "../util";
+import type { SocketActions } from "@/services/socketActions";
 import type { Socket } from "socket.io-client";
 
 interface UserContext {
   signedIn: boolean;
   user: User;
   setName: (name: string) => void;
-  socket: Socket<ClientToServerEvents, ServerToClientEvents> | null;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
   isConnected: boolean;
   error: Error | null;
+  socketActions: SocketActions;
 }
 
 export const UserContext = createContext<UserContext | null>(null);

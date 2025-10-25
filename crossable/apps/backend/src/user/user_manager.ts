@@ -77,7 +77,15 @@ export default class UserManager {
     user.socket.emit("updateUser", { id, name: user.name });
   }
 
-  updateAllUsers(gamesList: Array<GameMetaData>) {
+  toJSON(): Array<{ id: string; name: string }> {
+    const usersArray: Array<{ id: string; name: string }> = [];
+    for (const user of this.users.values()) {
+      usersArray.push({ id: user.id, name: user.name });
+    }
+    return usersArray;
+  }
+
+  updateGamesListForAllUsers(gamesList: Array<GameMetaData>) {
     for (const user of this.users.values()) {
       if (user.socket.connected) {
         user.socket.emit("updateGamesList", gamesList);

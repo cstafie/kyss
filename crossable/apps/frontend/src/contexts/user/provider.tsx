@@ -1,10 +1,11 @@
-import { useEffect, type ReactNode, useCallback } from "react";
+import { useEffect, type ReactNode, useCallback, useMemo } from "react";
 import reactUseCookie from "react-use-cookie";
 import Emoji from "@/components/emoji";
 import NavTitle from "@/components/nav_title";
 import UserNameForm from "@/components/user_name/user_name_form";
 import { UserContext } from ".";
 import { useSocket } from "./useSocket";
+import { SocketActions } from "@/services/socketActions";
 
 export default function UserContextProvider({
   children,
@@ -29,6 +30,9 @@ export default function UserContextProvider({
     onDisconnect,
     onError,
   });
+
+  // Socket actions
+  const actions = useMemo(() => new SocketActions(socket), [socket]);
 
   // keep cookies in sync with state
   // only run once
@@ -55,9 +59,10 @@ export default function UserContextProvider({
           name,
         },
         setName,
-        socket,
         isConnected,
         error,
+        socketActions: actions,
+        socket,
       }}
     >
       {!name && (

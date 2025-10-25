@@ -109,14 +109,16 @@ export class Game {
   }
 
   removePlayer(playerId: string) {
-    const playerInfo = this.playerManager.getPlayerInfo(playerId);
+    let playerInfo: PlayerInfo;
 
-    if (!playerInfo) {
-      return;
+    try {
+      playerInfo = this.playerManager.getPlayerInfo(playerId);
+    } catch (error) {
+      throw new Error("Game: removePlayer: " + error);
     }
 
     this.tileManager.emptyTileBar(playerInfo.tileBar);
-    this.playerManager.deletePlayer(playerId);
+    this.playerManager.playerLeaveGame(playerId);
 
     const otherPlayers = this.playerManager.getPlayerValues();
 
@@ -169,16 +171,12 @@ export class Game {
     tileId: string;
     pos: [number, number];
   }): boolean {
-    console.log(
-      `Player ${playerId} is attempting to play tile ${tileId} at position ${pos}.`
-    );
-
     const [row, col] = pos;
     const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
     // this might happen in a race condition
-    if (!playerInfo || this.xWord.grid[row][col].char !== " ") {
-      return true;
+    if (this.xWord.grid[row][col].char !== " ") {
+      throw new Error("Tile position already occupied");
     }
 
     const { tileBar } = playerInfo;
@@ -186,7 +184,7 @@ export class Game {
 
     // this should probably never happen
     if (tileIndex === -1) {
-      return true;
+      throw new Error("Tile not found in player's tile bar");
     }
 
     const tile = tileBar[tileIndex];
@@ -217,6 +215,7 @@ export class Game {
     });
 
     this.checkGameOver();
+    // todo: have a better return type
     return true;
   }
 
