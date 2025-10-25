@@ -66,3 +66,13 @@ httpServer.listen(port, () => {
 
 httpServer.on("error", console.error);
 httpServer.on("clientError", console.error);
+
+// TODO: do some decentralized monitoring solution later
+setInterval(() => {
+  const used = process.memoryUsage();
+  console.log({
+    rss: `${Math.round(used.rss / 1024 / 1024)} MB`,
+    heapUsed: `${Math.round(used.heapUsed / 1024 / 1024)} MB`,
+    heapTotal: `${Math.round(used.heapTotal / 1024 / 1024)} MB`,
+  });
+}, 10 * 60 * 1000);

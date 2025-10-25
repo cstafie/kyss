@@ -80,11 +80,15 @@ class Bot {
 
   // TODO: make these move functions dry
   makeDumbMove() {
-    if (!this.game) return;
+    if (!this.game) {
+      throw new Error("Game not found for bot making dumb move.");
+    }
 
     const playerInfo = this.botManager.getPlayerInfo(this.id);
 
-    if (!playerInfo) return;
+    if (!playerInfo) {
+      throw new Error("Player not found for bot making dumb move.");
+    }
 
     const { tileBar } = playerInfo;
 
@@ -109,11 +113,15 @@ class Bot {
   }
 
   makeMove() {
-    if (!this.game) return;
+    if (!this.game) {
+      throw new Error("Game not found for bot making dumb move.");
+    }
 
     const playerInfo = this.botManager.getPlayerInfo(this.id);
 
-    if (!playerInfo) return;
+    if (!playerInfo) {
+      throw new Error("Player not found for bot making dumb move.");
+    }
 
     const { tileBar } = playerInfo;
 

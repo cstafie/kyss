@@ -15,9 +15,7 @@ interface UserInfo {
 export default class UserManager {
   private users: Map<string, User> = new Map();
 
-  constructor() {
-    console.log("user manager: initialized");
-  }
+  constructor() {}
 
   getUserById(id: string): User {
     const user = this.users.get(id);

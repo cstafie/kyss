@@ -20,13 +20,6 @@ export function useGameNavigation({ game }: UseGameNavigationOptions) {
   const previousGameRef = useRef<GameInfo | null>(null);
 
   useEffect(() => {
-    console.log(
-      "useGameNavigation: location=",
-      location.pathname,
-      " game=",
-      game
-    );
-
     // Only navigate on actual state changes, not on every render
     const gameChanged = previousGameRef.current !== game;
     if (!gameChanged) return;

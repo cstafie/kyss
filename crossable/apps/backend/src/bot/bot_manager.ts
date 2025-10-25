@@ -69,8 +69,8 @@ export class BotManager {
     this.gameManager.updateAllPlayers();
   }
 
-  public getPlayerInfo(userId: string): PlayerInfo {
-    return this.gameManager.getPlayerInfo(userId);
+  public getPlayerInfo(playerId: string): PlayerInfo {
+    return this.gameManager.getPlayerInfo(playerId);
   }
 
   public toJSON(): Array<[string, Bot]> {

@@ -184,7 +184,6 @@ export default function GameContextProvider({
   const setReady = useCallback(
     (ready: boolean) => {
       try {
-        console.log("Setting ready status to:", ready);
         actions.setReady(ready);
       } catch (error) {
         console.error("Failed to set ready status:", error);

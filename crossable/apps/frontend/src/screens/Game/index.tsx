@@ -16,11 +16,11 @@ const Game = () => {
 
   useEffect(() => {
     setNavLeft(
-      <Button className="btn-borderless">
-        <Link to="/" onClick={leaveGame}>
+      <Link to="/" onClick={leaveGame}>
+        <Button className="btn-borderless">
           <Emoji description="Back arrow">{BACK_ARROW_EMOJI}</Emoji> LEAVE
-        </Link>
-      </Button>
+        </Button>
+      </Link>
     );
   }, [leaveGame, setNavLeft]);
 

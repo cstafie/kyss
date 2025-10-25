@@ -2,8 +2,8 @@ import { PlayerInfo } from "shared";
 import GameManager from "./game_manager";
 
 type GamePlayer = PlayerInfo & {
-  unsubscribe: () => void;
-  update: () => void;
+  unsubscribe: null | (() => void);
+  update: null | (() => void);
 };
 
 export class PlayerManager {
@@ -16,8 +16,7 @@ export class PlayerManager {
 
   // used by both us and the game manager
   public updateAllPlayers() {
-    this.players.forEach(({ name, update, ready }) => {
-      console.log("player manager: updating player:", name, ready);
+    this.players.forEach(({ update }) => {
       update?.();
     });
   }
@@ -41,8 +40,8 @@ export class PlayerManager {
       tileBar: [],
       score: 0,
       ready: false,
-      unsubscribe: () => console.log("no unsubscribe set"),
-      update: () => console.log("no update set"),
+      unsubscribe: null,
+      update: null,
       ...playerInfo,
     });
   }
@@ -131,9 +130,8 @@ export class PlayerManager {
   }
 
   public onDestroy() {
-    console.log("player manager: on destroy called");
     this.players.forEach(({ unsubscribe }) => {
-      unsubscribe();
+      unsubscribe?.();
     });
     this.players.clear();
   }

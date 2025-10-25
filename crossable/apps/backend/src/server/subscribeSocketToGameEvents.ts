@@ -27,7 +27,7 @@ export function subscribeUserToGameEvents(
     setReady: (ready: boolean) =>
       playerManager.setReady({ playerId: user.id, ready }),
     addBot: () => botManager.addBot(),
-    removeBot: () => botManager.removeBot(user.id),
+    removeBot: (botId: string) => botManager.removeBot(botId),
     setBotDifficulty: (params) => botManager.setBotDifficulty(params),
     startGame: () => gameManager.startGame(),
     leaveGame: () => playerManager.playerLeaveGame(user.id),

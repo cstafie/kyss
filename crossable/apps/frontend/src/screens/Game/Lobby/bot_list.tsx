@@ -22,13 +22,9 @@ function BotList({ game }: Props) {
     [user, gameCreatorId]
   );
 
-  console.log(isGameCreator, user.id, gameCreatorId);
-
   if (bots.size === 0 && !isGameCreator) {
     return null;
   }
-
-  console.log({ BOTS });
 
   return (
     <section className="text-xl">

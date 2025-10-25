@@ -64,6 +64,8 @@ export class Game {
       throw new Error("Not all players are ready");
     }
 
+    // fill all player tile bars
+    players.forEach((player) => this.fillPlayerTileBar(player.id));
     this.gameState = GameState.inProgress;
   }
 
@@ -167,6 +169,10 @@ export class Game {
     tileId: string;
     pos: [number, number];
   }): boolean {
+    console.log(
+      `Player ${playerId} is attempting to play tile ${tileId} at position ${pos}.`
+    );
+
     const [row, col] = pos;
     const playerInfo = this.playerManager.getPlayerInfo(playerId);
 

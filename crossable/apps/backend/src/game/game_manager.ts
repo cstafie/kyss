@@ -36,8 +36,6 @@ export class GameManager {
       playerManager: this.playerManager,
     });
 
-    this.userJoinGame(creator);
-
     console.log(`${creator.name} created a new game`);
   }
 
@@ -80,7 +78,7 @@ export class GameManager {
   public startGame() {
     // can only start games that are not started
     if (this.game.gameState !== GameState.waitingToStart) {
-      return;
+      throw new Error("Game already started");
     }
 
     try {

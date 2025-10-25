@@ -25,9 +25,11 @@ class ServerManager {
       this.destroyGame(game.id);
     }, 30 * 60 * 1000);
 
-    // the Game Manager will automatically add the creator to the game
     const game = new GameManager({ gameName, creator, destroyTimeoutCallback });
     this.games.set(game.id, game);
+
+    // have the creator join the game
+    this.joinGame(game.id, creator);
   }
 
   public joinGame(gameId: string, user: User) {
