@@ -86,8 +86,8 @@ export class PlayerManager {
     playerId: string;
     tileIds: Array<string>;
   }) {
-    this.gameManager.game.updateTileBar({
-      playerId: playerId,
+    this.gameManager.updateTileBar({
+      playerId,
       tileBarIds: tileIds,
     });
     this.updateAllPlayers();
@@ -98,13 +98,11 @@ export class PlayerManager {
     tileId: string;
     pos: [number, number];
   }) {
-    this.gameManager.game.playTile(params);
+    this.gameManager.playTile(params);
     this.updateAllPlayers();
   }
 
   public playerLeaveGame(playerId: string) {
-    console.log("player manager: player leave game");
-
     try {
       this.getPlayerInfo(playerId).unsubscribe?.();
       this.players.delete(playerId);

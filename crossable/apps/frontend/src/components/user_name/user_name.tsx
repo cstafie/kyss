@@ -24,7 +24,7 @@ const UserName = () => {
   ) : (
     <Button
       onClick={() => setEditing(true)}
-      className="flex gap-2 btn-blue"
+      className="flex gap-2 btn-blue btn-transparent"
       disabled={disabled}
     >
       <Emoji description="Pencil">{pencilEmoji}</Emoji>

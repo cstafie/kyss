@@ -7,14 +7,13 @@ import User from "./user";
 import { type Socket } from "socket.io";
 
 interface UserInfo {
-  name?: string;
-  socket?: Socket<ClientToServerEvents, ServerToClientEvents>;
+  name: string;
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
   currentGameId?: string;
 }
 
 export default class UserManager {
   private users: Map<string, User> = new Map();
-
   constructor() {}
 
   getUserById(id: string): User {
@@ -25,6 +24,10 @@ export default class UserManager {
     }
 
     return user;
+  }
+
+  hasUser(id: string): boolean {
+    return this.users.has(id);
   }
 
   addNewUser({
@@ -74,7 +77,7 @@ export default class UserManager {
 
   emitUpdateUser(id: string): void {
     const user = this.getUserById(id);
-    user.socket.emit("updateUser", { id, name: user.name });
+    user.socket?.emit("updateUser", { id, name: user.name });
   }
 
   toJSON(): Array<{ id: string; name: string }> {
@@ -87,8 +90,8 @@ export default class UserManager {
 
   updateGamesListForAllUsers(gamesList: Array<GameMetaData>) {
     for (const user of this.users.values()) {
-      if (user.socket.connected) {
-        user.socket.emit("updateGamesList", gamesList);
+      if (user.socket?.connected) {
+        user.socket?.emit("updateGamesList", gamesList);
       }
     }
   }

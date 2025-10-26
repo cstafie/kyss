@@ -4,30 +4,30 @@ import { Game } from "../game/game";
 import User from "../user/user";
 import { BotManager } from "../bot/bot_manager";
 import { PlayerManager } from "./player_manager";
-import { subscribeUserToGameEvents } from "../server/subscribeSocketToGameEvents";
+import subscribeSocketToGameEvents from "../server/subscribeSocketToGameEvents";
 
 interface GameManagerParams {
   gameName: string;
   creator: User;
-  destroyTimeoutCallback: NodeJS.Timeout;
+  destroyGame: (gameId: string) => void;
 }
 
 export class GameManager {
   public id = crypto.randomUUID();
-  public game: Game;
+  private game: Game;
   private botManager: BotManager;
   private playerManager: PlayerManager;
-  private destroyTimeoutCallback: NodeJS.Timeout;
+  private destroyTimeoutCallback: NodeJS.Timeout | null = null;
 
-  constructor({
-    gameName,
-    creator,
-    destroyTimeoutCallback,
-  }: GameManagerParams) {
+  constructor({ gameName, creator, destroyGame }: GameManagerParams) {
     const randomXWord = getRandomXWord();
     this.playerManager = new PlayerManager(this);
     this.botManager = new BotManager(this);
-    this.destroyTimeoutCallback = destroyTimeoutCallback;
+
+    // let the server manager destroy the game after 30min
+    this.destroyTimeoutCallback = setTimeout(() => {
+      destroyGame(this.id);
+    }, 30 * 60 * 1000);
 
     this.game = new Game({
       name: gameName,
@@ -35,8 +35,10 @@ export class GameManager {
       xWord: randomXWord,
       playerManager: this.playerManager,
     });
+  }
 
-    console.log(`${creator.name} created a new game`);
+  public getGame(): Game {
+    return this.game;
   }
 
   public userJoinGame(user: User, wasDisconnected = false) {
@@ -51,8 +53,8 @@ export class GameManager {
   }
 
   public addPlayerFromUser(user: User) {
-    const [updatePlayer, unsubscribePlayer] = subscribeUserToGameEvents(
-      user,
+    const [updatePlayer, unsubscribeSocket] = subscribeSocketToGameEvents(
+      user.socket,
       this,
       this.playerManager,
       this.botManager
@@ -63,7 +65,7 @@ export class GameManager {
       name: user.name,
       ready: false,
       update: updatePlayer,
-      unsubscribe: unsubscribePlayer,
+      unsubscribe: unsubscribeSocket,
     });
   }
 
@@ -73,6 +75,27 @@ export class GameManager {
       name: bot.name,
       ready: true,
     });
+  }
+
+  public updateTileBar({
+    playerId,
+    tileBarIds,
+  }: {
+    playerId: string;
+    tileBarIds: Array<string>;
+  }) {
+    this.game.updateTileBar({
+      playerId,
+      tileBarIds,
+    });
+  }
+
+  public playTile(params: {
+    playerId: string;
+    tileId: string;
+    pos: [number, number];
+  }) {
+    this.game.playTile(params);
   }
 
   public startGame() {
@@ -146,7 +169,7 @@ export class GameManager {
   }
 
   public getPlayerCount(): number {
-    return this.playerManager.getPlayerCount();
+    return this.playerManager.getPlayerCount() - this.botManager.getBotCount();
   }
 
   public getPlayerValues(): Array<PlayerInfo> {
@@ -154,7 +177,7 @@ export class GameManager {
   }
 
   onDestroy() {
-    clearTimeout(this.destroyTimeoutCallback);
+    this.destroyTimeoutCallback && clearTimeout(this.destroyTimeoutCallback);
     this.botManager.onDestroy();
     this.playerManager.onDestroy();
   }

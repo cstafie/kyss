@@ -4,7 +4,7 @@ import Bot from "./bot";
 
 export class BotManager {
   public bots: Map<string, Bot> = new Map();
-  gameManager: GameManager;
+  private gameManager: GameManager;
 
   constructor(gameManager: GameManager) {
     this.gameManager = gameManager;
@@ -48,7 +48,7 @@ export class BotManager {
 
   public startTheBots() {
     for (const bot of this.bots.values()) {
-      bot.start(this.gameManager.game);
+      bot.start(this.gameManager.getGame());
     }
   }
 
@@ -58,6 +58,10 @@ export class BotManager {
     }
 
     this.bots.clear();
+  }
+
+  public getBotCount(): number {
+    return this.bots.size;
   }
 
   onDestroy() {

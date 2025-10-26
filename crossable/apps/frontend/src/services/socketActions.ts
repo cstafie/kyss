@@ -44,10 +44,10 @@ export class SocketActions {
     socket.emit("startGame");
   }
 
-  joinServer(userInfo: { id?: string; name: string }): void {
+  joinServer(name: string): void {
     const socket = this.ensureConnected();
     console.log(socket.id);
-    socket.emit("joinServer", userInfo);
+    socket.emit("joinServer", name);
   }
 
   addBot(): void {

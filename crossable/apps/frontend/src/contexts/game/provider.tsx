@@ -47,7 +47,7 @@ export default function GameContextProvider({
     if (user.name && isConnected) {
       try {
         console.log("Joining server with user:", user.name);
-        socketActions.joinServer({ id: user.id, name: user.name });
+        socketActions.joinServer(user.name);
       } catch (error) {
         console.error("Failed to join server:", error);
       }

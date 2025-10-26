@@ -4,7 +4,6 @@ import { Socket } from "socket.io";
 interface ConstructorParams {
   name: string;
   socket: Socket<ClientToServerEvents, ServerToClientEvents>;
-  id?: string;
 }
 
 class User {
@@ -14,7 +13,7 @@ class User {
   currentGameId = "";
 
   constructor({ name, socket }: ConstructorParams) {
-    this.id = crypto.randomUUID();
+    this.id = socket.id;
     this.name = name;
     this.socket = socket;
   }
