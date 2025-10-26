@@ -160,7 +160,7 @@ export class Game {
     playerId: string;
     tileId: string;
     pos: [number, number];
-  }): boolean {
+  }) {
     const [row, col] = pos;
     const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
@@ -169,7 +169,7 @@ export class Game {
       throw new Error("Tile position already occupied");
     }
 
-    const { tileBar } = playerInfo;
+    const { tileBar, incorrectTilePlayed } = playerInfo;
     const tileIndex = tileBar.findIndex((tile) => tile.id === tileId);
 
     // this should probably never happen
@@ -182,7 +182,8 @@ export class Game {
     // -- incorrect play --
     if (this.solvedXWord.grid[row][col].char !== tile.char) {
       playerInfo.score += SCORING.DECREASE;
-      return false;
+      incorrectTilePlayed?.(pos);
+      return;
     }
 
     // -- correct play --

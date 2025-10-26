@@ -28,17 +28,9 @@ export default class UserManager {
     name,
     socket,
   }: {
-    name?: string;
-    socket?: Socket<ClientToServerEvents, ServerToClientEvents>;
+    name: string;
+    socket: Socket<ClientToServerEvents, ServerToClientEvents>;
   }): ServerUser {
-    if (!name) {
-      throw new Error("Name is required to add a new user");
-    }
-
-    if (!socket) {
-      throw new Error("Socket is required to add a new user");
-    }
-
     const user: ServerUser = {
       name,
       socket,

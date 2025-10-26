@@ -1,9 +1,12 @@
 import { PlayerInfo } from "shared";
 import GameManager from "./game_manager";
 
+// extending PlayerInfo to include methods for managing subscriptions and updates
+// bots will not use these methods
 type GamePlayer = PlayerInfo & {
   unsubscribe: null | (() => void);
   update: null | (() => void);
+  incorrectTilePlayed: null | ((tilePos: [number, number]) => void);
 };
 
 export class PlayerManager {
@@ -42,6 +45,7 @@ export class PlayerManager {
       ready: false,
       unsubscribe: null,
       update: null,
+      incorrectTilePlayed: null,
       ...playerInfo,
     });
   }

@@ -4,12 +4,18 @@ import { PlayerManager } from "../game/player_manager";
 import { BotManager } from "../bot/bot_manager";
 import { ServerSocket } from "../types";
 
+interface SubscribeSocketToGameEventsReturn {
+  updatePlayer: () => void;
+  unsubscribeSocket: () => void;
+  incorrectTilePlayed: (tilePos: [number, number]) => void;
+}
+
 export default function subscribeSocketToGameEvents(
   socket: ServerSocket,
   gameManager: GameManager,
   playerManager: PlayerManager,
   botManager: BotManager
-): [updatePlayer: () => void, unsubscribePlayer: () => void] {
+): SubscribeSocketToGameEventsReturn {
   type SocketHandlers = {
     [K in keyof InGameClientToServerEvents]: (
       ...args: Parameters<InGameClientToServerEvents[K]>
@@ -94,5 +100,13 @@ export default function subscribeSocketToGameEvents(
     socket.emit("updateGame", gameManager.makeServerGameUpdate(socket.id));
   };
 
-  return [updatePlayer, unsubscribeSocket];
+  const incorrectTilePlayed = (tilePos: [number, number]) => {
+    socket.emit("incorrectTilePlayed", tilePos);
+  };
+
+  return {
+    updatePlayer,
+    unsubscribeSocket,
+    incorrectTilePlayed,
+  };
 }

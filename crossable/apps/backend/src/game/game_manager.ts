@@ -53,12 +53,13 @@ export class GameManager {
   }
 
   public addPlayerFromUser(user: ServerUser) {
-    const [updatePlayer, unsubscribeSocket] = subscribeSocketToGameEvents(
-      user.socket,
-      this,
-      this.playerManager,
-      this.botManager
-    );
+    const { updatePlayer, unsubscribeSocket, incorrectTilePlayed } =
+      subscribeSocketToGameEvents(
+        user.socket,
+        this,
+        this.playerManager,
+        this.botManager
+      );
 
     this.playerManager.addPlayer({
       id: user.socket.id,
@@ -66,6 +67,7 @@ export class GameManager {
       ready: false,
       update: updatePlayer,
       unsubscribe: unsubscribeSocket,
+      incorrectTilePlayed,
     });
   }
 
