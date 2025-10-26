@@ -91,6 +91,7 @@ const Grid = ({
         const isHighlighted = isCellInCurrentEntry(row, col);
         const isCurrentCell =
           row === currentCell.row && col === currentCell.col;
+
         const isError = incorrectPosStrings.has(cellId);
 
         switch (tile.char) {

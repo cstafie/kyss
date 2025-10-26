@@ -1,9 +1,8 @@
 import { GameMetaData, GameState } from "shared";
 import GameManager from "../game/game_manager";
-import User from "../user/user";
 import UserManager from "../user/user_manager";
 import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
-import { ServerSocket } from "../types";
+import { ServerSocket, ServerUser } from "../types";
 
 class ServerManager {
   userManager: UserManager;
@@ -25,7 +24,7 @@ class ServerManager {
       }
 
       // user is in a completed game, let them create a new one
-      this.leaveGame(creator.id);
+      this.leaveGame(creator.socket.id);
     }
 
     const game = new GameManager({
@@ -37,7 +36,7 @@ class ServerManager {
     this.games.set(game.id, game);
 
     // have the creator join the game
-    this.joinGame(game.id, creator.id);
+    this.joinGame(game.id, creator.socket.id);
   }
 
   private destroyGame(gameId: string) {
@@ -65,7 +64,7 @@ class ServerManager {
     let game: GameManager;
 
     game = this.getGameById(user.currentGameId);
-    game.playerLeaveGame(user.id);
+    game.playerLeaveGame(user.socket.id);
 
     // XXX: important: clear the users currentGameId
     // must be done after game.playerLeaveGame
@@ -84,14 +83,14 @@ class ServerManager {
     console.log(`disconnecting user ${user.name} for reason: ${reason}`);
 
     if (user.currentGameId) {
-      this.leaveGame(user.id);
+      this.leaveGame(user.socket.id);
     }
 
     user.socket.disconnect(true);
   }
 
   public joinServer(name: string, socket: ServerSocket) {
-    let user: User;
+    let user: ServerUser;
 
     try {
       user = this.userManager.hasUser(socket.id)

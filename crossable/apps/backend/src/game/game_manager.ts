@@ -1,14 +1,14 @@
 import { BotInfo, GameState, PlayerInfo, ServerGameUpdate } from "shared";
 import { getRandomXWord } from "../utils";
 import { Game } from "../game/game";
-import User from "../user/user";
 import { BotManager } from "../bot/bot_manager";
 import { PlayerManager } from "./player_manager";
 import subscribeSocketToGameEvents from "../server/subscribeSocketToGameEvents";
+import { ServerUser } from "../types";
 
 interface GameManagerParams {
   gameName: string;
-  creator: User;
+  creator: ServerUser;
   destroyGame: (gameId: string) => void;
 }
 
@@ -41,7 +41,7 @@ export class GameManager {
     return this.game;
   }
 
-  public userJoinGame(user: User, wasDisconnected = false) {
+  public userJoinGame(user: ServerUser, wasDisconnected = false) {
     const inProgress = this.game.gameState === GameState.inProgress;
 
     if (inProgress && !wasDisconnected) {
@@ -52,7 +52,7 @@ export class GameManager {
     this.updateAllPlayers();
   }
 
-  public addPlayerFromUser(user: User) {
+  public addPlayerFromUser(user: ServerUser) {
     const [updatePlayer, unsubscribeSocket] = subscribeSocketToGameEvents(
       user.socket,
       this,
@@ -61,7 +61,7 @@ export class GameManager {
     );
 
     this.playerManager.addPlayer({
-      id: user.id,
+      id: user.socket.id,
       name: user.name,
       ready: false,
       update: updatePlayer,

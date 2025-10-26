@@ -3,20 +3,14 @@ import {
   type ClientToServerEvents,
   type ServerToClientEvents,
 } from "shared";
-import User from "./user";
 import { type Socket } from "socket.io";
-
-interface UserInfo {
-  name: string;
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
-  currentGameId?: string;
-}
+import { ServerUser } from "../types";
 
 export default class UserManager {
-  private users: Map<string, User> = new Map();
+  private users: Map<string, ServerUser> = new Map();
   constructor() {}
 
-  getUserById(id: string): User {
+  getUserById(id: string): ServerUser {
     const user = this.users.get(id);
 
     if (!user) {
@@ -36,7 +30,7 @@ export default class UserManager {
   }: {
     name?: string;
     socket?: Socket<ClientToServerEvents, ServerToClientEvents>;
-  }): User {
+  }): ServerUser {
     if (!name) {
       throw new Error("Name is required to add a new user");
     }
@@ -45,22 +39,25 @@ export default class UserManager {
       throw new Error("Socket is required to add a new user");
     }
 
-    const user = new User(name, socket);
-    this.users.set(user.id, user);
+    const user: ServerUser = {
+      name,
+      socket,
+      currentGameId: "",
+    };
 
-    this.emitUpdateUser(user.id);
+    this.users.set(user.socket.id, user);
+
+    this.emitUpdateUser(user.socket.id);
     return user;
   }
 
-  updateUser(id: string, userInfo: UserInfo): User {
-    const { name, socket, currentGameId } = userInfo;
-
-    let user: User;
+  updateUser(id: string, user: ServerUser): ServerUser {
+    const { name, socket, currentGameId } = user;
 
     try {
       user = this.getUserById(id);
     } catch (error) {
-      return this.addNewUser({
+      user = this.addNewUser({
         name,
         socket: socket,
       });
@@ -71,7 +68,7 @@ export default class UserManager {
     user.currentGameId =
       currentGameId !== undefined ? currentGameId : user.currentGameId;
 
-    this.emitUpdateUser(user.id);
+    this.emitUpdateUser(user.socket.id);
     return user;
   }
 
@@ -83,7 +80,7 @@ export default class UserManager {
   toJSON(): Array<{ id: string; name: string }> {
     const usersArray: Array<{ id: string; name: string }> = [];
     for (const user of this.users.values()) {
-      usersArray.push({ id: user.id, name: user.name });
+      usersArray.push({ id: user.socket.id, name: user.name });
     }
     return usersArray;
   }

@@ -91,7 +91,7 @@ export function useGameState(socket: GameSocket | null): UseGameStateReturn {
         })
       );
       incorrectTimeoutsRef.current.delete(posString);
-    }, 750);
+    }, 500);
 
     incorrectTimeoutsRef.current.set(posString, timeout);
   }, []);

@@ -1,7 +1,6 @@
 import {
   XWord,
   GameState,
-  PlayerInfo,
   emptyGrid,
   get1Random,
   TILE_BAR,
@@ -10,10 +9,10 @@ import {
   countEmpty,
   isEntryComplete,
   Tile,
-  User,
 } from "shared";
 import { TileManager } from "./tile_manager";
 import { PlayerManager } from "./player_manager";
+import { ServerUser } from "../types";
 
 export class Game {
   id: string = crypto.randomUUID();
@@ -35,7 +34,7 @@ export class Game {
     playerManager,
   }: {
     name: string;
-    player: User;
+    player: ServerUser;
     xWord: XWord;
     playerManager: PlayerManager;
   }) {
@@ -47,7 +46,7 @@ export class Game {
     };
     this.playerManager = playerManager;
     // this.log = [];
-    this.creatorId = player.id;
+    this.creatorId = player.socket.id;
     this.creatorName = player.name;
     this.tileManager = new TileManager(
       xWord.grid.flat().filter((tile: Tile) => tile.char !== "#")
@@ -71,9 +70,6 @@ export class Game {
 
   fillPlayerTileBar(playerId: string) {
     const player = this.playerManager.getPlayerInfo(playerId);
-
-    // TODO: error management and consistency
-    if (!player) throw new Error("Player not found");
 
     if (this.tileManager.fillTileBar(player.tileBar)) {
       return;
@@ -109,13 +105,7 @@ export class Game {
   }
 
   removePlayer(playerId: string) {
-    let playerInfo: PlayerInfo;
-
-    try {
-      playerInfo = this.playerManager.getPlayerInfo(playerId);
-    } catch (error) {
-      throw new Error("Game: removePlayer: " + error);
-    }
+    const playerInfo = this.playerManager.getPlayerInfo(playerId);
 
     this.tileManager.emptyTileBar(playerInfo.tileBar);
     this.playerManager.playerLeaveGame(playerId);
