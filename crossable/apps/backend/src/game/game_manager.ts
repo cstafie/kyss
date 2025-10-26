@@ -176,6 +176,10 @@ export class GameManager {
     return this.playerManager.getPlayerValues();
   }
 
+  public getGameState(): GameState {
+    return this.game.gameState;
+  }
+
   onDestroy() {
     this.destroyTimeoutCallback && clearTimeout(this.destroyTimeoutCallback);
     this.botManager.onDestroy();

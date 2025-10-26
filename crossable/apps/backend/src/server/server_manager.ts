@@ -1,19 +1,9 @@
-import {
-  GameMetaData,
-  GameState,
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "shared";
-import { Socket } from "socket.io";
+import { GameMetaData, GameState } from "shared";
 import GameManager from "../game/game_manager";
 import User from "../user/user";
 import UserManager from "../user/user_manager";
 import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
-
-interface JoinServerParams {
-  name: string;
-  socket: Socket;
-}
+import { ServerSocket } from "../types";
 
 class ServerManager {
   userManager: UserManager;
@@ -23,12 +13,19 @@ class ServerManager {
     this.userManager = userManager;
   }
 
-  public newGame(gameName: string, creatorSocketId: string) {
+  public newGame(gameName: string, creatorId: string) {
     // does this user already have a game?
-    const creator = this.userManager.getUserById(creatorSocketId);
+    const creator = this.userManager.getUserById(creatorId);
 
     if (creator.currentGameId) {
-      throw new Error("User is already in a game");
+      const currentGame = this.getGameById(creator.currentGameId);
+
+      if (currentGame.getGameState() !== GameState.complete) {
+        throw new Error("User is already in a game");
+      }
+
+      // user is in a completed game, let them create a new one
+      this.leaveGame(creator.id);
     }
 
     const game = new GameManager({
@@ -41,6 +38,15 @@ class ServerManager {
 
     // have the creator join the game
     this.joinGame(game.id, creator.id);
+  }
+
+  private destroyGame(gameId: string) {
+    const game = this.getGameById(gameId);
+
+    game.onDestroy();
+    this.games.delete(gameId);
+
+    this.updateGamesList();
   }
 
   public joinGame(gameId: string, userSocketId: string) {
@@ -65,7 +71,6 @@ class ServerManager {
     // must be done after game.playerLeaveGame
     user.currentGameId = "";
 
-    // TODO:
     // destroy the game if it has no players left
     if (game.getPlayerCount() === 0) {
       this.destroyGame(game.id);
@@ -74,10 +79,10 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  public disconnect(socketId: string, reason: string) {
+  public handleDisconnect(socketId: string, reason: string) {
     const user = this.userManager.getUserById(socketId);
+    console.log(`disconnecting user ${user.name} for reason: ${reason}`);
 
-    // TODO: double check this works as intended
     if (user.currentGameId) {
       this.leaveGame(user.id);
     }
@@ -85,7 +90,7 @@ class ServerManager {
     user.socket.disconnect(true);
   }
 
-  public joinServer({ name, socket }: JoinServerParams) {
+  public joinServer(name: string, socket: ServerSocket) {
     let user: User;
 
     try {
@@ -126,16 +131,8 @@ class ServerManager {
     this.userManager.updateGamesListForAllUsers(gamesList);
   }
 
-  public onSocketConnect(
-    socket: Socket<ClientToServerEvents, ServerToClientEvents>
-  ) {
+  public onSocketConnect(socket: ServerSocket) {
     console.log(`user connected with socket id: ${socket.id}`);
-
-    // debug: log all received events
-    socket.onAny((event, ...args) => {
-      console.log("Received:", socket.id, event, args);
-    });
-
     subscribeSocketToServerEvents(socket);
   }
 
@@ -151,15 +148,6 @@ class ServerManager {
     }
 
     return game;
-  }
-
-  private destroyGame(gameId: string) {
-    const game = this.getGameById(gameId);
-
-    game.onDestroy();
-    this.games.delete(gameId);
-
-    this.updateGamesList();
   }
 }
 

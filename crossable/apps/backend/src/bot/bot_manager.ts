@@ -10,10 +10,6 @@ export class BotManager {
     this.gameManager = gameManager;
   }
 
-  public getBotEntries(): Array<[string, Bot]> {
-    return Array.from(this.bots.entries());
-  }
-
   public addBot() {
     const bot = new Bot({
       botManager: this,
@@ -78,6 +74,6 @@ export class BotManager {
   }
 
   public toJSON(): Array<[string, Bot]> {
-    return this.getBotEntries();
+    return Array.from(this.bots.entries());
   }
 }

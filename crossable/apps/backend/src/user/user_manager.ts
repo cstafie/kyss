@@ -45,7 +45,7 @@ export default class UserManager {
       throw new Error("Socket is required to add a new user");
     }
 
-    const user = new User({ name, socket });
+    const user = new User(name, socket);
     this.users.set(user.id, user);
 
     this.emitUpdateUser(user.id);

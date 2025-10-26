@@ -1,18 +1,12 @@
-import { ServerToClientEvents, ClientToServerEvents } from "shared";
-import { Socket } from "socket.io";
-
-interface ConstructorParams {
-  name: string;
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
-}
+import { ServerSocket } from "../types";
 
 class User {
   id: string;
   name: string;
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>;
+  socket: ServerSocket;
   currentGameId = "";
 
-  constructor({ name, socket }: ConstructorParams) {
+  constructor(name: string, socket: ServerSocket) {
     this.id = socket.id;
     this.name = name;
     this.socket = socket;

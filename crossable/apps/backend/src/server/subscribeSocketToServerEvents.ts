@@ -34,7 +34,7 @@ export default function subscribeSocketToServerEvents(socket: ServerSocket) {
     },
     joinServer: (name: string) => {
       try {
-        theServerManager.joinServer({ name, socket });
+        theServerManager.joinServer(name, socket);
       } catch (error) {
         console.error(`failed to connect user because: ${error}`);
       }
@@ -51,7 +51,7 @@ export default function subscribeSocketToServerEvents(socket: ServerSocket) {
   const disconnectHandler = (reason: DisconnectReason) => {
     try {
       unsubscribeSocket();
-      theServerManager.disconnect(socket.id, reason);
+      theServerManager.handleDisconnect(socket.id, reason);
     } catch (error) {
       console.error(`failed to disconnect user because: ${error}`);
     }
