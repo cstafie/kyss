@@ -12,6 +12,7 @@ export default function UserContextProvider({
 }: {
   children: ReactNode;
 }) {
+  // socket setup
   const onConnect = useCallback(() => console.log("Socket connected"), []);
   const onDisconnect = useCallback(
     () => console.log("Socket disconnected"),
@@ -22,8 +23,6 @@ export default function UserContextProvider({
     []
   );
 
-  const [id, setID] = reactUseCookie("id");
-  const [name, setName] = reactUseCookie("name");
   const { socket, isConnected, error } = useSocket({
     url: "http://localhost:3333",
     onConnect,
@@ -34,30 +33,26 @@ export default function UserContextProvider({
   // Socket actions
   const actions = useMemo(() => new SocketActions(socket), [socket]);
 
+  // cookie setup
+  const [name, setName] = reactUseCookie("name");
+  const [sessionId, setSessionId] = reactUseCookie("sessionId");
+
   // keep cookies in sync with state
   // only run once
   useEffect(() => {
-    // keep cookies in sync
-    if (id) setID(id);
     if (name) setName(name);
+    if (sessionId) setSessionId(sessionId);
   });
 
   useEffect(() => {
-    if (!socket) return;
-
-    socket.on("updateUser", (user) => {
-      setID(user.id);
-    });
-  }, [socket, setID]);
+    socket?.on("updateUser", setSessionId);
+  }, [socket, setSessionId]);
 
   return (
     <UserContext.Provider
       value={{
-        signedIn: true,
-        user: {
-          id,
-          name,
-        },
+        name,
+        sessionId,
         setName,
         isConnected,
         error,

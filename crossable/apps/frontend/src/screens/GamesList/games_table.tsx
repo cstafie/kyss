@@ -12,7 +12,7 @@ interface Props {
 }
 
 const GamesTable = ({ games }: Props) => {
-  const { user } = useUser();
+  const { sessionId } = useUser();
   const { joinGame } = useGame();
 
   return (
@@ -44,7 +44,7 @@ const GamesTable = ({ games }: Props) => {
               </td> */}
               {/* <td className="text-left font-mono py-2">{name}</td> */}
               <td className="text-left font-mono">
-                {creatorId === user.id ? "YOU" : creatorName}
+                {creatorId === sessionId ? "YOU" : creatorName}
               </td>
               <td className="text-center">{numberOfPlayers}</td>
               <td className="text-right">

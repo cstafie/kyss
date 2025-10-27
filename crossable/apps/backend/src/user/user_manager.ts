@@ -4,17 +4,46 @@ import {
   type ServerToClientEvents,
 } from "shared";
 import { type Socket } from "socket.io";
-import { ServerUser } from "../types";
+import { ServerUser, ServerSocket } from "../types";
 
 export default class UserManager {
   private users: Map<string, ServerUser> = new Map();
   constructor() {}
 
-  getUserById(id: string): ServerUser {
-    const user = this.users.get(id);
+  getOrCreateUser({
+    sessionId,
+    socket,
+    name,
+  }: {
+    sessionId?: string;
+    socket: ServerSocket;
+    name: string;
+  }): ServerUser {
+    if (!sessionId) {
+      return this.addNewUser({ name, socket });
+    }
+
+    // try to find existing user
+    try {
+      const user = this.getUserBySessionId(sessionId);
+      if (user.socket.id !== socket.id) {
+        // disconnect old socket
+        user.socket.disconnect(true);
+      }
+
+      user.socket = socket;
+      return user;
+    } catch (error) {
+      // user not found, create new one
+      return this.addNewUser({ name, socket });
+    }
+  }
+
+  getUserBySessionId(sessionId: string): ServerUser {
+    const user = this.users.get(sessionId);
 
     if (!user) {
-      throw new Error(`User with id ${id} not found`);
+      throw new Error(`User with id ${sessionId} not found`);
     }
 
     return user;
@@ -35,19 +64,21 @@ export default class UserManager {
       name,
       socket,
       currentGameId: "",
+      // TODO: have the user session expire after some time
+      sessionId: crypto.randomUUID(),
     };
 
     this.users.set(user.socket.id, user);
 
-    this.emitUpdateUser(user.socket.id);
+    this.emitUpdateUser(user.sessionId);
     return user;
   }
 
-  updateUser(id: string, user: ServerUser): ServerUser {
+  updateUser(sessionId: string, user: ServerUser): ServerUser {
     const { name, socket, currentGameId } = user;
 
     try {
-      user = this.getUserById(id);
+      user = this.getUserBySessionId(sessionId);
     } catch (error) {
       user = this.addNewUser({
         name,
@@ -60,13 +91,13 @@ export default class UserManager {
     user.currentGameId =
       currentGameId !== undefined ? currentGameId : user.currentGameId;
 
-    this.emitUpdateUser(user.socket.id);
+    this.emitUpdateUser(user.sessionId);
     return user;
   }
 
-  emitUpdateUser(id: string): void {
-    const user = this.getUserById(id);
-    user.socket?.emit("updateUser", { id, name: user.name });
+  emitUpdateUser(sessionId: string): void {
+    const user = this.getUserBySessionId(sessionId);
+    user.socket?.emit("updateUser", sessionId);
   }
 
   toJSON(): Array<{ id: string; name: string }> {

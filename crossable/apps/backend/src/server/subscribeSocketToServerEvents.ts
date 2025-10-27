@@ -1,9 +1,9 @@
 import theServerManager from "./server_manager";
 import { OutOfGameClientToServerEvents } from "shared";
-import { DisconnectReason } from "socket.io";
-import { ServerSocket } from "../types";
+import { type DisconnectReason } from "socket.io";
+import { ServerUser } from "../types";
 
-export default function subscribeSocketToServerEvents(socket: ServerSocket) {
+export default function subscribeSocketToServerEvents(user: ServerUser) {
   type SocketHandlers = {
     [K in keyof OutOfGameClientToServerEvents]: (
       ...args: Parameters<OutOfGameClientToServerEvents[K]>
@@ -11,50 +11,51 @@ export default function subscribeSocketToServerEvents(socket: ServerSocket) {
   };
 
   const handlers: SocketHandlers = {
-    newGame: (name: string) => {
+    newGame: (gameName: string) => {
       try {
-        theServerManager.newGame(name, socket.id);
+        theServerManager.newGame({ gameName, creator: user });
       } catch (error) {
         console.error(`failed to create new game because: ${error}`);
       }
     },
     joinGame: (gameId: string) => {
       try {
-        theServerManager.joinGame(gameId, socket.id);
+        theServerManager.joinGame({ gameId, user });
       } catch (error) {
         console.error(`failed to join game because: ${error}`);
       }
     },
     leaveGame: () => {
       try {
-        theServerManager.leaveGame(socket.id);
+        theServerManager.leaveGame(user);
       } catch (error) {
         console.error(`failed to leave game because: ${error}`);
       }
     },
-    joinServer: (name: string) => {
+    joinServer: ({ sessionId, name }: { sessionId?: string; name: string }) => {
       try {
-        theServerManager.joinServer(name, socket);
+        theServerManager.joinServer(user);
       } catch (error) {
         console.error(`failed to connect user because: ${error}`);
       }
     },
   };
 
-  const unsubscribeSocket = () => {
-    eventNames.forEach((event) => {
-      socket.off(event, handlers[event]);
-    });
-    socket.off("disconnect", disconnectHandler);
-  };
-
   const disconnectHandler = (reason: DisconnectReason) => {
+    console.log(`socket disconnected: ${user.socket.id}, reason: ${reason}`);
     try {
       unsubscribeSocket();
-      theServerManager.handleDisconnect(socket.id, reason);
+      theServerManager.handleDisconnect(user);
     } catch (error) {
       console.error(`failed to disconnect user because: ${error}`);
     }
+  };
+
+  const unsubscribeSocket = () => {
+    eventNames.forEach((event) => {
+      user.socket.off(event, handlers[event]);
+    });
+    user.socket.off("disconnect", disconnectHandler);
   };
 
   const eventNames = Object.keys(handlers) as Array<
@@ -63,7 +64,7 @@ export default function subscribeSocketToServerEvents(socket: ServerSocket) {
 
   // Register all handlers
   eventNames.forEach((event) => {
-    socket.on(event, handlers[event]);
+    user.socket.on(event, handlers[event]);
   });
-  socket.on("disconnect", disconnectHandler);
+  user.socket.on("disconnect", disconnectHandler);
 }

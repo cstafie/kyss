@@ -5,10 +5,10 @@ import UserNameForm from "./user_name_form";
 import Button from "../button";
 import { useLocation } from "react-router-dom";
 
-const pencilEmoji = "✏️";
+const PENCIL_EMOJI = "✏️";
 
 const UserName = () => {
-  const { user } = useUser();
+  const { name } = useUser();
   const [editing, setEditing] = useState(false);
   const location = useLocation();
 
@@ -27,8 +27,8 @@ const UserName = () => {
       className="flex gap-2 btn-blue btn-transparent"
       disabled={disabled}
     >
-      <Emoji description="Pencil">{pencilEmoji}</Emoji>
-      <div>{user.name}</div>
+      <Emoji description="Pencil">{PENCIL_EMOJI}</Emoji>
+      <div>{name}</div>
     </Button>
   );
 };

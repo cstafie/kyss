@@ -56,6 +56,7 @@ const XWord = ({ game }: Props) => {
       if (letterIndex === -1 || game.xWord.grid[row][col].char !== " ") {
         // TODO: this should be a setting
         // could be goToNextEmptyCell instead
+        // it's nice cause it can be front-end side only
         goToNextCell();
         return;
       }
@@ -68,7 +69,7 @@ const XWord = ({ game }: Props) => {
     [game, currentCell, goToNextCell]
   );
 
-  const isGameOver = game.gameState === GameState.complete;
+  const isGameOver = game.gameState === GameState.completed;
 
   const cluesClass = "m-2 hidden sm:block";
 

@@ -17,7 +17,13 @@ export type OutOfGameClientToServerEvents = {
   leaveGame: () => void;
   joinGame: (gameId: string) => void;
   newGame: (name: string) => void;
-  joinServer: (name: string) => void;
+  joinServer: ({
+    sessionId,
+    name,
+  }: {
+    sessionId: string;
+    name: string;
+  }) => void;
 };
 
 export type ClientToServerEvents = OutOfGameClientToServerEvents &

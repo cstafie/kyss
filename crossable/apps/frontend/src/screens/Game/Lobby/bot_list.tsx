@@ -14,12 +14,12 @@ interface Props {
 
 function BotList({ game }: Props) {
   const { gameCreatorId, bots } = game;
-  const { user } = useUser();
+  const { sessionId } = useUser();
   const { addBot, setBotDifficulty, removeBot } = useGame();
 
   const isGameCreator = useMemo(
-    () => user.id === gameCreatorId,
-    [user, gameCreatorId]
+    () => sessionId === gameCreatorId,
+    [sessionId, gameCreatorId]
   );
 
   if (bots.size === 0 && !isGameCreator) {
@@ -80,7 +80,7 @@ function BotList({ game }: Props) {
         </div>
       ))}
 
-      {isGameCreator && bots.size < 10 && (
+      {isGameCreator && bots.size < BOTS.MAX_BOTS_PER_GAME && (
         <button onClick={addBot} className="btn btn-transparent text-sm mt-6">
           + ADD BOT
         </button>

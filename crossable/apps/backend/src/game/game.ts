@@ -70,8 +70,9 @@ export class Game {
 
   fillPlayerTileBar(playerId: string) {
     const player = this.playerManager.getPlayerInfo(playerId);
+    this.tileManager.fillTileBar(player.tileBar);
 
-    if (this.tileManager.fillTileBar(player.tileBar)) {
+    if (player.tileBar.length === TILE_BAR.NUMBER_OF_TILES) {
       return;
     }
 
@@ -95,12 +96,32 @@ export class Game {
       );
 
       if (filteredChars.length === 0) {
-        return;
+        break;
       }
 
       const randomChar = get1Random(filteredChars);
       // make a new tile with the same char
       player.tileBar.push(charToTile(randomChar));
+    }
+
+    if (player.tileBar.length === TILE_BAR.NUMBER_OF_TILES) {
+      return;
+    }
+
+    // still couldn't fill the tile bar, let's copy a random tile from another player
+
+    const otherPlayers = Array.from(
+      this.playerManager.getPlayerValues()
+    ).filter((p) => p.id !== playerId);
+
+    if (otherPlayers.length === 0) {
+      return;
+    }
+
+    while (player.tileBar.length < TILE_BAR.NUMBER_OF_TILES) {
+      const randomPlayer = get1Random(otherPlayers);
+      const randomTile = get1Random(randomPlayer.tileBar);
+      player.tileBar.push({ id: crypto.randomUUID(), char: randomTile.char });
     }
   }
 
@@ -206,8 +227,7 @@ export class Game {
     });
 
     this.checkGameOver();
-    // todo: have a better return type
-    return true;
+    return;
   }
 
   checkGameOver() {
@@ -215,7 +235,7 @@ export class Game {
     const isGameOver = numEmptyTiles === 0;
 
     if (isGameOver) {
-      this.gameState = GameState.complete;
+      this.gameState = GameState.completed;
     }
   }
 

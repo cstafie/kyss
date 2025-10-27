@@ -34,6 +34,7 @@ export function useSocket(options: UseSocketOptions) {
     // Create socket instance
     const socket = io(url, {
       autoConnect: true,
+      withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 1,
       reconnectionDelay: 1000,

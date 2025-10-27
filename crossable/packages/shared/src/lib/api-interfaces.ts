@@ -10,7 +10,7 @@ export interface XWord {
 export interface FeedbackInfo {
   email: string;
   content: string;
-  user: User;
+  userName: string;
 }
 
 // export const TileState = {
@@ -54,11 +54,6 @@ export interface BotInfo {
   difficulty: BotDifficulty;
 }
 
-export interface User {
-  id: string;
-  name: string;
-}
-
 export interface PlayerGameUpdate {
   xWord: XWord;
   ready: boolean;
@@ -90,7 +85,7 @@ export interface GameMetaData {
 export const GameState = {
   waitingToStart: "waiting-to-start",
   inProgress: "in-progress",
-  complete: "complete",
+  completed: "completed",
 } as const;
 export type GameState = (typeof GameState)[keyof typeof GameState];
 

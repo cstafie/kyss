@@ -109,7 +109,11 @@ export class PlayerManager {
   public playerLeaveGame(playerId: string) {
     try {
       this.getPlayerInfo(playerId).unsubscribe?.();
-      this.players.delete(playerId);
+
+      // soft delete: we keep the player in the map so that they show on the scoreboard
+      if (this.gameManager.isGameCompleted()) return;
+
+      this.deletePlayer(playerId);
     } catch (error) {
       console.error("player manager: error leaving game:", error);
     }

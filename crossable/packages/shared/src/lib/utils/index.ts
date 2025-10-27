@@ -1,6 +1,7 @@
 import { Tile, XWord } from "../api-interfaces";
 
 // TODO: this should be class tile with a constructor
+// fromChar etc.
 export const charToTile = (char: string) => ({ id: crypto.randomUUID(), char });
 
 export const mapGrid = (grid: Array<Array<string>>): Array<Array<Tile>> => {

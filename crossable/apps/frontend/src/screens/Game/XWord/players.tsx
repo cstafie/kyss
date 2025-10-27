@@ -20,13 +20,13 @@ function computeMedal(spot: number) {
 }
 
 const Players = ({ players, isGameOver }: Props) => {
-  const { user } = useUser();
+  const { sessionId } = useUser();
   players.sort((playerA, playerB) => playerB.score - playerA.score);
 
   return (
     <ol className="font-mono text-lg">
       {players.map(({ id, name, score }, i) => (
-        <li key={id} className={`${id === user.id ? "text-purple-400" : ""}`}>
+        <li key={id} className={`${id === sessionId ? "text-purple-400" : ""}`}>
           {isGameOver && computeMedal(i)} {name}: {score}
         </li>
       ))}

@@ -11,17 +11,14 @@ export class TileManager {
     this.tiles = cloneDeep(tiles);
   }
 
-  // TODO: look at this boolean passed throughout the call chain, it's ugly,
-  // maybe throw instead and catch at a higher level
-
-  fillTileBar(tileBar: Array<Tile>): boolean {
+  fillTileBar(tileBar: Array<Tile>) {
     while (tileBar.length < TILE_BAR.NUMBER_OF_TILES) {
       if (!this.addTile(tileBar)) {
-        return false;
+        return;
       }
     }
 
-    return true;
+    return;
   }
 
   addTile(tileBar: Array<Tile>): boolean {

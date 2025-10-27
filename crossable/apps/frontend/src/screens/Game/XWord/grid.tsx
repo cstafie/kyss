@@ -99,7 +99,7 @@ const Grid = ({
             return (
               <Block
                 key={cellId}
-                isGameDone={gameState === GameState.complete}
+                isGameDone={gameState === GameState.completed}
               />
             );
           default:

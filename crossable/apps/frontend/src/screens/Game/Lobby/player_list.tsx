@@ -9,7 +9,7 @@ interface Props {
 
 function PlayerList({ game }: Props) {
   const { gameCreatorId, bots } = game;
-  const { user } = useUser();
+  const { sessionId } = useUser();
 
   const players = useMemo(() => {
     return Array.from(game.players.values()).filter(
@@ -21,7 +21,10 @@ function PlayerList({ game }: Props) {
     <section className="text-xl flex flex-col justify-center">
       <h3 className="mb-3"> PLAYERS </h3>
       {players.map(({ id, name, ready }) => (
-        <div key={id} className={`${id === user.id ? "text-purple-400" : ""}`}>
+        <div
+          key={id}
+          className={`${id === sessionId ? "text-purple-400" : ""}`}
+        >
           {ready ? (
             <Emoji description="Green circle">🟢</Emoji>
           ) : (

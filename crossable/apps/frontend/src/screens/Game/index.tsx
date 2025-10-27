@@ -34,7 +34,7 @@ const Game = () => {
         return <Lobby game={game} />;
 
       case GameState.inProgress:
-      case GameState.complete:
+      case GameState.completed:
         return <XWord game={game} />;
     }
   })();

@@ -17,7 +17,7 @@ export default function GameContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const { user, isConnected, socketActions, socket } = useUser();
+  const { name, isConnected, socketActions, socket, sessionId } = useUser();
   const [game, setGame] = useState<GameInfo | null>(null);
 
   //
@@ -44,15 +44,15 @@ export default function GameContextProvider({
 
   // Join server when user info is available
   useEffect(() => {
-    if (user.name && isConnected) {
+    if (name && isConnected) {
       try {
-        console.log("Joining server with user:", user.name);
-        socketActions.joinServer(user.name);
+        console.log("Joining server with user:", name);
+        socketActions.joinServer({ name, sessionId });
       } catch (error) {
         console.error("Failed to join server:", error);
       }
     }
-  }, [user.name, user.id, isConnected, socketActions]);
+  }, [name, isConnected, sessionId, socketActions]);
 
   // Context methods
   const createGame = useCallback(() => {

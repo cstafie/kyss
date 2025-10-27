@@ -41,6 +41,8 @@ export class GameManager {
     return this.game;
   }
 
+  // TODO: use wasDisconnected to allow rejoining games in progress,
+  // we're halfway there but need to handle more edge cases
   public userJoinGame(user: ServerUser, wasDisconnected = false) {
     const inProgress = this.game.gameState === GameState.inProgress;
 
@@ -48,7 +50,10 @@ export class GameManager {
       throw new Error("Cannot join a game in progress");
     }
 
-    this.addPlayerFromUser(user);
+    if (!wasDisconnected) {
+      this.addPlayerFromUser(user);
+    }
+
     this.updateAllPlayers();
   }
 
@@ -62,7 +67,7 @@ export class GameManager {
       );
 
     this.playerManager.addPlayer({
-      id: user.socket.id,
+      id: user.sessionId,
       name: user.name,
       ready: false,
       update: updatePlayer,
@@ -178,8 +183,16 @@ export class GameManager {
     return this.playerManager.getPlayerValues();
   }
 
-  public getGameState(): GameState {
-    return this.game.gameState;
+  public isGameInProgress(): boolean {
+    return this.game.gameState === GameState.inProgress;
+  }
+
+  public isGameWaitingToStart(): boolean {
+    return this.game.gameState === GameState.waitingToStart;
+  }
+
+  public isGameCompleted(): boolean {
+    return this.game.gameState === GameState.completed;
   }
 
   onDestroy() {

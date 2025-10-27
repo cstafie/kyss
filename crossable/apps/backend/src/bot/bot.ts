@@ -58,7 +58,7 @@ class Bot {
 
     // TODO: this is a hack because i have a bug with cleartimeout,
     // once that's fixed this if statement should not be necessary
-    if (this.game.gameState === GameState.complete) {
+    if (this.game.gameState === GameState.completed) {
       return;
     }
 

@@ -7,4 +7,6 @@ export type ServerUser = {
   name: string;
   socket: ServerSocket;
   currentGameId: string;
+  disconnectTimeout?: NodeJS.Timeout;
+  sessionId: string;
 };

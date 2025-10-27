@@ -3,6 +3,8 @@ import GameManager from "../game/game_manager";
 import UserManager from "../user/user_manager";
 import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
 import { ServerSocket, ServerUser } from "../types";
+import parseSocketCookies from "./parse_socket_cookies";
+import { Server } from "http";
 
 class ServerManager {
   userManager: UserManager;
@@ -12,19 +14,23 @@ class ServerManager {
     this.userManager = userManager;
   }
 
-  public newGame(gameName: string, creatorId: string) {
+  public newGame({
+    gameName,
+    creator,
+  }: {
+    gameName: string;
+    creator: ServerUser;
+  }) {
     // does this user already have a game?
-    const creator = this.userManager.getUserById(creatorId);
-
     if (creator.currentGameId) {
       const currentGame = this.getGameById(creator.currentGameId);
 
-      if (currentGame.getGameState() !== GameState.complete) {
+      if (!currentGame.isGameCompleted()) {
         throw new Error("User is already in a game");
       }
 
       // user is in a completed game, let them create a new one
-      this.leaveGame(creator.socket.id);
+      this.leaveGame(creator);
     }
 
     const game = new GameManager({
@@ -36,7 +42,7 @@ class ServerManager {
     this.games.set(game.id, game);
 
     // have the creator join the game
-    this.joinGame(game.id, creator.socket.id);
+    this.joinGame({ gameId: game.id, user: creator });
   }
 
   private destroyGame(gameId: string) {
@@ -48,23 +54,28 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  public joinGame(gameId: string, userSocketId: string) {
+  public joinGame({ gameId, user }: { gameId: string; user: ServerUser }) {
     const game = this.getGameById(gameId);
 
-    const user = this.userManager.getUserById(userSocketId);
+    // are we already in the game (reconnecting)?
+    const wasDisconnected = user.currentGameId === gameId;
+
+    if (wasDisconnected) {
+      clearTimeout(user.disconnectTimeout);
+    }
 
     // XXX: important: set the users currentGameId
     user.currentGameId = game.id;
-    game.userJoinGame(user);
+    game.userJoinGame(user, wasDisconnected);
     this.updateGamesList();
   }
 
-  public leaveGame(userSocketId: string) {
-    const user = this.userManager.getUserById(userSocketId);
+  // TODO: currently we lose the game on refresh
+  public leaveGame(user: ServerUser) {
     let game: GameManager;
 
     game = this.getGameById(user.currentGameId);
-    game.playerLeaveGame(user.socket.id);
+    game.playerLeaveGame(user.sessionId);
 
     // XXX: important: clear the users currentGameId
     // must be done after game.playerLeaveGame
@@ -78,32 +89,31 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  public handleDisconnect(socketId: string, reason: string) {
-    const user = this.userManager.getUserById(socketId);
-    console.log(`disconnecting user ${user.name} for reason: ${reason}`);
+  public handleDisconnect(user: ServerUser) {
+    user.disconnectTimeout = setTimeout(
+      () => this.finalizeDisconnect(user),
+      10 * 1000
+    );
+  }
+
+  private finalizeDisconnect(user: ServerUser) {
+    clearTimeout(user.disconnectTimeout);
 
     if (user.currentGameId) {
-      this.leaveGame(user.socket.id);
+      this.leaveGame(user);
     }
 
     user.socket.disconnect(true);
+    this.updateGamesList();
   }
 
-  public joinServer(name: string, socket: ServerSocket) {
-    let user: ServerUser;
-
-    try {
-      user = this.userManager.hasUser(socket.id)
-        ? this.userManager.getUserById(socket.id)
-        : this.userManager.addNewUser({ name, socket });
-    } catch (error) {
-      console.error(`error joining server: ${error}`);
-      return;
-    }
-
+  public joinServer(user: ServerUser) {
     if (user.currentGameId) {
       try {
-        this.joinGame(user.currentGameId, socket.id);
+        this.joinGame({
+          gameId: user.currentGameId,
+          user,
+        });
       } catch (error) {
         console.error(`failed to rejoin the game because: ${error}`);
       }
@@ -131,8 +141,22 @@ class ServerManager {
   }
 
   public onSocketConnect(socket: ServerSocket) {
-    console.log(`user connected with socket id: ${socket.id}`);
-    subscribeSocketToServerEvents(socket);
+    try {
+      const { name, sessionId } = parseSocketCookies(
+        socket.handshake.headers.cookie || ""
+      );
+
+      const user = this.userManager.getOrCreateUser({
+        sessionId,
+        socket,
+        name,
+      });
+      subscribeSocketToServerEvents(user);
+    } catch (error) {
+      console.error(
+        `server_manager: socket connection failed because: ${error}`
+      );
+    }
   }
 
   private getGameById(gameId: string): GameManager {
