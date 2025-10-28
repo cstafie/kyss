@@ -42,6 +42,7 @@ export default class UserManager {
         user.socket.disconnect(true);
       }
 
+      user.name = name;
       user.socket = socket;
       return user;
     } catch (error) {

@@ -16,14 +16,8 @@ export interface InGameClientToServerEvents {
 export type OutOfGameClientToServerEvents = {
   leaveGame: () => void;
   joinGame: (gameId: string) => void;
-  newGame: (name: string) => void;
-  joinServer: ({
-    sessionId,
-    name,
-  }: {
-    sessionId: string;
-    name: string;
-  }) => void;
+  newGame: (gameName: string) => void;
+  joinServer: (userInfo: { name: string }) => void;
 };
 
 export type ClientToServerEvents = OutOfGameClientToServerEvents &

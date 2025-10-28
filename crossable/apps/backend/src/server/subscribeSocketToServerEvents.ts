@@ -2,6 +2,8 @@ import theServerManager from "./server_manager";
 import { OutOfGameClientToServerEvents } from "shared";
 import { type DisconnectReason } from "socket.io";
 import { ServerUser } from "../types";
+import { parse } from "path";
+import parseSocketCookies from "./parse_socket_cookies";
 
 export default function subscribeSocketToServerEvents(user: ServerUser) {
   type SocketHandlers = {
@@ -32,8 +34,9 @@ export default function subscribeSocketToServerEvents(user: ServerUser) {
         console.error(`failed to leave game because: ${error}`);
       }
     },
-    joinServer: ({ sessionId, name }: { sessionId?: string; name: string }) => {
+    joinServer: (userInfo: { name: string }) => {
       try {
+        user.name = userInfo.name;
         theServerManager.joinServer(user);
       } catch (error) {
         console.error(`failed to connect user because: ${error}`);

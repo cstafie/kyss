@@ -185,6 +185,9 @@ class ServerManager {
         socket,
         name,
       });
+      socket.onAny((event, ...args) => {
+        console.log(`socket event: ${event}`, ...args);
+      });
       subscribeSocketToServerEvents(user);
 
       userManager.emitUpdateUser(user.sessionId);
