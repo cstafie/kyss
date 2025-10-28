@@ -15,7 +15,7 @@ import { PlayerManager } from "./player_manager";
 import { ServerUser } from "../types";
 
 export class Game {
-  id: string = crypto.randomUUID();
+  id: string = "game-" + crypto.randomUUID().substring(0, 8);
   createdAt: Date = new Date();
   name: string;
   creatorName: string;
@@ -29,15 +29,19 @@ export class Game {
 
   constructor({
     name,
-    player,
+    creator,
     xWord,
     playerManager,
   }: {
     name: string;
-    player: ServerUser;
+    creator: ServerUser;
     xWord: XWord;
     playerManager: PlayerManager;
   }) {
+    console.log(
+      `game: creating new game "${name}" with id ${this.id} by user ${creator.name} (${creator.sessionId})`
+    );
+
     this.name = name;
     this.solvedXWord = xWord;
     this.xWord = {
@@ -46,8 +50,8 @@ export class Game {
     };
     this.playerManager = playerManager;
     // this.log = [];
-    this.creatorId = player.socket.id;
-    this.creatorName = player.name;
+    this.creatorId = creator.sessionId;
+    this.creatorName = creator.name;
     this.tileManager = new TileManager(
       xWord.grid.flat().filter((tile: Tile) => tile.char !== "#")
     );
@@ -121,7 +125,7 @@ export class Game {
     while (player.tileBar.length < TILE_BAR.NUMBER_OF_TILES) {
       const randomPlayer = get1Random(otherPlayers);
       const randomTile = get1Random(randomPlayer.tileBar);
-      player.tileBar.push({ id: crypto.randomUUID(), char: randomTile.char });
+      player.tileBar.push(charToTile(randomTile.char));
     }
   }
 

@@ -1,5 +1,6 @@
+// TODO: make this a part of game settings
 export const TILE_BAR = Object.freeze({
-  NUMBER_OF_TILES: 5,
+  NUMBER_OF_TILES: 6,
 });
 
 export const SCORING = Object.freeze({
@@ -17,5 +18,5 @@ const BOT_DIFFICULTIES = Object.freeze({
 
 export const BOTS = Object.freeze({
   DIFFICULTIES: BOT_DIFFICULTIES,
-  MAX_BOTS_PER_GAME: 3,
+  MAX_BOTS_PER_GAME: 5,
 });

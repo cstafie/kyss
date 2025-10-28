@@ -4,7 +4,6 @@ import UserManager from "../user/user_manager";
 import subscribeSocketToServerEvents from "./subscribeSocketToServerEvents";
 import { ServerSocket, ServerUser } from "../types";
 import parseSocketCookies from "./parse_socket_cookies";
-import { Server } from "http";
 
 class ServerManager {
   userManager: UserManager;
@@ -23,6 +22,7 @@ class ServerManager {
   }) {
     // does this user already have a game?
     if (creator.currentGameId) {
+      console.log("server_manager: user already has a game");
       const currentGame = this.getGameById(creator.currentGameId);
 
       if (!currentGame.isGameCompleted()) {
@@ -43,6 +43,8 @@ class ServerManager {
 
     // have the creator join the game
     this.joinGame({ gameId: game.id, user: creator });
+
+    this.updateGamesList();
   }
 
   private destroyGame(gameId: string) {
@@ -60,13 +62,15 @@ class ServerManager {
     // are we already in the game (reconnecting)?
     const wasDisconnected = user.currentGameId === gameId;
 
-    if (wasDisconnected) {
+    if (wasDisconnected && user.disconnectTimeout) {
       clearTimeout(user.disconnectTimeout);
+      user.disconnectTimeout = null;
     }
 
     // XXX: important: set the users currentGameId
     user.currentGameId = game.id;
     game.userJoinGame(user, wasDisconnected);
+
     this.updateGamesList();
   }
 
@@ -90,25 +94,51 @@ class ServerManager {
   }
 
   public handleDisconnect(user: ServerUser) {
+    const potentiallyStaleSocketId = user.socket.id;
+
+    if (user.disconnectTimeout) {
+      clearTimeout(user.disconnectTimeout);
+      user.disconnectTimeout = null;
+    }
+
     user.disconnectTimeout = setTimeout(
-      () => this.finalizeDisconnect(user),
+      () => this.finalizeDisconnect(user, potentiallyStaleSocketId),
       10 * 1000
     );
   }
 
-  private finalizeDisconnect(user: ServerUser) {
-    clearTimeout(user.disconnectTimeout);
+  private finalizeDisconnect(
+    user: ServerUser,
+    potentiallyStaleSocketId: string
+  ) {
+    if (user.disconnectTimeout) {
+      clearTimeout(user.disconnectTimeout);
+      user.disconnectTimeout = null;
+    }
+
+    console.log(user.socket.id, potentiallyStaleSocketId);
+
+    if (user.socket.id !== potentiallyStaleSocketId) {
+      // user reconnected
+      return;
+    }
 
     if (user.currentGameId) {
       this.leaveGame(user);
     }
 
+    console.log(
+      `server_manager: disconnecting user with sessionId: ${user.sessionId}`
+    );
     user.socket.disconnect(true);
     this.updateGamesList();
   }
 
   public joinServer(user: ServerUser) {
     if (user.currentGameId) {
+      console.log(
+        `server_manager: user has currentGameId: ${user.currentGameId}`
+      );
       try {
         this.joinGame({
           gameId: user.currentGameId,
@@ -146,12 +176,18 @@ class ServerManager {
         socket.handshake.headers.cookie || ""
       );
 
+      console.log(
+        `server_manager: socket connected with sessionId: ${sessionId}`
+      );
+
       const user = this.userManager.getOrCreateUser({
         sessionId,
         socket,
         name,
       });
       subscribeSocketToServerEvents(user);
+
+      userManager.emitUpdateUser(user.sessionId);
     } catch (error) {
       console.error(
         `server_manager: socket connection failed because: ${error}`

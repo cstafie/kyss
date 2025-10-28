@@ -25,8 +25,8 @@ class Bot {
     botManager: BotManager;
     botDifficulty?: BotDifficulty;
   }) {
-    this.id = crypto.randomUUID();
-    this.name = `🤖-${this.id.substring(0, 4)}`;
+    this.id = "bot-" + crypto.randomUUID().substring(0, 8);
+    this.name = `🤖-${crypto.randomUUID().substring(0, 4)}`;
     this.difficulty = botDifficulty;
     this.botManager = botManager;
   }

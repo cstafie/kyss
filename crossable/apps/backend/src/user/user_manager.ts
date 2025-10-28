@@ -19,15 +19,26 @@ export default class UserManager {
     socket: ServerSocket;
     name: string;
   }): ServerUser {
+    // console.log(
+    //   `user_manager: getOrCreateUser called with sessionId: ${sessionId}`
+    // );
+
     if (!sessionId) {
+      // console.log(`user_manager: creating new user because no sessionId`);
       return this.addNewUser({ name, socket });
     }
 
     // try to find existing user
     try {
+      // console.log(
+      //   `user_manager: looking for user with sessionId: ${sessionId}`
+      // );
       const user = this.getUserBySessionId(sessionId);
       if (user.socket.id !== socket.id) {
         // disconnect old socket
+        console.log(
+          `user_manager: disconnecting old socket ${user.socket.id} for user with sessionId: ${sessionId}`
+        );
         user.socket.disconnect(true);
       }
 
@@ -64,11 +75,12 @@ export default class UserManager {
       name,
       socket,
       currentGameId: "",
+      disconnectTimeout: null,
       // TODO: have the user session expire after some time
       sessionId: crypto.randomUUID(),
     };
 
-    this.users.set(user.socket.id, user);
+    this.users.set(user.sessionId, user);
 
     this.emitUpdateUser(user.sessionId);
     return user;
@@ -97,7 +109,7 @@ export default class UserManager {
 
   emitUpdateUser(sessionId: string): void {
     const user = this.getUserBySessionId(sessionId);
-    user.socket?.emit("updateUser", sessionId);
+    user.socket.emit("updateUser", sessionId);
   }
 
   toJSON(): Array<{ id: string; name: string }> {
@@ -110,8 +122,8 @@ export default class UserManager {
 
   updateGamesListForAllUsers(gamesList: Array<GameMetaData>) {
     for (const user of this.users.values()) {
-      if (user.socket?.connected) {
-        user.socket?.emit("updateGamesList", gamesList);
+      if (user.socket.connected) {
+        user.socket.emit("updateGamesList", gamesList);
       }
     }
   }

@@ -8,6 +8,7 @@
     "dev:fe": "turbo run dev --filter=frontend",
     "dev:be": "turbo run dev --filter=backend",
     "dev:shared": "turbo run dev --filter=shared",
+    "clean": "turbo run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

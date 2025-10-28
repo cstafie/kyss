@@ -12,7 +12,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx --watch src/index.ts",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist && rm -rf node_modules"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

@@ -13,7 +13,7 @@ interface GameManagerParams {
 }
 
 export class GameManager {
-  public id = crypto.randomUUID();
+  public id = "gm-" + crypto.randomUUID().substring(0, 8);
   private game: Game;
   private botManager: BotManager;
   private playerManager: PlayerManager;
@@ -31,7 +31,7 @@ export class GameManager {
 
     this.game = new Game({
       name: gameName,
-      player: creator,
+      creator,
       xWord: randomXWord,
       playerManager: this.playerManager,
     });
@@ -50,17 +50,14 @@ export class GameManager {
       throw new Error("Cannot join a game in progress");
     }
 
-    if (!wasDisconnected) {
-      this.addPlayerFromUser(user);
-    }
-
+    this.addPlayerFromUser(user);
     this.updateAllPlayers();
   }
 
   public addPlayerFromUser(user: ServerUser) {
     const { updatePlayer, unsubscribeSocket, incorrectTilePlayed } =
       subscribeSocketToGameEvents(
-        user.socket,
+        user,
         this,
         this.playerManager,
         this.botManager

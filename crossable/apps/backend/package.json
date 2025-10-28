@@ -9,7 +9,7 @@
     "copy-assets": "cp -r src/assets dist/assets",
     "start": "node dist/main.js",
     "lint": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist && rm -rf node_modules"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",

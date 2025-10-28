@@ -2,7 +2,7 @@ import { InGameClientToServerEvents } from "shared";
 import GameManager from "../game/game_manager";
 import { PlayerManager } from "../game/player_manager";
 import { BotManager } from "../bot/bot_manager";
-import { ServerSocket } from "../types";
+import { ServerUser } from "../types";
 
 interface SubscribeSocketToGameEventsReturn {
   updatePlayer: () => void;
@@ -11,7 +11,7 @@ interface SubscribeSocketToGameEventsReturn {
 }
 
 export default function subscribeSocketToGameEvents(
-  socket: ServerSocket,
+  user: ServerUser,
   gameManager: GameManager,
   playerManager: PlayerManager,
   botManager: BotManager
@@ -25,28 +25,28 @@ export default function subscribeSocketToGameEvents(
   const handlers: SocketHandlers = {
     playTile: (tileInfo: { tileId: string; pos: [number, number] }) => {
       try {
-        playerManager.playTile({ playerId: socket.id, ...tileInfo });
+        playerManager.playTile({ playerId: user.sessionId, ...tileInfo });
       } catch (error) {
         console.error(
-          `failed to play tile for user ${socket.id} because: ${error}`
+          `failed to play tile for user ${user.sessionId} because: ${error}`
         );
       }
     },
     updateTileBar: (tileIds: Array<string>) => {
       try {
-        playerManager.updateTileBar({ playerId: socket.id, tileIds });
+        playerManager.updateTileBar({ playerId: user.sessionId, tileIds });
       } catch (error) {
         console.error(
-          `failed to update tile bar for user ${socket.id} because: ${error}`
+          `failed to update tile bar for user ${user.sessionId} because: ${error}`
         );
       }
     },
     setReady: (ready: boolean) => {
       try {
-        playerManager.setReady({ playerId: socket.id, ready });
+        playerManager.setReady({ playerId: user.sessionId, ready });
       } catch (error) {
         console.error(
-          `failed to set ready state for user ${socket.id} because: ${error}`
+          `failed to set ready state for user ${user.sessionId} because: ${error}`
         );
       }
     },
@@ -86,22 +86,25 @@ export default function subscribeSocketToGameEvents(
 
   const unsubscribeSocket = () => {
     eventNames.forEach((event) => {
-      socket.off(event, handlers[event]);
+      user.socket.off(event, handlers[event]);
     });
   };
 
   // Register all handlers
   eventNames.forEach((event) => {
-    socket.on(event, handlers[event]);
+    user.socket.on(event, handlers[event]);
   });
 
   // setup game update emitter for the player
   const updatePlayer = () => {
-    socket.emit("updateGame", gameManager.makeServerGameUpdate(socket.id));
+    user.socket.emit(
+      "updateGame",
+      gameManager.makeServerGameUpdate(user.sessionId)
+    );
   };
 
   const incorrectTilePlayed = (tilePos: [number, number]) => {
-    socket.emit("incorrectTilePlayed", tilePos);
+    user.socket.emit("incorrectTilePlayed", tilePos);
   };
 
   return {
