@@ -58,7 +58,7 @@ app.post("/api/feedback", async (req, res) => {
 
 io.on("connection", (socket) => theServerManager.onSocketConnect(socket));
 
-const port = process.env.port || 3333;
+const port = 3333;
 
 httpServer.listen(port, () => {
   console.log("Listening at http://localhost:" + port + "...");

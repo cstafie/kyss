@@ -2,8 +2,6 @@ import theServerManager from "./server_manager";
 import { OutOfGameClientToServerEvents } from "shared";
 import { type DisconnectReason } from "socket.io";
 import { ServerUser } from "../types";
-import { parse } from "path";
-import parseSocketCookies from "./parse_socket_cookies";
 
 export default function subscribeSocketToServerEvents(user: ServerUser) {
   type SocketHandlers = {

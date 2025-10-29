@@ -1,6 +1,6 @@
-import * as nodemailer from 'nodemailer';
+import * as nodemailer from "nodemailer";
 
-const user = 'crossable.puzzles';
+const user = "crossable.puzzles";
 const email = `${user}@outlook.com`;
 
 interface Params {
@@ -9,10 +9,13 @@ interface Params {
 }
 
 function sendEmail({ subject, textBody }: Params) {
-  console.log('Trying to send email');
+  // TODO: enable this when ready
+  throw new Error("Disabled for now");
+
+  console.log("Trying to send email");
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.office365.com',
+    host: "smtp.office365.com",
     port: 587,
     secure: false, // upgrade later with STARTTLS
     auth: {
@@ -28,7 +31,7 @@ function sendEmail({ subject, textBody }: Params) {
       subject,
       text: textBody,
     })
-    .then(() => console.log('Sent email success'))
+    .then(() => console.log("Sent email success"))
     .catch((e) => console.log(e));
 }
 

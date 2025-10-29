@@ -5,6 +5,7 @@ export default defineConfig({
   format: ["cjs"],
   outDir: "dist",
   sourcemap: true,
+  shims: true,
   clean: true,
   minify: true, // minify for production
   splitting: false,
