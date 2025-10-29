@@ -20,6 +20,7 @@ const app = express();
 const httpServer = http.createServer(app);
 
 const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer, {
+  path: "/socket.io/",
   cors: {
     // TODO: double check once everything is dockerized
     origin: [
