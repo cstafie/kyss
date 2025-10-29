@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import type { ServerToClientEvents, ClientToServerEvents } from "shared";
 
@@ -30,7 +30,7 @@ export function useSocket(options: UseSocketOptions) {
   useEffect(() => {
     // Create socket instance
     // TODO: replace with env variable
-    const socket = io("https://crossable.cristianstafie.ca/api", {
+    const socket = io("https://crossable.cristianstafie.ca/", {
       autoConnect: false,
       withCredentials: true,
       reconnection: true,
@@ -81,7 +81,7 @@ export function useSocket(options: UseSocketOptions) {
       socket.close();
       socketRef.current = null;
     };
-  }, [url, onConnect, onDisconnect, onError]);
+  }, [onConnect, onDisconnect, onError]);
 
   return {
     socket: socketRef.current,
