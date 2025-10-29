@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import type { ServerToClientEvents, ClientToServerEvents } from "shared";
 
 interface UseSocketOptions {
-  url: string;
   autoConnect?: boolean;
   onConnect?: () => void;
   onDisconnect?: () => void;
@@ -17,7 +16,7 @@ interface SocketState {
 
 export function useSocket(options: UseSocketOptions) {
   console.log("useSocket called");
-  const { url, onConnect, onDisconnect, onError } = options;
+  const { onConnect, onDisconnect, onError } = options;
 
   const socketRef = useRef<Socket<
     ServerToClientEvents,
@@ -28,9 +27,13 @@ export function useSocket(options: UseSocketOptions) {
     error: null,
   });
 
+  const url = useMemo(() => {
+    return window.location.origin;
+  }, []);
+
   useEffect(() => {
     // Create socket instance
-    const socket = io(url, {
+    const socket = io(`${url}/api`, {
       autoConnect: false,
       withCredentials: true,
       reconnection: true,

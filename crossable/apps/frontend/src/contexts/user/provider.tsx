@@ -24,7 +24,6 @@ export default function UserContextProvider({
   );
 
   const { socket, isConnected, error } = useSocket({
-    url: "http://localhost:3333",
     onConnect,
     onDisconnect,
     onError,
