@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Copy workspace config
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy all packages
@@ -15,6 +14,7 @@ COPY apps/frontend ./apps/frontend
 ENV CI=true
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm build --filter shared
 RUN pnpm --filter frontend build
 
 # ---- Serve stage ----
@@ -27,6 +27,7 @@ RUN npm install -g serve
 
 # Copy only the built dist folder
 COPY --from=builder /app/apps/frontend/dist ./dist
+COPY --from=builder /app/apps/frontend/package.json ./package.json
 
 EXPOSE 3000
 

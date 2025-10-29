@@ -18,6 +18,7 @@ ENV CI=true
 
 # Install dependencies and build
 RUN pnpm install --frozen-lockfile
+RUN pnpm build --filter shared
 RUN pnpm build --filter backend
 
 # Production stage
