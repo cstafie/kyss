@@ -20,7 +20,7 @@ const app = express();
 const httpServer = http.createServer(app);
 
 const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer, {
-  path: "/socket.io/",
+  path: "/socket.io",
   cors: {
     // TODO: double check once everything is dockerized
     origin: [
@@ -61,11 +61,13 @@ app.post("/api/feedback", async (req, res) => {
   res.send("Success!");
 });
 
-io.on("connection", (socket) => theServerManager.onSocketConnect(socket));
+io.of("/").on("connection", (socket) =>
+  theServerManager.onSocketConnect(socket)
+);
 
 const port = 3000;
 
-httpServer.listen(port, () => {
+httpServer.listen(port, "0.0.0.0", () => {
   console.log(
     `Server is running on port ${port} at address:`,
     httpServer.address()

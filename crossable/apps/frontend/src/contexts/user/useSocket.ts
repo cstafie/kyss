@@ -30,7 +30,11 @@ export function useSocket(options: UseSocketOptions) {
   useEffect(() => {
     // Create socket instance
     // TODO: replace with env variable
-    const socket = io("/", {
+
+    console.log("Creating socket instance");
+
+    const socket = io("https://crossable.cristianstafie.ca", {
+      transports: ["websocket", "polling"],
       path: "/socket.io",
       autoConnect: false,
       withCredentials: true,

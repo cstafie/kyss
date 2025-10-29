@@ -49,6 +49,7 @@ export default function UserContextProvider({
 
   useEffect(() => {
     // connect to the socket when name is set
+    console.log({ isConnected, name, socket });
     if (!isConnected && name && socket) {
       socket.connect();
     }
