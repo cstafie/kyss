@@ -1,0 +1,42 @@
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy root package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy all workspace packages
+COPY packages ./packages
+COPY apps/backend ./apps/backend
+
+
+# Set CI environment variable for pnpm
+ENV CI=true
+
+# Install dependencies and build
+RUN pnpm install --frozen-lockfile
+RUN pnpm build --filter backend
+
+# Production stage
+FROM node:24-alpine AS runner
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy built artifacts and necessary files
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/backend ./apps/backend
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
+
+WORKDIR /app/apps/backend
+
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]

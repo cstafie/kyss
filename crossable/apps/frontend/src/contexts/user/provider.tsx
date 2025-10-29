@@ -48,6 +48,13 @@ export default function UserContextProvider({
     socket?.on("updateUser", setSessionId);
   }, [socket, setSessionId]);
 
+  useEffect(() => {
+    // connect to the socket when name is set
+    if (!isConnected && name && socket) {
+      socket.connect();
+    }
+  }, [isConnected, name, socket]);
+
   return (
     <UserContext.Provider
       value={{

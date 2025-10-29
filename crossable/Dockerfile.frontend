@@ -1,0 +1,34 @@
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy workspace config
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy all packages
+COPY packages ./packages
+COPY apps/frontend ./apps/frontend
+
+# Set CI environment variable for pnpm
+ENV CI=true
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter frontend build
+
+# ---- Serve stage ----
+FROM node:24-alpine AS runner
+
+WORKDIR /app
+
+# Install serve globally
+RUN npm install -g serve
+
+# Copy only the built dist folder
+COPY --from=builder /app/apps/frontend/dist ./dist
+
+EXPOSE 3000
+
+# Serve on 0.0.0.0:3000
+CMD ["serve", "dist", "-l", "3000"]

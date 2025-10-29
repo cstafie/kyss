@@ -17,7 +17,7 @@ interface SocketState {
 
 export function useSocket(options: UseSocketOptions) {
   console.log("useSocket called");
-  const { url, autoConnect = true, onConnect, onDisconnect, onError } = options;
+  const { url, onConnect, onDisconnect, onError } = options;
 
   const socketRef = useRef<Socket<
     ServerToClientEvents,
@@ -29,11 +29,9 @@ export function useSocket(options: UseSocketOptions) {
   });
 
   useEffect(() => {
-    if (!autoConnect) return;
-
     // Create socket instance
     const socket = io(url, {
-      autoConnect: true,
+      autoConnect: false,
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 1,
@@ -83,7 +81,7 @@ export function useSocket(options: UseSocketOptions) {
       socket.close();
       socketRef.current = null;
     };
-  }, [url, autoConnect, onConnect, onDisconnect, onError]);
+  }, [url, onConnect, onDisconnect, onError]);
 
   return {
     socket: socketRef.current,

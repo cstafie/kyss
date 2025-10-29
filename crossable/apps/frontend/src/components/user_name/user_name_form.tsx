@@ -34,6 +34,7 @@ function UserNameForm({ className, onSubmit }: Props) {
 
       // TODO: better validation
       if (value && value.toLocaleLowerCase() !== "you") {
+        console.log(`setting user name to: ${value}`);
         setName(value);
         onSubmit?.();
       }

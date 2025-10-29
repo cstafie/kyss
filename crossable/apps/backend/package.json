@@ -2,15 +2,16 @@
   "name": "backend",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
-    "build": "tsc && npm run copy-assets",
+    "dev": "tsup src/main.ts --watch",
+    "build": "tsup src/main.ts && npm run copy-assets",
     "copy-assets": "cp -r src/assets dist/assets",
     "start": "node dist/main.js",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist && rm -rf node_modules"
   },
+  "main": "./dist/main.js",
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",
     "@types/lodash": "^4.17.20",
@@ -26,8 +27,9 @@
   "devDependencies": {
     "@types/express": "^4.17.23",
     "@types/node": "^20.19.20",
-    "typescript": "^5.9.3",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.6",
-    "turbo": "2.5.8"
+    "turbo": "2.5.8",
+    "typescript": "^5.9.3"
   }
 }

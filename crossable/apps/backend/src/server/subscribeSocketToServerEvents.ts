@@ -36,6 +36,7 @@ export default function subscribeSocketToServerEvents(user: ServerUser) {
     },
     joinServer: (userInfo: { name: string }) => {
       try {
+        console.log(`socket joining server: ${user.socket.id}`);
         user.name = userInfo.name;
         theServerManager.joinServer(user);
       } catch (error) {

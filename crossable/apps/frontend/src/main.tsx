@@ -3,7 +3,7 @@ import { enableMapSet } from "immer";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./app/app";
-import AuthContextProvider from "@/contexts/user/provider";
+import UserContextProvider from "@/contexts/user/provider";
 import GameContextProvider from "@/contexts/game/provider";
 import "./main.css";
 
@@ -16,11 +16,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <BrowserRouter>
-      <AuthContextProvider>
+      <UserContextProvider>
         <GameContextProvider>
           <App />
         </GameContextProvider>
-      </AuthContextProvider>
+      </UserContextProvider>
     </BrowserRouter>
   </StrictMode>
 );
