@@ -18,15 +18,14 @@ import sendEmail from "./api/feedback/send_email";
 const app = express();
 
 const httpServer = http.createServer(app);
-const host = httpServer.address();
-const hostString =
-  typeof host === "string" ? host : host && `${host.address}:${host.port}`;
-console.log("Starting server at host:", hostString);
 
 const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer, {
   cors: {
     // TODO: double check once everything is dockerized
-    origin: [`https://${hostString}`, `https://${hostString}/`], // frontend origin
+    origin: [
+      "https://crossable.cristianstafie.ca",
+      "https://crossable.cristianstafie.ca/",
+    ], // frontend origin
     methods: ["GET", "POST"],
     credentials: true,
     allowedHeaders: ["content-type"],
@@ -66,7 +65,10 @@ io.on("connection", (socket) => theServerManager.onSocketConnect(socket));
 const port = 3000;
 
 httpServer.listen(port, () => {
-  console.log(`Server is running on port ${port} at address:`, host);
+  console.log(
+    `Server is running on port ${port} at address:`,
+    httpServer.address()
+  );
 });
 
 httpServer.on("error", console.error);

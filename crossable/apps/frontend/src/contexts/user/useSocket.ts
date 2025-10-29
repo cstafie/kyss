@@ -27,13 +27,10 @@ export function useSocket(options: UseSocketOptions) {
     error: null,
   });
 
-  const url = useMemo(() => {
-    return window.location.origin;
-  }, []);
-
   useEffect(() => {
     // Create socket instance
-    const socket = io(`${url}/api`, {
+    // TODO: replace with env variable
+    const socket = io("https://crossable.cristianstafie.ca/api", {
       autoConnect: false,
       withCredentials: true,
       reconnection: true,
