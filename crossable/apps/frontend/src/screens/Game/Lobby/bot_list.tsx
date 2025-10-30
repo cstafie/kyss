@@ -22,8 +22,6 @@ function BotList({ game }: Props) {
     [sessionId, gameCreatorId]
   );
 
-  console.log({ BOTS, isGameCreator, sessionId, gameCreatorId });
-
   if (bots.size === 0 && !isGameCreator) {
     return null;
   }

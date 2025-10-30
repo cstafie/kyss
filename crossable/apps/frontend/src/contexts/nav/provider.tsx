@@ -43,7 +43,7 @@ export default function NavContextProvider({
                   <Emoji description="Notebook">📔</Emoji> Instructions
                 </MenuItem>
               </Link>
-              <Link to="/feedback">
+              <Link to="https://cristianstafie.ca/contact">
                 <MenuItem>
                   <Emoji description="Megaphone">📣</Emoji> Feedback
                 </MenuItem>

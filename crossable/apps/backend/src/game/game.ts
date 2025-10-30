@@ -38,10 +38,6 @@ export class Game {
     xWord: XWord;
     playerManager: PlayerManager;
   }) {
-    console.log(
-      `game: creating new game "${name}" with id ${this.id} by user ${creator.name} (${creator.sessionId})`
-    );
-
     this.name = name;
     this.solvedXWord = xWord;
     this.xWord = {

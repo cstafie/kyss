@@ -41,8 +41,6 @@ export class GameManager {
     return this.game;
   }
 
-  // TODO: use wasDisconnected to allow rejoining games in progress,
-  // we're halfway there but need to handle more edge cases
   public userJoinGame(user: ServerUser, wasDisconnected = false) {
     const inProgress = this.game.gameState === GameState.inProgress;
 

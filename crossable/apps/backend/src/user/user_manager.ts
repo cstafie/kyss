@@ -19,26 +19,15 @@ export default class UserManager {
     socket: ServerSocket;
     name: string;
   }): ServerUser {
-    // console.log(
-    //   `user_manager: getOrCreateUser called with sessionId: ${sessionId}`
-    // );
-
     if (!sessionId) {
-      // console.log(`user_manager: creating new user because no sessionId`);
       return this.addNewUser({ name, socket });
     }
 
     // try to find existing user
     try {
-      // console.log(
-      //   `user_manager: looking for user with sessionId: ${sessionId}`
-      // );
       const user = this.getUserBySessionId(sessionId);
       if (user.socket.id !== socket.id) {
         // disconnect old socket
-        console.log(
-          `user_manager: disconnecting old socket ${user.socket.id} for user with sessionId: ${sessionId}`
-        );
         user.socket.disconnect(true);
       }
 

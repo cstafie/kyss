@@ -22,7 +22,6 @@ class ServerManager {
   }) {
     // does this user already have a game?
     if (creator.currentGameId) {
-      console.log("server_manager: user already has a game");
       const currentGame = this.getGameById(creator.currentGameId);
 
       if (!currentGame.isGameCompleted()) {
@@ -74,7 +73,6 @@ class ServerManager {
     this.updateGamesList();
   }
 
-  // TODO: currently we lose the game on refresh
   public leaveGame(user: ServerUser) {
     let game: GameManager;
 
@@ -116,8 +114,6 @@ class ServerManager {
       user.disconnectTimeout = null;
     }
 
-    console.log(user.socket.id, potentiallyStaleSocketId);
-
     if (user.socket.id !== potentiallyStaleSocketId) {
       // user reconnected
       return;
@@ -127,18 +123,12 @@ class ServerManager {
       this.leaveGame(user);
     }
 
-    console.log(
-      `server_manager: disconnecting user with sessionId: ${user.sessionId}`
-    );
     user.socket.disconnect(true);
     this.updateGamesList();
   }
 
   public joinServer(user: ServerUser) {
     if (user.currentGameId) {
-      console.log(
-        `server_manager: user has currentGameId: ${user.currentGameId}`
-      );
       try {
         this.joinGame({
           gameId: user.currentGameId,
@@ -176,17 +166,10 @@ class ServerManager {
         socket.handshake.headers.cookie || ""
       );
 
-      console.log(
-        `server_manager: socket connected with sessionId: ${sessionId}`
-      );
-
       const user = this.userManager.getOrCreateUser({
         sessionId,
         socket,
         name,
-      });
-      socket.onAny((event, ...args) => {
-        console.log(`socket event: ${event}`, ...args);
       });
       subscribeSocketToServerEvents(user);
 

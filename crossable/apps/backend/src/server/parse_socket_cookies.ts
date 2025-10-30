@@ -2,8 +2,6 @@ export default function parseSocketCookies(cookieString: string): {
   name: string;
   sessionId: string;
 } {
-  console.log(`parseSocketCookies: parsing cookies: ${cookieString}`);
-
   const cookies: { [key: string]: string } = {};
   const cookiePairs = cookieString.split("; ");
 

@@ -25,7 +25,6 @@ console.log("Using FRONTEND_URL:", frontendUrl);
 const io = new Server<ServerToClientEvents, ClientToServerEvents>(httpServer, {
   path: "/socket.io",
   cors: {
-    // TODO: double check once everything is dockerized
     origin: [frontendUrl, `${frontendUrl}/`], // frontend origin
     methods: ["GET", "POST"],
     credentials: true,

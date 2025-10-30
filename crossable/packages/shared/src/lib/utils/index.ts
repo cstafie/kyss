@@ -1,7 +1,5 @@
 import { Tile, XWord } from "../api-interfaces";
 
-// TODO: this should be class tile with a constructor
-// fromChar etc.
 export const charToTile = (char: string) => ({
   id: "tile-" + crypto.randomUUID().substring(0, 8),
   char,

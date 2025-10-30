@@ -52,9 +52,8 @@ function Instructions() {
           </li>{" "}
           <li className="p-2">
             <Emoji description="Up pointing backhand">👆</Emoji>{" "}
-            <strong>Tapping / Clicking:</strong> Tap or click a letter from your
-            tile bar to select it, then click on a cell in the crossword to
-            place it.
+            <strong>Tapping / Clicking:</strong> Tap or click on a cell in the
+            crossword, then click on a letter from your tile bar to place it.
           </li>
         </ul>
       </div>

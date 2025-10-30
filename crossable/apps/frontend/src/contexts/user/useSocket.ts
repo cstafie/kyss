@@ -26,8 +26,6 @@ export function useSocket(options: UseSocketOptions) {
   console.log("useSocket called");
   const { onConnect, onDisconnect, onError } = options;
 
-  console.log(import.meta.env.VITE_SERVER_URL, window.ENV.VITE_SERVER_URL);
-
   // XXX: ${VITE_SERVER_URL} is the default value set in the index.html
   // and used by envsubst in docker_entry.sh
   const url = useMemo(() => {
@@ -87,11 +85,6 @@ export function useSocket(options: UseSocketOptions) {
     socketRef.current.on("disconnect", handleDisconnect);
     // socketRef.current.on("error", handleError);
     socketRef.current.on("connect_error", handleConnectError);
-
-    // Frontend
-    socketRef.current.onAny((event, ...args) => {
-      console.log("Emitting:", event, args);
-    });
 
     // Cleanup on unmount
     return () => {

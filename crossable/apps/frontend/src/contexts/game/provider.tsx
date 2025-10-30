@@ -31,7 +31,6 @@ export default function GameContextProvider({
 
   // Sync server game state with local state
   useEffect(() => {
-    console.log("Server game state updated:", serverGame);
     if (serverGame) {
       setGame(serverGame);
     } else {
