@@ -14,6 +14,8 @@ const mapEntries = (entries: any[]): Array<XWordEntry> => {
   }));
 };
 
+// TODO: decouple from fs for better testability
+// TODO: decouple from crossword assets from build
 export const getRandomXWord = (): XWord => {
   const path = "./dist/assets/generated_xWords/";
   const filePaths = fs.readdirSync(path);

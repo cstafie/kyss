@@ -24,12 +24,16 @@ WORKDIR /app
 
 # Install serve globally
 RUN npm install -g serve
+RUN apk add --no-cache gettext
 
 # Copy only the built dist folder
 COPY --from=builder /app/apps/frontend/dist ./dist
 COPY --from=builder /app/apps/frontend/package.json ./package.json
 
+# Copy the entrypoint script
+COPY apps/frontend/docker_entry.sh /docker_entry.sh
+RUN chmod +x /docker_entry.sh
+
 EXPOSE 3000
 
-# Serve on 0.0.0.0:3000
-CMD ["serve", "dist", "-l", "3000"]
+CMD ["/docker_entry.sh"]

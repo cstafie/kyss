@@ -2,6 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import type { ServerToClientEvents, ClientToServerEvents } from "shared";
 
+declare global {
+  interface Window {
+    ENV: {
+      VITE_SERVER_URL: string;
+    };
+  }
+}
+
 interface UseSocketOptions {
   autoConnect?: boolean;
   onConnect?: () => void;
@@ -18,8 +26,10 @@ export function useSocket(options: UseSocketOptions) {
   console.log("useSocket called");
   const { onConnect, onDisconnect, onError } = options;
 
+  console.log(import.meta.env.VITE_SERVER_URL, window.ENV.VITE_SERVER_URL);
+
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>(
-    io(import.meta.env.VITE_SERVER_URL, {
+    io(import.meta.env.VITE_SERVER_URL || window.ENV.VITE_SERVER_URL, {
       transports: ["polling", "websocket"],
       path: "/socket.io",
       autoConnect: false,
