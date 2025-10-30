@@ -38,3 +38,11 @@ COPY --from=builder /app/apps/backend/package.json ./apps/backend/package.json
 
 # COPY any assets if needed
 COPY --from=builder /app/apps/backend/assets ./apps/backend/assets
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
+
+WORKDIR /app/apps/backend
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]
