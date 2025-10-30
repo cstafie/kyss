@@ -12,7 +12,6 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY packages ./packages
 COPY apps/backend ./apps/backend
 
-
 # Set CI environment variable for pnpm
 ENV CI=true
 
@@ -23,21 +22,16 @@ RUN pnpm build --filter backend
 
 # Production stage
 FROM node:24-alpine AS runner
-
 WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy built artifacts and necessary files
+# Copy root dependencies config
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+
+# Copy built shared package
 COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/apps/backend ./apps/backend
 
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
-
-WORKDIR /app/apps/backend
-
-EXPOSE 3000
-
-CMD ["node", "dist/main.js"]
+# Copy ONLY the built backend dist + package.json
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/package.json ./apps/backend/package.json

@@ -18,32 +18,24 @@ export function useSocket(options: UseSocketOptions) {
   console.log("useSocket called");
   const { onConnect, onDisconnect, onError } = options;
 
-  const socketRef = useRef<Socket<
-    ServerToClientEvents,
-    ClientToServerEvents
-  > | null>(null);
-  const [state, setState] = useState<SocketState>({
-    isConnected: false,
-    error: null,
-  });
-
-  useEffect(() => {
-    // Create socket instance
-    // TODO: replace with env variable
-
-    console.log("Creating socket instance");
-
-    const socket = io("https://crossable.cristianstafie.ca", {
-      transports: ["websocket", "polling"],
+  const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>(
+    io(import.meta.env.VITE_SERVER_URL, {
+      transports: ["polling", "websocket"],
       path: "/socket.io",
       autoConnect: false,
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 1,
       reconnectionDelay: 1000,
-    });
+    })
+  );
+  const [state, setState] = useState<SocketState>({
+    isConnected: false,
+    error: null,
+  });
 
-    socketRef.current = socket;
+  useEffect(() => {
+    console.log("Creating socket instance");
 
     // Connection handlers
     const handleConnect = () => {
@@ -56,10 +48,11 @@ export function useSocket(options: UseSocketOptions) {
       onDisconnect?.();
     };
 
-    const handleError = (error: Error) => {
-      setState((prev) => ({ ...prev, error }));
-      onError?.(error);
-    };
+    // TODO: figure out why type error on this event
+    // const handleError = (error: Error) => {
+    //   setState((prev) => ({ ...prev, error }));
+    //   onError?.(error);
+    // };
 
     const handleConnectError = (error: Error) => {
       setState({ isConnected: false, error });
@@ -67,24 +60,23 @@ export function useSocket(options: UseSocketOptions) {
     };
 
     // Register event listeners
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("error", handleError);
-    socket.on("connect_error", handleConnectError);
+    socketRef.current.on("connect", handleConnect);
+    socketRef.current.on("disconnect", handleDisconnect);
+    // socketRef.current.on("error", handleError);
+    socketRef.current.on("connect_error", handleConnectError);
 
     // Frontend
-    socket.onAny((event, ...args) => {
+    socketRef.current.onAny((event, ...args) => {
       console.log("Emitting:", event, args);
     });
 
     // Cleanup on unmount
     return () => {
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("error", handleError);
-      socket.off("connect_error", handleConnectError);
-      socket.close();
-      socketRef.current = null;
+      socketRef.current.off("connect", handleConnect);
+      socketRef.current.off("disconnect", handleDisconnect);
+      // socketRef.current.off("error", handleError);
+      socketRef.current.off("connect_error", handleConnectError);
+      socketRef.current.close();
     };
   }, [onConnect, onDisconnect, onError]);
 

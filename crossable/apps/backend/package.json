@@ -11,7 +11,7 @@
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist && rm -rf node_modules"
   },
-  "main": "./dist/main.js",
+  "main": "dist/main.js",
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",
     "@types/lodash": "^4.17.20",
