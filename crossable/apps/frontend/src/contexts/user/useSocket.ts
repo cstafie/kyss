@@ -28,8 +28,13 @@ export function useSocket(options: UseSocketOptions) {
 
   console.log(import.meta.env.VITE_SERVER_URL, window.ENV.VITE_SERVER_URL);
 
+  // XXX: ${VITE_SERVER_URL} is the default value set in the index.html
+  // and used by envsubst in docker_entry.sh
   const url = useMemo(() => {
-    if (window?.ENV?.VITE_SERVER_URL) {
+    if (
+      window?.ENV?.VITE_SERVER_URL &&
+      window.ENV.VITE_SERVER_URL !== "${VITE_SERVER_URL}"
+    ) {
       return window.ENV.VITE_SERVER_URL;
     }
 

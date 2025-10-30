@@ -35,3 +35,6 @@ COPY --from=builder /app/packages ./packages
 # Copy ONLY the built backend dist + package.json
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/package.json ./apps/backend/package.json
+
+# COPY any assets if needed
+COPY --from=builder /app/apps/backend/assets ./apps/backend/assets

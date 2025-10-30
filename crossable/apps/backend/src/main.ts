@@ -1,6 +1,4 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
+import "dotenv/config";
 import express from "express";
 import { Server } from "socket.io";
 import * as http from "http";
@@ -15,8 +13,9 @@ import {
 import theServerManager from "./server/server_manager";
 import sendEmail from "./api/feedback/send_email";
 
-const app = express();
+console.log("Starting backend server...");
 
+const app = express();
 const httpServer = http.createServer(app);
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";

@@ -4,10 +4,8 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "dev": "tsup src/main.ts --watch",
-    "build": "tsup src/main.ts && npm run copy-assets",
-    "copy-assets": "cp -r src/assets dist/assets",
-    "start": "node dist/main.js",
+    "dev": "tsx src/main.ts",
+    "build": "tsup src/main.ts",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist && rm -rf node_modules"
   },
